@@ -23,6 +23,7 @@
 	<modules>
         <module>user-service</module>
 		<module>hotel-service</module>
+		<module>notification-service</module>
 	</modules>	
 	<developers>
 		<developer/>

@@ -1,4 +1,4 @@
-package com.example.staymate.entity.enums;
+package com.example.notificationservice.entity;
 
 public enum NotificationType {
     BOOKING,
