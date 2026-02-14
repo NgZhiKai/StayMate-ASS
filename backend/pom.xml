@@ -22,6 +22,7 @@
 	</licenses>
 	<modules>
         <module>user-service</module>
+		<module>hotel-service</module>
 	</modules>	
 	<developers>
 		<developer/>
