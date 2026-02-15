@@ -4,7 +4,7 @@ echo Stopping all Staymate microservices...
 echo.
 
 :: List of service ports (adjust as needed)
-set PORTS=8081 8082 8083 8084 8085
+set PORTS=8081 8082 8083 8084 8085 8086
 
 :: Loop through each port and kill the process
 for %%p in (%PORTS%) do (

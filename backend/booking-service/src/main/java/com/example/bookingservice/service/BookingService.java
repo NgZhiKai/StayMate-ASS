@@ -181,6 +181,12 @@ public class BookingService {
         return overlapping.isEmpty();
     }
 
+    public Booking updateBookingStatus(Long bookingId, BookingStatus status) {
+        Booking booking = getBookingById(bookingId);
+        booking.setStatus(status);
+        return bookingRepository.save(booking);
+    }
+
     // ------------------- Mapping Helpers -------------------
 
     private BookingResponseDTO mapToBookingResponseDTO(Booking b) {

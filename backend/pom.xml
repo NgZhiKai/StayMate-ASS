@@ -26,6 +26,7 @@
 		<module>notification-service</module>
 		<module>booking-service</module>
 		<module>email-service</module>
+		<module>payment-service</module>
 	</modules>	
 	<developers>
 		<developer/>

@@ -13,6 +13,7 @@ import com.example.bookingservice.dto.BookingRequestDTO;
 import com.example.bookingservice.dto.BookingResponseDTO;
 import com.example.bookingservice.dto.UserBookingResponseDTO;
 import com.example.bookingservice.entity.Booking;
+import com.example.bookingservice.entity.BookingStatus;
 import com.example.bookingservice.service.BookingService;
 
 @RestController
@@ -114,5 +115,17 @@ public class BookingController {
 
         boolean available = bookingService.isRoomAvailable(hotelId, roomId, checkIn, checkOut);
         return ResponseEntity.ok(available);
+    }
+
+    /**
+     * Update booking status endpoint.
+     */
+    @PostMapping("/{bookingId}/status")
+    public ResponseEntity<String> updateBookingStatus(
+            @PathVariable Long bookingId,
+            @RequestParam BookingStatus status) {
+
+        bookingService.updateBookingStatus(bookingId, status);
+        return ResponseEntity.ok("Booking status updated to " + status);
     }
 }

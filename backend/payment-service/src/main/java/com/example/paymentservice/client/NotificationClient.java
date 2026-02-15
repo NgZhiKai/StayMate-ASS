@@ -1,4 +1,4 @@
-package com.example.bookingservice.client;
+package com.example.paymentservice.client;
 
 import java.util.Map;
 
@@ -31,7 +31,7 @@ public class NotificationClient {
         Map<String, Object> body = Map.of(
                 "userId", userId,
                 "message", message,
-                "type", "BOOKING");
+                "type", "PAYMENT");
 
         HttpEntity<Map<String, Object>> request = new HttpEntity<>(body, headers);
 

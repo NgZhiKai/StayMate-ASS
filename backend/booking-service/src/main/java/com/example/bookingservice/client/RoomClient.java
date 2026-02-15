@@ -1,12 +1,12 @@
 package com.example.bookingservice.client;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
-
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestTemplate;
 
 @Component
 public class RoomClient {
@@ -19,7 +19,7 @@ public class RoomClient {
     public RoomClient(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
-    
+
     /**
      * Book a room via RoomService
      * Returns an empty map if booking fails

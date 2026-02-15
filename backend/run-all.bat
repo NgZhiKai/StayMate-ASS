@@ -1,6 +1,6 @@
 @echo off
 setlocal enabledelayedexpansion
-set SERVICES=user-service hotel-service booking-service notification-service email-service
+set SERVICES=user-service hotel-service booking-service notification-service email-service payment-service
 set PROFILE=dev
 echo Starting all Spring Boot microservices with profile: %PROFILE%
 for %%S in (%SERVICES%) do (
