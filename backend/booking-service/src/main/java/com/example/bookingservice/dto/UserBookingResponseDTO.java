@@ -1,21 +1,27 @@
-package com.example.userservice.dto;
+package com.example.bookingservice.dto;
 
+import java.time.LocalDate;
+
+/**
+ * DTO for returning user booking details.
+ * 
+ * This class does NOT reference the Booking entity directly.
+ * All fields must be set manually.
+ */
 public class UserBookingResponseDTO {
     private Long bookingId;
     private Long hotelId;
     private Long roomId;
-    private String roomType;
+    private LocalDate checkInDate;
+    private LocalDate checkOutDate;
+    private String roomType; // optional
     private String status;
 
-    public UserBookingResponseDTO(BookingDTO bookingDto) {
-        this.bookingId = bookingDto.getBookingId();
-        this.hotelId = bookingDto.getHotelId();
-        this.roomId = bookingDto.getRoomId();
-        this.roomType = bookingDto.getRoomType();
-        this.status = bookingDto.getStatus();
+    // Default constructor
+    public UserBookingResponseDTO() {
     }
 
-    // Getters & Setters
+    // Getters and Setters
     public Long getBookingId() {
         return bookingId;
     }
@@ -38,6 +44,22 @@ public class UserBookingResponseDTO {
 
     public void setRoomId(Long roomId) {
         this.roomId = roomId;
+    }
+
+    public LocalDate getCheckInDate() {
+        return checkInDate;
+    }
+
+    public void setCheckInDate(LocalDate checkInDate) {
+        this.checkInDate = checkInDate;
+    }
+
+    public LocalDate getCheckOutDate() {
+        return checkOutDate;
+    }
+
+    public void setCheckOutDate(LocalDate checkOutDate) {
+        this.checkOutDate = checkOutDate;
     }
 
     public String getRoomType() {

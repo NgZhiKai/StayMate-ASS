@@ -10,10 +10,10 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>booking-service</artifactId>
-    <name>staymate-booking-service</name>
+    <artifactId>email-service</artifactId>
+    <name>staymate-email-service</name>
     <packaging>jar</packaging>
-    <description>Booking Service for Staymate microservices</description>
+    <description>Email Service for Staymate microservices</description>
 
     <dependencies>
         <!-- Spring Boot Core -->
@@ -80,7 +80,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.example.bookingservice.BookingServiceApplication</mainClass>
+                    <mainClass>com.example.emailservice.EmailServiceApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>

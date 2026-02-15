@@ -2,10 +2,12 @@ package com.example.notificationservice.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.notificationservice.client.UserClient;
+import com.example.notificationservice.dto.NotificationRequestDTO;
 import com.example.notificationservice.entity.Notification;
 import com.example.notificationservice.entity.NotificationType;
 import com.example.notificationservice.service.NotificationService;
@@ -25,17 +27,15 @@ public class NotificationController {
     // Create a new notification for a single user
     @PostMapping
     public ResponseEntity<Notification> createNotification(
-            @RequestParam Long userId,
-            @RequestParam String message,
-            @RequestParam NotificationType type) {
+            @RequestBody NotificationRequestDTO request) {
 
         Notification notification = new Notification();
-        notification.setUserId(userId);
-        notification.setMessage(message);
-        notification.setType(type);
+        notification.setUserId(request.getUserId());
+        notification.setMessage(request.getMessage());
+        notification.setType(request.getType());
 
         Notification saved = notificationService.createNotification(notification);
-        return ResponseEntity.ok(saved);
+        return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
     // Get all notifications for a user

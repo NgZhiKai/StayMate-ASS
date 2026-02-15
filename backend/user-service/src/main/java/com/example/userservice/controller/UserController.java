@@ -3,13 +3,25 @@ package com.example.userservice.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.example.userservice.dto.*;
+import com.example.userservice.dto.CustomResponse;
+import com.example.userservice.dto.UserCreationRequestDTO;
+import com.example.userservice.dto.UserLoginRequestDTO;
+import com.example.userservice.dto.UserRequestUpdateDto;
+import com.example.userservice.dto.UserResponseDTO;
 import com.example.userservice.entity.User;
 import com.example.userservice.exception.InvalidUserException;
 import com.example.userservice.exception.ResourceNotFoundException;
@@ -31,7 +43,7 @@ public class UserController {
 
     // ---------------- Register ----------------
     @PostMapping("/register")
-    public ResponseEntity<CustomResponse<User>> registerUser(
+    public ResponseEntity<CustomResponse<UserResponseDTO>> registerUser(
             @Valid @RequestBody UserCreationRequestDTO userDto) {
         try {
             User user = new User(
@@ -40,14 +52,14 @@ public class UserController {
                     userDto.getEmail(),
                     userDto.getPassword(),
                     userDto.getPhoneNumber(),
-                    userDto.getRole()
-            );
+                    userDto.getRole());
 
             User savedUser = userService.registerUser(user);
+            UserResponseDTO responseDTO = UserResponseDTO.fromEntity(savedUser);
 
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new CustomResponse<>("User registered successfully. Check your email for verification.",
-                            savedUser));
+                            responseDTO));
         } catch (InvalidUserException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new CustomResponse<>(ex.getMessage(), null));
@@ -61,10 +73,11 @@ public class UserController {
         try {
             String token = userService.loginUser(loginDto.getEmail(), loginDto.getPassword(), loginDto.getRole());
             User user = userService.getUserByEmail(loginDto.getEmail());
+            UserResponseDTO responseDTO = UserResponseDTO.fromEntity(user);
 
             Map<String, Object> responseData = new HashMap<>();
             responseData.put("token", token);
-            responseData.put("user", user);
+            responseData.put("user", responseDTO);
 
             return ResponseEntity.ok(new CustomResponse<>("Login successful", responseData));
         } catch (InvalidUserException ex) {
@@ -75,17 +88,19 @@ public class UserController {
 
     // ---------------- Get All Users ----------------
     @GetMapping
-    public ResponseEntity<CustomResponse<List<User>>> getAllUsers() {
+    public ResponseEntity<CustomResponse<List<UserResponseDTO>>> getAllUsers() {
         List<User> users = userService.getAllUsers();
-        return ResponseEntity.ok(new CustomResponse<>("Users retrieved successfully", users));
+        List<UserResponseDTO> dtos = users.stream().map(UserResponseDTO::fromEntity).collect(Collectors.toList());
+        return ResponseEntity.ok(new CustomResponse<>("Users retrieved successfully", dtos));
     }
 
     // ---------------- Get User by ID ----------------
     @GetMapping("/{id}")
-    public ResponseEntity<CustomResponse<User>> getUserById(@PathVariable Long id) {
+    public ResponseEntity<CustomResponse<UserResponseDTO>> getUserById(@PathVariable Long id) {
         try {
             User user = userService.getUserById(id);
-            return ResponseEntity.ok(new CustomResponse<>("User retrieved successfully", user));
+            UserResponseDTO dto = UserResponseDTO.fromEntity(user);
+            return ResponseEntity.ok(new CustomResponse<>("User retrieved successfully", dto));
         } catch (ResourceNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new CustomResponse<>(ex.getMessage(), null));
@@ -94,10 +109,11 @@ public class UserController {
 
     // ---------------- Get User by Email ----------------
     @GetMapping("/by-email/{email}")
-    public ResponseEntity<CustomResponse<User>> getUserByEmail(@PathVariable String email) {
+    public ResponseEntity<CustomResponse<UserResponseDTO>> getUserByEmail(@PathVariable String email) {
         try {
             User user = userService.getUserByEmail(email);
-            return ResponseEntity.ok(new CustomResponse<>("User retrieved successfully", user));
+            UserResponseDTO dto = UserResponseDTO.fromEntity(user);
+            return ResponseEntity.ok(new CustomResponse<>("User retrieved successfully", dto));
         } catch (ResourceNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new CustomResponse<>(ex.getMessage(), null));
@@ -106,7 +122,7 @@ public class UserController {
 
     // ---------------- Update User ----------------
     @PutMapping("/{id}")
-    public ResponseEntity<CustomResponse<User>> updateUser(
+    public ResponseEntity<CustomResponse<UserResponseDTO>> updateUser(
             @PathVariable Long id,
             @Valid @RequestBody UserRequestUpdateDto dto) {
         try {
@@ -119,7 +135,8 @@ public class UserController {
                 existingUser.setPassword(dto.getPassword());
 
             User updatedUser = userService.updateUser(id, existingUser);
-            return ResponseEntity.ok(new CustomResponse<>("User updated successfully", updatedUser));
+            UserResponseDTO responseDTO = UserResponseDTO.fromEntity(updatedUser);
+            return ResponseEntity.ok(new CustomResponse<>("User updated successfully", responseDTO));
         } catch (ResourceNotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new CustomResponse<>(ex.getMessage(), null));
@@ -131,8 +148,7 @@ public class UserController {
     public ResponseEntity<CustomResponse<Void>> deleteUser(@PathVariable Long id) {
         try {
             userService.deleteUser(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT)
-                    .body(new CustomResponse<>("User deleted successfully", null));
+            return ResponseEntity.ok(new CustomResponse<>("User deleted successfully", null));
         } catch (ResourceNotFoundException | InvalidUserException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new CustomResponse<>(ex.getMessage(), null));
@@ -150,19 +166,4 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired token.");
         }
     }
-
-    // ---------------- Get User Bookings ----------------
-    // @GetMapping("/{id}/bookings")
-    // public ResponseEntity<CustomResponse<List<UserBookingResponseDTO>>> getUserBookings(@PathVariable Long id) {
-    //     try {
-    //         List<UserBookingResponseDTO> bookings = userService.getUserBookings(id);
-    //         return ResponseEntity.ok(new CustomResponse<>("User bookings retrieved successfully", bookings));
-    //     } catch (ResourceNotFoundException ex) {
-    //         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-    //                 .body(new CustomResponse<>(ex.getMessage(), null));
-    //     } catch (Exception ex) {
-    //         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-    //                 .body(new CustomResponse<>("Failed to retrieve bookings: " + ex.getMessage(), null));
-    //     }
-    // }
 }

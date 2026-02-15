@@ -12,8 +12,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
-import com.example.userservice.entity.UserRole;
-
 @Entity
 @Table(name = "users")
 public class User {

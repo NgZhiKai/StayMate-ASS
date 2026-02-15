@@ -2,7 +2,7 @@ package com.example.bookingservice.entity;
 
 import java.time.LocalDate;
 
-import com.example.bookingservice.BookingStatus;
+import com.example.bookingservice.entity.BookingStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

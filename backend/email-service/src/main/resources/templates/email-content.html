@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Verification</title>
+    <style>
+        .container {
+            max-width: 480px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 32px 24px;
+        }
+        .brand {
+            font-size: 1.7em;
+            font-weight: bold;
+            color: #174a8c;
+            margin-bottom: 12px;
+        }
+        .btn {
+            display: inline-block;
+            background: #2d6cdf;
+            color: #fff !important;
+            padding: 12px 28px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 18px 0 12px 0;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: #1a4e96;
+        }
+        .token {
+            background: #f4f6fa;
+            color: #174a8c;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 1.1em;
+            font-family: monospace;
+            display: inline-block;
+            margin: 10px 0;
+        }
+        .footer {
+            color: #888;
+            font-size: 0.95em;
+            margin-top: 32px;
+        }
+    </style>
+</head>
+<body style="background: #f4f6fa; font-family: 'Segoe UI', Arial, sans-serif;">
+    <div class="container">
+        <div class="brand">Staymate</div>
+        <p style="margin-top:0;">Hello,</p>
+        <p>Thank you for registering with Staymate! To complete your registration, please verify your email address by using the token below:</p>
+        <div class="token">{{token}}</div>
+        <p>If you did not register, you can safely ignore this email.</p>
+        <div class="footer">
+            Best regards,<br>
+            The Staymate Team
+        </div>
+    </div>
+</body>
+</html>

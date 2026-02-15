@@ -1,9 +1,6 @@
 package com.example.userservice.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -11,30 +8,27 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.userservice.dto.UserBookingResponseDTO;
+import com.example.userservice.client.EmailClient;
 import com.example.userservice.entity.User;
 import com.example.userservice.entity.UserRole;
 import com.example.userservice.exception.InvalidUserException;
 import com.example.userservice.exception.ResourceNotFoundException;
-import com.example.userservice.observer.Observer;
-import com.example.userservice.observer.Subject;
 import com.example.userservice.repository.UserRepository;
 
 @Service
-public class UserService implements Subject {
+public class UserService {
 
     private final UserRepository userRepository;
     private final String baseUrl;
-    private final List<Observer> observers = new ArrayList<>();
+    private final EmailClient emailClient;
 
     // ---------------- Constructor Injection ----------------
     public UserService(UserRepository userRepository,
             @Value("${frontend.host-url}") String baseUrl,
-            List<Observer> observers) {
+            EmailClient emailClient) {
         this.userRepository = userRepository;
         this.baseUrl = baseUrl;
-        if (observers != null)
-            this.observers.addAll(observers);
+        this.emailClient = emailClient;
     }
 
     // ---------------- User Registration ----------------
@@ -54,8 +48,8 @@ public class UserService implements Subject {
         String token = generateVerificationToken(savedUser);
         String verificationLink = baseUrl + "/verify?token=" + token;
 
-        // Notify observers (e.g., EmailObserver)
-        notifyObservers(savedUser, verificationLink, token);
+        // Send verification email via EmailClient
+        emailClient.sendVerificationEmail(savedUser.getEmail(), token, verificationLink);
 
         return savedUser;
     }
@@ -150,32 +144,4 @@ public class UserService implements Subject {
         return generateVerificationToken(user);
     }
 
-    // ---------------- Observer Pattern ----------------
-    @Override
-    public void addObserver(Observer observer) {
-        observers.add(observer);
-    }
-
-    @Override
-    public void removeObserver(Observer observer) {
-        observers.remove(observer);
-    }
-
-    @Override
-    public void notifyObservers(Map<String, Object> data) {
-        for (Observer observer : observers) {
-            observer.update(data);
-        }
-    }
-
-    public void notifyObservers(User user, String verificationLink, String token) {
-        if (user == null || verificationLink == null || verificationLink.isBlank() || token == null)
-            throw new InvalidUserException("User and verification link cannot be null or empty.");
-
-        Map<String, Object> data = new HashMap<>();
-        data.put("user", user);
-        data.put("verificationLink", verificationLink);
-        data.put("token", token);
-        notifyObservers(data);
-    }
 }

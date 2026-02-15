@@ -24,6 +24,8 @@
         <module>user-service</module>
 		<module>hotel-service</module>
 		<module>notification-service</module>
+		<module>booking-service</module>
+		<module>email-service</module>
 	</modules>	
 	<developers>
 		<developer/>
