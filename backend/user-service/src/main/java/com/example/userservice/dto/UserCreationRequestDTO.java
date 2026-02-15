@@ -1,6 +1,6 @@
 package com.example.userservice.dto;
 
-import com.example.userservice.entity.UserRole;
+import com.example.userservice.entity.user.UserRole;
 
 public class UserCreationRequestDTO {
     private String firstName;

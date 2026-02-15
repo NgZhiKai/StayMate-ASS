@@ -7,8 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.example.userservice.entity.User;
-import com.example.userservice.entity.UserRole;
+import com.example.userservice.entity.user.User;
+import com.example.userservice.entity.user.UserRole;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {

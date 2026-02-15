@@ -22,7 +22,7 @@ import com.example.userservice.dto.UserCreationRequestDTO;
 import com.example.userservice.dto.UserLoginRequestDTO;
 import com.example.userservice.dto.UserRequestUpdateDto;
 import com.example.userservice.dto.UserResponseDTO;
-import com.example.userservice.entity.User;
+import com.example.userservice.entity.user.User;
 import com.example.userservice.exception.InvalidUserException;
 import com.example.userservice.exception.ResourceNotFoundException;
 import com.example.userservice.service.UserService;

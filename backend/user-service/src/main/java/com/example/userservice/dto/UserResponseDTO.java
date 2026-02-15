@@ -1,7 +1,7 @@
 package com.example.userservice.dto;
 
-import com.example.userservice.entity.User;
-import com.example.userservice.entity.UserRole;
+import com.example.userservice.entity.user.User;
+import com.example.userservice.entity.user.UserRole;
 
 public class UserResponseDTO {
     private Long id;

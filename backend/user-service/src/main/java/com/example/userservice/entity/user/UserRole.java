@@ -1,4 +1,4 @@
-package com.example.userservice.entity;
+package com.example.userservice.entity.user;
 
 public enum UserRole {
     CUSTOMER,

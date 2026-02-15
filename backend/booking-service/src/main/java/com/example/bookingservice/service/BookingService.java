@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,9 +19,6 @@ import com.example.bookingservice.dto.UserBookingResponseDTO;
 import com.example.bookingservice.entity.Booking;
 import com.example.bookingservice.entity.BookingStatus;
 import com.example.bookingservice.repository.BookingRepository;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 public class BookingService {
@@ -64,12 +63,12 @@ public class BookingService {
 
         // Check room availability
         boolean available = isRoomAvailable(dto.getHotelId(), dto.getRoomId(),
-                                            dto.getCheckInDate(), dto.getCheckOutDate());
+                dto.getCheckInDate(), dto.getCheckOutDate());
 
         if (!available) {
             throw new IllegalStateException(
-                "Room " + dto.getRoomId() + " in hotel " + dto.getHotelId() + " is not available for selected dates"
-            );
+                    "Room " + dto.getRoomId() + " in hotel " + dto.getHotelId()
+                            + " is not available for selected dates");
         }
 
         // Create booking
@@ -79,7 +78,8 @@ public class BookingService {
         booking.setUserId(dto.getUserId());
         booking.setCheckInDate(dto.getCheckInDate());
         booking.setCheckOutDate(dto.getCheckOutDate());
-        booking.setTotalAmount(Objects.requireNonNullElse(dto.getTotalAmount(), 0.0));        booking.setBookingDate(LocalDate.now());
+        booking.setTotalAmount(Objects.requireNonNullElse(dto.getTotalAmount(), 0.0));
+        booking.setBookingDate(LocalDate.now());
         booking.setStatus(BookingStatus.PENDING);
 
         Booking savedBooking = bookingRepository.save(booking);
@@ -87,7 +87,7 @@ public class BookingService {
         // Send notification (optional)
         try {
             notificationClient.sendNotification(dto.getUserId(),
-                "Your booking is pending confirmation.");
+                    "Your booking is pending confirmation.");
         } catch (Exception e) {
             // Log failure but do not fail the booking
             System.err.println("Failed to send notification: " + e.getMessage());

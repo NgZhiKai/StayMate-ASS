@@ -9,8 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.userservice.client.EmailClient;
-import com.example.userservice.entity.User;
-import com.example.userservice.entity.UserRole;
+import com.example.userservice.entity.user.User;
+import com.example.userservice.entity.user.UserRole;
 import com.example.userservice.exception.InvalidUserException;
 import com.example.userservice.exception.ResourceNotFoundException;
 import com.example.userservice.repository.UserRepository;
