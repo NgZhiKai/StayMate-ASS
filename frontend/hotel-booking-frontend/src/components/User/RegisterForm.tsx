@@ -1,181 +1,205 @@
-import React, { useEffect, useState } from "react";
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
+import React, { useState } from "react";
 import { RegisterData } from "../../types/User";
 import MessageModal from "../MessageModal";
+import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
-const RegisterForm: React.FC<{
+interface RegisterFormProps {
   onRegister: (registerData: RegisterData) => void;
   error: string | null;
   registerData: RegisterData;
   handleChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   confirmPassword: string;
   setConfirmPassword: React.Dispatch<React.SetStateAction<string>>;
-}> = ({ onRegister, error, registerData, handleChange, confirmPassword, setConfirmPassword }) => {
+  isEmailReadonly?: boolean;
+}
+
+const RegisterForm: React.FC<RegisterFormProps> = ({
+  onRegister,
+  error,
+  registerData,
+  handleChange,
+  confirmPassword,
+  setConfirmPassword,
+  isEmailReadonly = false,
+}) => {
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [validationError, setValidationError] = useState<string | null>(null);
-  const [modalMessage, setModalMessage] = useState<string>("");
+  const [modalMessage, setModalMessage] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleModal = (open: boolean) => setIsModalOpen(open);
 
   const validateForm = () => {
-    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-    const passwordMinLength = 8;
-    let errors: string[] = [];
+    const errors: string[] = [];
 
-    // Validate email
-    if (!emailRegex.test(registerData.email)) {
-      errors.push("Please enter a valid email address.");
-    }
+    if (!registerData.firstName.trim()) errors.push("First name is required.");
+    if (!registerData.lastName.trim()) errors.push("Last name is required.");
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(registerData.email)) errors.push("Please enter a valid email.");
+    if (!registerData.phoneNumber.trim()) errors.push("Phone number is required.");
+    if (registerData.password.length < 8) errors.push("Password must be at least 8 characters.");
+    if (registerData.password !== confirmPassword) errors.push("Passwords do not match.");
 
-    // Validate password length
-    if (registerData.password.length < passwordMinLength) {
-      errors.push(`Password must be at least ${passwordMinLength} characters long.`);
-    }
+    setValidationErrors(errors);
+    return errors.length === 0;
+  };
 
-    // Validate passwords match
-    if (registerData.password !== confirmPassword) {
-      errors.push("Passwords do not match.");
-    }
+  const handleSubmit: React.FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+    if (!validateForm()) return;
 
-    if (errors.length > 0) {
-      // Create a bullet point list of errors
-      setValidationError(
-        `<ul>${errors.map(error => `<li>${error}</li>`).join('')}</ul>`
+    setIsSubmitting(true);
+    try {
+      await onRegister(registerData);
+      setModalMessage(
+        "Your account has been created successfully!\nRedirecting to login..."
       );
-      return false;
-    }
-
-    setValidationError(null);
-    return true;
-  };
-
-  const handleSubmit = () => {
-    if (validateForm()) {
-      // Assuming onRegister is the function that will create the user account
-      onRegister(registerData);
-      setModalMessage("Verification email has been sent.\nYour account has been created successfully!"); // Both messages
-      handleModal(true); // Open modal on success
-    } else {
-      setModalMessage(validationError || "There was an error with your registration.");
-      handleModal(true); // Open modal if validation fails
+      handleModal(true);
+    } catch (err: any) {
+      setModalMessage(err.message || "An error occurred during registration.");
+      handleModal(true);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  // Ensure modal message is updated based on error or validation error change
-  useEffect(() => {
-    if (validationError) {
-      setModalMessage(validationError);
-      handleModal(true); // Open modal when validation error is set
-    } else if (error) {
-      setModalMessage(error);
-      handleModal(true); // Open modal when there's an error
-    }
-  }, [validationError, error]); // Dependency array ensures update when validationError or error change
-  
+  const inputBase =
+    "peer w-full px-3 pt-3 pb-1 border border-gray-300 rounded-lg text-sm placeholder-transparent focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-transparent";
+  const labelBase =
+    "absolute left-3 text-gray-400 text-xs transition-all peer-placeholder-shown:top-2 peer-placeholder-shown:text-gray-500 peer-placeholder-shown:text-sm peer-focus:top-0 peer-focus:text-xs peer-focus:text-blue-500";
+
   return (
-    <div className="bg-white border border-gray-100 shadow-xl rounded-2xl p-8 w-full max-w-2xl mx-auto mt-12">
-      <h2 className="text-4xl font-bold mb-8 text-center text-gray-800">Sign Up</h2>
-  
-      {/* Success or Error Modal */}
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white/90 backdrop-blur-md shadow-lg rounded-xl p-4 w-full max-w-md mx-auto space-y-2 max-h-[calc(100vh-4rem)] overflow-auto"
+      noValidate
+    >
+      <h2 className="text-xl font-semibold text-center text-gray-800 mb-2">Create Account</h2>
+
+      {/* Modal */}
       <MessageModal
         isOpen={isModalOpen}
         onClose={() => handleModal(false)}
         message={modalMessage}
-        type={validationError || error ? "error" : "success"}
+        type={validationErrors.length > 0 || error ? "error" : "success"}
       />
-  
-      <div className="space-y-6 text-sm">
-        {/* First and Last Name */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-gray-600 font-medium mb-1">First Name</label>
+
+      {/* Validation Errors */}
+      {validationErrors.length > 0 && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-2 text-xs text-red-600">
+          <ul className="list-disc list-inside space-y-0.5">
+            {validationErrors.map((err, i) => (
+              <li key={i}>{err}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* First & Last Name */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+        {["firstName", "lastName"].map((field) => (
+          <div key={field} className="relative">
             <input
+              id={field}
+              name={field}
               type="text"
-              name="firstName"
-              value={registerData.firstName}
+              value={registerData[field as keyof RegisterData] as string}
               onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition duration-200"
+              placeholder={field === "firstName" ? "First Name" : "Last Name"}
+              className={inputBase}
             />
+            <label htmlFor={field} className={labelBase}>
+              {field === "firstName" ? "First Name" : "Last Name"}
+            </label>
           </div>
-          <div>
-            <label className="block text-gray-600 font-medium mb-1">Last Name</label>
-            <input
-              type="text"
-              name="lastName"
-              value={registerData.lastName}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition duration-200"
-            />
-          </div>
-        </div>
-  
-        {/* Email and Phone */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-gray-600 font-medium mb-1">Email</label>
-            <input
-              type="email"
-              name="email"
-              value={registerData.email}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition duration-200"
-            />
-          </div>
-          <div>
-            <label className="block text-gray-600 font-medium mb-1">Phone Number</label>
-            <PhoneInput
-              country={'sg'}
-              inputProps={{
-                required: true,
-                className: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition duration-200",
-              }}
-              buttonClass="text-sm"
-              containerClass="relative flex justify-end"
-              value={registerData.phoneNumber}
-              onChange={(value: string) =>
-                handleChange({
-                  target: { name: 'phoneNumber', value },
-                } as React.ChangeEvent<HTMLInputElement>)
-              }
-            />
-          </div>
-        </div>
-  
-        {/* Password and Confirm Password */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label className="block text-gray-600 font-medium mb-1">Password</label>
-            <input
-              type="password"
-              name="password"
-              value={registerData.password}
-              onChange={handleChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition duration-200"
-            />
-          </div>
-          <div>
-            <label className="block text-gray-600 font-medium mb-1">Confirm Password</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm transition duration-200"
-            />
-          </div>
-        </div>
-  
-        {/* Register Button */}
-        <button
-          onClick={handleSubmit}
-          className="w-full bg-gradient-to-r from-blue-500 to-blue-600 text-white py-3 rounded-full font-semibold shadow-lg hover:from-blue-600 hover:to-blue-700 transition-all duration-300 ease-in-out transform hover:scale-[1.02]"
-        >
-          Register
-        </button>
+        ))}
       </div>
-    </div>
-  );  
+
+      {/* Email & Phone */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div className="relative">
+          <input
+            id="email"
+            name="email"
+            type="email"
+            value={registerData.email}
+            onChange={handleChange}
+            placeholder="Email"
+            className={inputBase + (isEmailReadonly ? " bg-gray-100 cursor-not-allowed" : "")}
+            readOnly={isEmailReadonly} // make it read-only
+          />
+          <label htmlFor="email" className={labelBase}>
+            Email
+          </label>
+        </div>
+        <div className="relative">
+          <input
+            id="phoneNumber"
+            name="phoneNumber"
+            type="tel"
+            value={registerData.phoneNumber}
+            onChange={(e) => /^\+?\d*$/.test(e.target.value) && handleChange(e)}
+            placeholder="+65 9123 4567"
+            className={inputBase}
+          />
+          <label htmlFor="phoneNumber" className={labelBase}>
+            Phone Number
+          </label>
+        </div>
+      </div>
+
+      {/* Password & Confirm */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div className="relative">
+          <input
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            value={registerData.password}
+            onChange={handleChange}
+            placeholder="Password"
+            className={inputBase}
+          />
+          <label htmlFor="password" className={labelBase}>
+            Password
+          </label>
+          <span className="absolute inset-y-0 right-2 flex items-center">
+            <button
+              type="button"
+              onClick={() => setShowPassword(!showPassword)}
+              className="text-gray-400 hover:text-gray-700 focus:outline-none"
+            >
+              {showPassword ? <AiFillEyeInvisible size={16} /> : <AiFillEye size={16} />}
+            </button>
+          </span>
+        </div>
+        <div className="relative">
+          <input
+            id="confirmPassword"
+            name="confirmPassword"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="Confirm Password"
+            className={inputBase}
+          />
+          <label htmlFor="confirmPassword" className={labelBase}>
+            Confirm Password
+          </label>
+        </div>
+      </div>
+
+      {/* Submit */}
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white py-2 rounded-lg font-medium shadow hover:scale-105 transition-transform duration-150 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+      >
+        {isSubmitting ? "Registering..." : "Register"}
+      </button>
+    </form>
+  );
 };
 
 export default RegisterForm;

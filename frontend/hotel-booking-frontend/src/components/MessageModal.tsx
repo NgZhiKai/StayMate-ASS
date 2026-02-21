@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 type MessageModalProps = {
   isOpen: boolean;
@@ -7,39 +7,108 @@ type MessageModalProps = {
   type: "success" | "error";
 };
 
-const MessageModal: React.FC<MessageModalProps> = ({ isOpen, onClose, message, type }) => {
-  if (!isOpen) return null;
+const MessageModal: React.FC<MessageModalProps> = ({
+  isOpen,
+  onClose,
+  message,
+  type,
+}) => {
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const isSuccess = type === "success";
 
-  const icon = type === "success" ? (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-    </svg>
-  ) : (
-    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-red-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-    </svg>
-  );
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
 
-  const title = type === "success" ? "Success" : "Error";
+    if (isOpen && !dialog.open) {
+      dialog.showModal();
+    } else if (!isOpen && dialog.open) {
+      dialog.close();
+    }
+  }, [isOpen]);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+
+    const handleCancel = (e: Event) => {
+      e.preventDefault();
+      onClose();
+    };
+
+    dialog.addEventListener("cancel", handleCancel);
+    return () => dialog.removeEventListener("cancel", handleCancel);
+  }, [onClose]);
 
   return (
-    <>
-      <div className="fixed inset-0 bg-gray-500 bg-opacity-50 z-50" onClick={onClose}></div>
-      <div className="fixed inset-0 flex justify-center items-center z-50">
-        <div className="bg-gray-900 rounded-lg shadow-lg p-6 w-96">
-          <div className="flex items-center mb-4">
-            {icon}
-            <h2 className="text-xl font-semibold text-gray-300">{title}</h2>
+    <dialog
+      ref={dialogRef}
+      aria-labelledby="modal-title"
+      className="
+        fixed inset-0 m-auto
+        w-full max-w-md
+        p-0 border-none rounded-2xl shadow-2xl
+        backdrop:bg-black/50 backdrop:backdrop-blur-sm
+      "
+    >
+      <div
+        className={`relative p-8 bg-white 
+        border ${isSuccess ? "border-green-400/40" : "border-red-400/40"} 
+        rounded-2xl`}
+      >
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          aria-label="Close modal"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition"
+        >
+          ✕
+        </button>
+
+        {/* Header */}
+        <div className="flex flex-col items-center text-center mb-6">
+          <div
+            className={`flex items-center justify-center h-14 w-14 rounded-full mb-4 text-xl font-bold
+              ${
+                isSuccess
+                  ? "bg-green-100 text-green-600"
+                  : "bg-red-100 text-red-600"
+              }`}
+            aria-hidden="true"
+          >
+            {isSuccess ? "✓" : "!"}
           </div>
-          <div className="mb-4 text-gray-300" dangerouslySetInnerHTML={{ __html: message }} />
-          <div className="flex justify-end">
-            <button onClick={onClose} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-              Close
-            </button>
-          </div>
+
+          <h2
+            id="modal-title"
+            className="text-xl font-semibold text-gray-900"
+          >
+            {isSuccess ? "Success" : "Error"}
+          </h2>
+        </div>
+
+        {/* Message */}
+        <div
+          className="text-gray-800 text-base leading-relaxed text-center mb-8"
+          dangerouslySetInnerHTML={{ __html: message }}
+        />
+
+        {/* Action */}
+        <div className="flex justify-center">
+          <button
+            onClick={onClose}
+            className={`px-6 py-2.5 rounded-lg font-medium transition
+              ${
+                isSuccess
+                  ? "bg-green-600 hover:bg-green-700 text-white"
+                  : "bg-red-600 hover:bg-red-700 text-white"
+              }`}
+          >
+            Got it
+          </button>
         </div>
       </div>
-    </>
+    </dialog>
   );
 };
 

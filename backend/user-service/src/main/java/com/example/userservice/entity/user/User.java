@@ -159,4 +159,8 @@ public class User {
         this.isDeleted = isDeleted;
     }
 
+    public boolean isNewlyCreated() {
+        return this.password == null || this.password.isEmpty();
+    }
+
 }

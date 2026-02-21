@@ -3,7 +3,6 @@ package com.example.userservice.controller;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +21,7 @@ import com.example.userservice.dto.UserCreationRequestDTO;
 import com.example.userservice.dto.UserLoginRequestDTO;
 import com.example.userservice.dto.UserRequestUpdateDto;
 import com.example.userservice.dto.UserResponseDTO;
+import com.example.userservice.dto.VerificationResult;
 import com.example.userservice.entity.user.User;
 import com.example.userservice.exception.InvalidUserException;
 import com.example.userservice.exception.ResourceNotFoundException;
@@ -41,25 +41,51 @@ public class UserController {
         this.userService = userService;
     }
 
-    // ---------------- Register ----------------
-    @PostMapping("/register")
-    public ResponseEntity<CustomResponse<UserResponseDTO>> registerUser(
-            @Valid @RequestBody UserCreationRequestDTO userDto) {
+    // ---------------- Initiate Registration ----------------
+    @PostMapping("/initiate-registration")
+    public ResponseEntity<CustomResponse<String>> initiateRegistration(
+            @RequestBody Map<String, String> body) {
         try {
-            User user = new User(
-                    userDto.getFirstName(),
-                    userDto.getLastName(),
-                    userDto.getEmail(),
-                    userDto.getPassword(),
-                    userDto.getPhoneNumber(),
-                    userDto.getRole());
+            String email = body.get("email");
+            String token = userService.initiateRegistration(email);
+            return ResponseEntity.ok(new CustomResponse<>(
+                    "Verification email sent to " + email, token));
+        } catch (InvalidUserException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new CustomResponse<>(ex.getMessage(), null));
+        }
+    }
 
-            User savedUser = userService.registerUser(user);
-            UserResponseDTO responseDTO = UserResponseDTO.fromEntity(savedUser);
+    // ---------------- Verify ----------------
+    @PostMapping("/verify")
+    public ResponseEntity<CustomResponse<VerificationResult>> verifyUser(@RequestBody Map<String, String> body) {
+        try {
+            String token = body.get("token");
+            VerificationResult result = userService.verifyUser(token);
+
+            return ResponseEntity.ok(new CustomResponse<>("Email verified successfully", result));
+        } catch (InvalidUserException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new CustomResponse<>(ex.getMessage(), null));
+        }
+    }
+
+    // ---------------- Registration ----------------
+    @PostMapping("/register")
+    public ResponseEntity<CustomResponse<UserResponseDTO>> completeRegistration(
+            @RequestBody Map<String, String> body) {
+        try {
+            Long userId = Long.parseLong(body.get("id"));
+            String firstName = body.get("firstName");
+            String lastName = body.get("lastName");
+            String phone = body.get("phoneNumber");
+            String password = body.get("password");
+
+            User completedUser = userService.completeRegistration(userId, firstName, lastName, phone, password);
+            UserResponseDTO dto = UserResponseDTO.fromEntity(completedUser);
 
             return ResponseEntity.status(HttpStatus.CREATED)
-                    .body(new CustomResponse<>("User registered successfully. Check your email for verification.",
-                            responseDTO));
+                    .body(new CustomResponse<>("Registration completed successfully", dto));
         } catch (InvalidUserException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new CustomResponse<>(ex.getMessage(), null));
@@ -90,7 +116,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<CustomResponse<List<UserResponseDTO>>> getAllUsers() {
         List<User> users = userService.getAllUsers();
-        List<UserResponseDTO> dtos = users.stream().map(UserResponseDTO::fromEntity).collect(Collectors.toList());
+        List<UserResponseDTO> dtos = users.stream().map(UserResponseDTO::fromEntity).toList();
         return ResponseEntity.ok(new CustomResponse<>("Users retrieved successfully", dtos));
     }
 
@@ -155,15 +181,4 @@ public class UserController {
         }
     }
 
-    // ---------------- Verify User ----------------
-    @PostMapping("/verify")
-    public ResponseEntity<String> verifyUser(@RequestBody Map<String, String> request) {
-        String token = request.get("token");
-        boolean verified = userService.verifyUser(token);
-        if (verified) {
-            return ResponseEntity.ok("User verified successfully.");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid or expired token.");
-        }
-    }
 }

@@ -25,163 +25,145 @@ const Sidebar: React.FC<{ isOpen: boolean; toggleSidebar: () => void }> = ({ isO
 
   return (
     <div
-      className={`fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-gray-900 text-white p-6 transition-all duration-300 z-40
+      className={`fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-gray-900 text-white p-4 shadow-lg transition-transform duration-300 z-40
       ${isOpen ? "translate-x-0" : "-translate-x-64"}`}
     >
-      <nav className="flex flex-col space-y-3">
-        {/* Customer Side */}
-          <>
-            <Link
-              to="/"
-              className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded transition-all duration-200"
-            >
-              <Hotel size={18} /> {role === "admin" ? "Manage Hotels" : "Hotels"}
-            </Link>
-            <Link
-              to="/nearme"
-              className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded transition-all duration-200"
-            >
-              <MapPin size={18} /> Near Me
-            </Link>
-          </>
+      <nav className="flex flex-col space-y-4">
+        {/* Customer Links */}
+        <div className="flex flex-col space-y-2">
+          <Link
+            to="/"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 shadow-sm transition-all duration-200"
+          >
+            <Hotel size={20} /> {role === "admin" ? "Manage Hotels" : "Hotels"}
+          </Link>
+          <Link
+            to="/nearme"
+            className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 shadow-sm transition-all duration-200"
+          >
+            <MapPin size={20} /> Near Me
+          </Link>
+        </div>
 
-        {/* Unauthenticated User */}
+        <hr className="border-gray-700" />
+
+        {/* Unauthenticated Links */}
         {!isLoggedIn && (
-          <>
+          <div className="flex flex-col space-y-2">
             <Link
               to="/login"
-              className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded transition-all duration-200"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 shadow-sm transition-all duration-200"
             >
-              <LogIn size={18} /> Login
+              <LogIn size={20} /> Login
             </Link>
             <Link
               to="/register"
-              className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded transition-all duration-200"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 shadow-sm transition-all duration-200"
             >
-              <UserPlus size={18} /> Register
+              <UserPlus size={20} /> Register
             </Link>
             <Link
               to="/verify"
-              className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded transition-all duration-200"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 shadow-sm transition-all duration-200"
             >
-              <CheckCircle size={18} /> Verify
+              <CheckCircle size={20} /> Verify
             </Link>
-          </>
+          </div>
         )}
 
         {/* Authenticated Customer */}
         {isLoggedIn && role === "customer" && (
-          <>
+          <div className="flex flex-col space-y-2">
             <Link
               to="/bookmarked-hotels"
-              className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded transition-all duration-200"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 shadow-sm transition-all duration-200"
             >
-              <Hotel size={18} /> Bookmarked Hotels
+              <Hotel size={20} /> Bookmarked Hotels
             </Link>
             <Link
               to="/notifications"
-              className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded transition-all duration-200"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 shadow-sm transition-all duration-200"
             >
-              <Bell size={18} />
-              Notifications
+              <Bell size={20} /> Notifications
               {unreadCount > 0 && (
-                <span className="ml-2 text-xs bg-red-500 text-white rounded-full px-2">{unreadCount}</span>
+                <span className="ml-auto text-xs bg-red-500 text-white rounded-full px-2">{unreadCount}</span>
               )}
             </Link>
             <Link
               to="/bookings"
-              className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded transition-all duration-200"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 shadow-sm transition-all duration-200"
             >
-              <Calendar size={18} /> My Bookings
+              <Calendar size={20} /> My Bookings
             </Link>
             <Link
               to="/my-payments"
-              className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded transition-all duration-200"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 shadow-sm transition-all duration-200"
             >
-              <CreditCard size={18} /> My Payments
+              <CreditCard size={20} /> My Payments
             </Link>
-            <Link
-              to="/user-account-settings"
-              className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded transition-all duration-200"
-            >
-              <Settings size={18} /> User Settings
-            </Link>
-            <Link
-              to="/logout"
-              className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded transition-all duration-200"
-            >
-              <LogOut size={18} /> Logout
-            </Link>
-          </>
+          </div>
         )}
 
-        {/* Admin */}
+        <hr className="border-gray-700" />
+
+        {/* Admin Links */}
         {isLoggedIn && role === "admin" && (
-          <>
-            {/* Admin Links */}
+          <div className="flex flex-col space-y-2">
             <Link
               to="/notifications"
-              className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded transition-all duration-200"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 shadow-sm transition-all duration-200"
             >
-              <Bell size={18} />
-              Notifications
+              <Bell size={20} /> Notifications
               {unreadCount > 0 && (
-                <span className="ml-2 text-xs bg-red-500 text-white rounded-full px-2">{unreadCount}</span>
+                <span className="ml-auto text-xs bg-red-500 text-white rounded-full px-2">{unreadCount}</span>
               )}
             </Link>
             <Link
               to="/bookings"
-              className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded transition-all duration-200"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 shadow-sm transition-all duration-200"
             >
-              <Calendar size={18} /> My Bookings
+              <Calendar size={20} /> My Bookings
             </Link>
 
             {/* Admin Dropdown */}
-            <div>
+            <div className="flex flex-col">
               <button
                 onClick={() => setIsAdminDropdownOpen(!isAdminDropdownOpen)}
-                className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded w-full text-left transition-all duration-200"
+                className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 shadow-sm transition-all duration-200 w-full text-left"
               >
-                <ClipboardList size={18} /> Admin Actions
+                <ClipboardList size={20} /> Admin Actions
               </button>
               {isAdminDropdownOpen && (
-                <div className="pl-6 space-y-2">
+                <div className="flex flex-col pl-6 mt-1 space-y-1">
                   <Link
                     to="/admin/users"
-                    className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded transition-all duration-200"
+                    className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 shadow-sm transition-all duration-200"
                   >
-                    <Users size={18} /> Manage Users
+                    <Users size={20} /> Manage Users
                   </Link>
                   <Link
                     to="/admin/payments"
-                    className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded transition-all duration-200"
+                    className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 shadow-sm transition-all duration-200"
                   >
-                    <CreditCard size={18} /> Payments Overview
+                    <CreditCard size={20} /> Payments Overview
                   </Link>
                   <Link
                     to="/admin/bookings"
-                    className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded transition-all duration-200"
+                    className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 shadow-sm transition-all duration-200"
                   >
-                    <ClipboardList size={18} /> Bookings Summary
+                    <ClipboardList size={20} /> Bookings Summary
                   </Link>
                 </div>
               )}
             </div>
 
-            {/* Admin Settings */}
             <Link
               to="/user-account-settings"
-              className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded transition-all duration-200"
+              className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-gray-800 shadow-sm transition-all duration-200"
             >
-              <Settings size={18} /> Admin Settings
+              <Settings size={20} /> Admin Settings
             </Link>
-            <Link
-              to="/logout"
-              className="flex items-center gap-2 hover:bg-gray-700 hover:text-white hover:scale-105 p-2 rounded transition-all duration-200"
-            >
-              <LogOut size={18} /> Logout
-            </Link>
-          </>
+          </div>
         )}
       </nav>
     </div>

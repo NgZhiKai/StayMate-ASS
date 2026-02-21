@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { BASE_URL } from '../constants/constants';
+import { HOTEL_BASE_URL } from '../constants/constants';
 import { HotelData } from '../types/Hotels';
 
 // Base URL for the API
-const API_BASE_URL = `${BASE_URL}/hotels`;
+const API_BASE_URL = `${HOTEL_BASE_URL}/hotels`;
 
 // Create a new hotel (with rooms)
 export const createHotel = async (formData: FormData) => {

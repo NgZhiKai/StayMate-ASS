@@ -23,7 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByLastNameContaining(String lastName);
 
     // Find by verification token
-    User findByVerificationToken(String verificationToken);
+    Optional<User> findByVerificationToken(String verificationToken);
 
     // Get all users that are not deleted
     @Query("SELECT u FROM User u WHERE u.isDeleted = false")

@@ -3,162 +3,129 @@ import { useNavigate } from "react-router-dom";
 import { getUserInfo, updateUser, deleteUser } from "../services/userApi";
 import { AuthContext } from "../contexts/AuthContext";
 import AccountSettingsForm from "../components/User/AccountSettingsForm";
-import MessageModal from "../components/MessageModal"; // Import MessageModal
 
 const UserAccountSettings = () => {
   const [userInfo, setUserInfo] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
     phoneNumber: "",
     role: "",
   });
-  const [passwords, setPasswords] = useState({
-    currentPassword: "",
-    newPassword: "",
-  });
-  const [newEmail, setNewEmail] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
+  const [passwords, setPasswords] = useState({ currentPassword: "", newPassword: "" });
+  const [newEmail, setNewEmail] = useState("");
+  const [loading, setLoading] = useState(true);
+
   const { logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  // Modal state
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
-  const [modalType, setModalType] = useState<"success" | "error">("success");
+  // Fetch user info
+  const fetchUserData = async () => {
+    try {
+      setLoading(true);
+      const userId = sessionStorage.getItem("userId");
+      if (!userId) throw new Error("User not logged in.");
 
-  const openModal = (message: string, type: "success" | "error") => {
-    setModalMessage(message);
-    setModalType(type);
-    setIsModalOpen(true);
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false);
+      const { user } = await getUserInfo(userId);
+      setUserInfo({
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+      });
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to load user info.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
-    const userId = sessionStorage.getItem("userId");
-
-    if (userId) {
-      const fetchUserData = async () => {
-        try {
-          setLoading(true);
-          const { user } = await getUserInfo(userId);
-          setUserInfo({
-            name: `${user.firstName} ${user.lastName}`,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            role: user.role,
-          });
-          setLoading(false);
-        } catch (err: unknown) {
-          setLoading(false);
-          openModal(
-            err instanceof Error ? err.message : "An unknown error occurred.",
-            "error"
-          );
-        }
-      };
-
-      fetchUserData();
-    } else {
-      setLoading(false);
-      openModal("User not logged in.", "error");
-    }
+    fetchUserData();
   }, []);
 
-  const handleEmailChange = async () => {
-    if (newEmail.trim() !== "") {
-      try {
-        const userId = sessionStorage.getItem("userId");
-        if (!userId) {
-          throw new Error("User not logged in.");
-        }
+  // ---------------- Name & Phone ----------------
+  const handleNamePhoneUpdate = async (firstName: string, lastName: string, phoneNumber: string) => {
+    try {
+      const userId = sessionStorage.getItem("userId");
+      if (!userId) throw new Error("User not logged in.");
 
-        const updatedUser = {
-          firstName: userInfo.name.split(" ")[0],
-          lastName: userInfo.name.split(" ")[1],
-          email: newEmail,
-          phoneNumber: userInfo.phoneNumber,
-          role: userInfo.role,
-        };
-
-        await updateUser(userId, updatedUser);
-        setUserInfo((prev) => ({ ...prev, email: newEmail }));
-        setNewEmail("");
-        openModal("Email updated successfully!", "success");
-      } catch (error) {
-        openModal(error instanceof Error ? error.message : "An error occurred.", "error");
-      }
+      await updateUser(userId, { ...userInfo, firstName, lastName, phoneNumber });
+      setUserInfo((prev) => ({ ...prev, firstName, lastName, phoneNumber }));
+      alert("Name and phone updated successfully!");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to update name/phone.");
     }
   };
 
+  // ---------------- Email ----------------
+  const handleEmailChange = async (email: string) => {
+    if (!email.trim()) return;
+
+    try {
+      const userId = sessionStorage.getItem("userId");
+      if (!userId) throw new Error("User not logged in.");
+
+      await updateUser(userId, { ...userInfo, email });
+      setUserInfo((prev) => ({ ...prev, email }));
+      setNewEmail("");
+      alert("Email updated successfully!");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to update email.");
+    }
+  };
+
+  // ---------------- Password ----------------
   const handlePasswordChange = async () => {
-    if (passwords.currentPassword && passwords.newPassword) {
-      try {
-        const userId = sessionStorage.getItem("userId");
-        if (!userId) {
-          throw new Error("User not logged in.");
-        }
+    if (!passwords.currentPassword || !passwords.newPassword) {
+      return alert("Please fill all password fields.");
+    }
 
-        const updatedUser = {
-          firstName: userInfo.name.split(" ")[0],
-          lastName: userInfo.name.split(" ")[1],
-          email: userInfo.email,
-          password: passwords.newPassword,
-          phoneNumber: userInfo.phoneNumber,
-          role: userInfo.role,
-        };
+    try {
+      const userId = sessionStorage.getItem("userId");
+      if (!userId) throw new Error("User not logged in.");
 
-        await updateUser(userId, updatedUser);
-        setPasswords({ currentPassword: "", newPassword: "" });
-        openModal("Password changed successfully!", "success");
-      } catch (error) {
-        openModal(error instanceof Error ? error.message : "An error occurred.", "error");
-      }
+      await updateUser(userId, { ...userInfo, password: passwords.newPassword });
+      setPasswords({ currentPassword: "", newPassword: "" });
+      alert("Password changed successfully!");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to change password.");
     }
   };
 
+  // ---------------- Delete Account ----------------
   const handleDeleteAccount = async () => {
     const userId = sessionStorage.getItem("userId");
+    if (!userId || !window.confirm("Are you sure you want to delete your account?")) return;
 
-    if (userId && window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
-      try {
-        const response = await deleteUser(userId);
-        alert(response.message);
-        logout();
-        navigate("/");
-      } catch (err) {
-        alert(err instanceof Error ? err.message : "An error occurred while deleting the account.");
-      }
+    try {
+      const response = await deleteUser(userId);
+      alert(response.message);
+      logout();
+      navigate("/");
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to delete account.");
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div className="text-center mt-10 text-gray-700 text-lg">Loading...</div>;
 
   return (
-    <div className="flex justify-center items-center min-h-full bg-gray-100">
-      <div className="w-full max-w-lg p-6 bg-white shadow-md rounded-lg">
-        <AccountSettingsForm
-          userInfo={userInfo}
-          newEmail={newEmail}
-          setNewEmail={setNewEmail}
-          passwords={passwords}
-          setPasswords={setPasswords}
-          handleEmailChange={handleEmailChange}
-          handlePasswordChange={handlePasswordChange}
-          handleDeleteAccount={handleDeleteAccount}
-        />
-      </div>
-
-      {/* Modal Popup for Success/Error Message */}
-      <MessageModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        message={modalMessage}
-        type={modalType}
+      <div
+        className="h-[calc(98vh-4rem)] flex items-center justify-center p-6 overflow-hidden"
+        style={{ background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)" }}
+      >
+      <AccountSettingsForm
+        userInfo={userInfo}
+        newEmail={newEmail}
+        setNewEmail={setNewEmail}
+        passwords={passwords}
+        setPasswords={setPasswords}
+        handleNamePhoneUpdate={handleNamePhoneUpdate}
+        handleEmailChange={handleEmailChange}
+        handlePasswordChange={handlePasswordChange}
+        handleDeleteAccount={handleDeleteAccount}
       />
     </div>
   );

@@ -1,9 +1,9 @@
 import axios from 'axios';
-import { BASE_URL } from '../constants/constants';
+import { HOTEL_BASE_URL } from '../constants/constants';
 import { Review } from '../types/Review';
 
 // Base URL for the API
-const API_BASE_URL = `${BASE_URL}/reviews`;
+const API_BASE_URL = `${HOTEL_BASE_URL}/reviews`;
 
 interface CustomResponse<T> {
   message: string;

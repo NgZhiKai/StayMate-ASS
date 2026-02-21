@@ -1,6 +1,7 @@
 package com.example.userservice.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.userservice.client.EmailClient;
+import com.example.userservice.dto.VerificationResult;
 import com.example.userservice.entity.user.User;
 import com.example.userservice.entity.user.UserRole;
 import com.example.userservice.exception.InvalidUserException;
@@ -24,11 +26,52 @@ public class UserService {
 
     // ---------------- Constructor Injection ----------------
     public UserService(UserRepository userRepository,
-            @Value("${frontend.host-url}") String baseUrl,
+            @Value("${frontend.host.url}") String baseUrl,
             EmailClient emailClient) {
         this.userRepository = userRepository;
         this.baseUrl = baseUrl;
         this.emailClient = emailClient;
+    }
+
+    public String initiateRegistration(String email) {
+        Optional<User> existingUserOpt = userRepository.findByEmail(email);
+        User user;
+
+        if (existingUserOpt.isPresent()) {
+            user = existingUserOpt.get();
+        } else {
+            user = new User();
+            user.setEmail(email);
+            user.setVerified(false);
+            user.setDeleted(false);
+            user.setRole(UserRole.CUSTOMER);
+
+            user = userRepository.save(user);
+        }
+
+        String token = generateVerificationToken(user);
+        String verificationLink = baseUrl + "/verify?token=" + token;
+
+        // Send email with token
+        emailClient.sendVerificationEmail(user.getEmail(), token, verificationLink);
+
+        return token;
+    }
+
+    public User completeRegistration(Long userId, String firstName, String lastName, String phone, String password) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new InvalidUserException("User not found"));
+
+        if (!user.isVerified()) {
+            throw new InvalidUserException("Email not verified yet.");
+        }
+
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
+        user.setPhoneNumber(phone);
+        user.setPassword(password);
+
+        return userRepository.save(user);
     }
 
     // ---------------- User Registration ----------------
@@ -112,20 +155,25 @@ public class UserService {
         if (user == null)
             throw new InvalidUserException("User cannot be null when generating token.");
         String token = UUID.randomUUID().toString();
+        user.setVerified(false);
         user.setVerificationToken(token);
         userRepository.save(user);
         return token;
     }
 
-    public boolean verifyUser(String token) {
-        if (token == null || token.isBlank())
-            throw new InvalidUserException("Verification token cannot be null or empty.");
-        User user = userRepository.findByVerificationToken(token);
-        if (user == null || user.isVerified())
-            return false;
+    public VerificationResult verifyUser(String token) {
+        // 1. Find the user by token
+        User user = userRepository.findByVerificationToken(token)
+                .orElseThrow(() -> new InvalidUserException("Invalid or expired token"));
+
+        // 2. Check if user is newly created or already existed
+        String tokenType = user.isNewlyCreated() ? "NEW_USER" : "EXISTING_USER";
+
+        // 3. Mark user as verified
         user.setVerified(true);
         userRepository.save(user);
-        return true;
+
+        return new VerificationResult(user.getId(), tokenType);
     }
 
     // ---------------- Login ----------------
@@ -141,7 +189,7 @@ public class UserService {
             throw new InvalidUserException("Role mismatch.");
 
         // Return verification token (replace with JWT in production)
-        return generateVerificationToken(user);
+        return user.getVerificationToken();
     }
 
 }
