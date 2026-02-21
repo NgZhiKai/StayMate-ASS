@@ -1,32 +1,33 @@
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
 
-import MainLayout from "./layouts/MainLayout";
 import HeaderOnlyLayout from "./layouts/HeaderOnlyLayout";
+import MainLayout from "./layouts/MainLayout";
 
 // Pages
 import AdminPaymentsPage from "./Pages/AdminPaymentsPage";
 import BookedHotelsPage from "./Pages/BookedHotelsPage";
-import BookingPage from "./Pages/BookingPage";
+import BookingPage from "./Pages/Booking/BookingPage";
 import BookmarkedHotelsPage from "./Pages/BookmarkedHotelsPage";
-import CreateBookingPage from "./Pages/CreateBookingPage";
-import CreateUpdateHotelPage from "./Pages/CreateUpdateHotelPage";
+import CreateBookingPage from "./Pages/Booking/CreateBookingPage";
 import HomePage from "./Pages/HomePage";
-import HotelDetailsPage from "./Pages/HotelDetailsPage";
-import LoginPage from "./Pages/LoginPage";
-import LogOutPage from "./Pages/LogoutPage";
+import CreateUpdateHotelPage from "./Pages/Hotel/CreateUpdateHotelPage";
+import HotelDetailsPage from "./Pages/Hotel/HotelDetailsPage";
 import ManageBookingsPage from "./Pages/ManageBookingsPage";
-import ManageUsersPage from "./Pages/ManageUsersPage";
 import MyPaymentsPage from "./Pages/MyPaymentsPage";
-import NearMePage from "./Pages/NearMePage";
-import NotifcationsPage from "./Pages/NotificationPage";
+import NearMePage from "./Pages/NearMe/NearMePage";
+import NotifcationsPage from "./Pages/Notification/NotificationPage";
 import PaymentPage from "./Pages/PaymentPage";
-import RegisterPage from "./Pages/RegisterPage";
-import SignInPage from "./Pages/SignInPage";
-import UserAccountSettings from "./Pages/UserAccountSettings";
-import VerifyEmailPage from "./Pages/VerficationPage";
+import LoginPage from "./Pages/SignIn/LoginPage";
+import LogOutPage from "./Pages/SignIn/LogoutPage";
+import RegisterPage from "./Pages/SignIn/RegisterPage";
+import SignInPage from "./Pages/SignIn/SignInPage";
+import VerifyEmailPage from "./Pages/SignIn/VerficationPage";
+import SearchResultsPage from "./Pages/Hotel/SearchResultsPage";
+import ManageUsersPage from "./Pages/User/ManageUsersPage";
+import UserAccountSettings from "./Pages/User/UserAccountSettings";
 
 const App: React.FC = () => {
   const [isOpen, setIsOpen] = useState(() => {
@@ -88,6 +89,7 @@ const App: React.FC = () => {
               <Route path="create-bookings/:hotelId" element={<CreateBookingPage />} />
               <Route path="nearme" element={<NearMePage />} />
               <Route path="user-account-settings" element={<UserAccountSettings />} />
+              <Route path="search" element={<SearchResultsPage />} />
               <Route path="logout" element={<LogOutPage />} />
               <Route path="admin/users" element={<ManageUsersPage />} />
               <Route path="admin/bookings" element={<ManageBookingsPage />} />

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import MessageModal from "../MessageModal";
+import MessageModal from "../Modal/MessageModal";
 
 type AccountSettingsFormProps = {
   userInfo: { firstName: string; lastName: string; email: string; phoneNumber: string; role: string };

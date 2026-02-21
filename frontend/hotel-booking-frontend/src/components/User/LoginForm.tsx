@@ -1,7 +1,7 @@
 // src/components/User/LoginForm.tsx
 import React, { useEffect, useState } from "react";
 import { LoginData } from "../../types/User";
-import MessageModal from "../MessageModal";
+import MessageModal from "../Modal/MessageModal";
 
 interface LoginFormProps {
   loginData: LoginData;

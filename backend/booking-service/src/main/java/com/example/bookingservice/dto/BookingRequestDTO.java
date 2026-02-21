@@ -1,6 +1,8 @@
 package com.example.bookingservice.dto;
 
 import java.time.LocalDate;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -14,7 +16,7 @@ public class BookingRequestDTO {
     private Long hotelId;
 
     @NotNull(message = "Room ID is required")
-    private Long roomId;
+    private List<Long> roomIds;
 
     @NotNull(message = "Check-in date is required")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -32,11 +34,12 @@ public class BookingRequestDTO {
     }
 
     // All-args constructor
-    public BookingRequestDTO(Long userId, Long hotelId, Long roomId, LocalDate checkInDate, LocalDate checkOutDate,
+    public BookingRequestDTO(Long userId, Long hotelId, List<Long> roomIds, LocalDate checkInDate,
+            LocalDate checkOutDate,
             double totalAmount) {
         this.userId = userId;
         this.hotelId = hotelId;
-        this.roomId = roomId;
+        this.roomIds = roomIds;
         this.checkInDate = checkInDate;
         this.checkOutDate = checkOutDate;
         this.totalAmount = totalAmount;
@@ -59,12 +62,12 @@ public class BookingRequestDTO {
         this.hotelId = hotelId;
     }
 
-    public Long getRoomId() {
-        return roomId;
+    public List<Long> getRoomIds() {
+        return roomIds;
     }
 
-    public void setRoomId(Long roomId) {
-        this.roomId = roomId;
+    public void setRoomIds(List<Long> roomIds) {
+        this.roomIds = roomIds;
     }
 
     public LocalDate getCheckInDate() {

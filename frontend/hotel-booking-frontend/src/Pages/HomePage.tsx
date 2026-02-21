@@ -1,144 +1,108 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import HotelCard from '../components/Hotel/HotelCard';
-import { useNotificationContext } from "../contexts/NotificationContext";
-import { fetchHotels } from '../services/hotelApi';
-import { getReviewsForHotel } from '../services/ratingApi';
-import { HotelData } from '../types/Hotels';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { fetchHotelDestinations } from "../services/Hotel/hotelApi";
+import SearchBar from "../components/Search/SearchBar";
+
+interface Destination {
+  city: string;
+  country: string;
+  count: number;
+  imageUrl: string;
+}
 
 const HomePage: React.FC = () => {
-  const [hotels, setHotels] = useState<HotelData[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string>('');
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const hotelsPerPage = 8;
-  const { refreshNotifications } = useNotificationContext();
-
-  const userId = sessionStorage.getItem('userId');
-  const userRole = sessionStorage.getItem('role');
-  const isAdmin = userId && userRole === 'admin';
+  const [destinations, setDestinations] = useState<Destination[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedDestination, setSelectedDestination] = useState<string>(""); // "City|Country"
   const navigate = useNavigate();
 
+  // Fetch destinations
   useEffect(() => {
-    refreshNotifications();
-
-    const loadHotels = async () => {
+    const loadDestinations = async () => {
       try {
-        const hotelData = await fetchHotels();
-        if (!Array.isArray(hotelData)) throw new Error('Invalid data format');
-
-        const hotelsWithRatings = await Promise.all(
-          hotelData.map(async hotel => {
-            const reviews = await getReviewsForHotel(hotel.id);
-            const averageRating = reviews.length
-              ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
-              : 0;
-            return { ...hotel, averageRating };
-          })
-        );
-
-        setHotels(hotelsWithRatings);
-      } catch (err: any) {
-        console.error(err);
-        setError('Failed to load hotels. Please try again.');
+        setLoading(true);
+        const data = await fetchHotelDestinations();
+        setDestinations(data || []); // <-- fallback to empty array
+      } catch (err) {
+        console.error("Failed to fetch destinations:", err);
+        setDestinations([]);
       } finally {
         setLoading(false);
       }
     };
-
-    loadHotels();
+    loadDestinations();
   }, []);
 
-  const handleCreateHotel = () => navigate('/create-hotel');
-
-  // Pagination
-  const indexOfLastHotel = currentPage * hotelsPerPage;
-  const indexOfFirstHotel = indexOfLastHotel - hotelsPerPage;
-  const currentHotels = hotels.slice(indexOfFirstHotel, indexOfLastHotel);
-  const totalPages = Math.ceil(hotels.length / hotelsPerPage);
-
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
-  const nextPage = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
-  const prevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
+  const handleSearch = () => {
+    if (!selectedDestination) return;
+    const [city, country] = selectedDestination.split("|");
+    navigate(`/search?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`);
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6 md:p-10">
-      {/* Hero Section */}
-      <div className="bg-white rounded-lg shadow-md py-16 px-6 md:px-20 text-center mb-10">
-        <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-          Welcome to StayMate
-        </h1>
-        <p className="text-gray-600 text-lg">
-          Explore the best hotels curated for you
-        </p>
+    <div className="bg-gray-50 min-h-screen select-none">
 
-        {isAdmin && (
-          <button
-            onClick={handleCreateHotel}
-            className="fixed bottom-6 right-6 bg-blue-600 text-white px-5 py-3 rounded-full shadow-lg hover:bg-blue-700 hover:scale-105 transition-all z-50"
-          >
-            Create Hotel
-          </button>
-        )}
+      {/* ================= HERO SECTION ================= */}
+      <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-500 text-white pb-20 sm:pb-32 pt-20 sm:pt-24 px-6">
+        <div className="max-w-7xl mx-auto">
+          <h1 className="text-3xl sm:text-5xl font-bold mb-4">Find your next stay</h1>
+          <p className="text-lg sm:text-xl opacity-90">
+            Search low prices on hotels and much more...
+          </p>
+        </div>
       </div>
 
-      {/* Hotel List */}
-      <div className="max-w-7xl mx-auto">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Recommended Hotels</h2>
+      {/* ================= FLOATING SEARCH CARD ================= */}
+      <div className="max-w-4xl mx-auto px-6 relative z-50 -translate-y-1/2">
+        <div className="bg-white rounded-2xl shadow-2xl p-6 hover:shadow-3xl transition-shadow duration-300">
+          <SearchBar
+            destinations={destinations}
+            value={selectedDestination}
+            onChange={setSelectedDestination}
+            onSearch={handleSearch}
+            placeholder="Select a destination"
+            buttonLabel="Search"
+          />
+        </div>
+      </div>
+
+      {/* ================= TRENDING DESTINATIONS ================= */}
+      <div className="max-w-7xl mx-auto px-6 py-20">
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">Trending destinations</h2>
+        <p className="text-gray-600 mb-10">Most popular choices for travellers</p>
 
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {Array.from({ length: hotelsPerPage }).map((_, idx) => (
-              <div key={idx} className="animate-pulse bg-white h-64 rounded-lg" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {Array.from({ length: 8 }).map((_, idx) => (
+              <div key={idx} className="h-64 bg-gray-200 rounded-2xl animate-pulse" />
             ))}
           </div>
-        ) : error ? (
-          <p className="text-red-600">{error}</p>
-        ) : hotels.length === 0 ? (
-          <p>No hotels available at the moment.</p>
         ) : (
-          <>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-              {currentHotels.map(hotel => (
-                <HotelCard key={hotel.id} hotel={hotel} />
-              ))}
-            </div>
-
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex justify-center mt-8 items-center gap-2 flex-wrap">
-                <button
-                  onClick={prevPage}
-                  disabled={currentPage === 1}
-                  className={`px-4 py-2 rounded-md ${
-                    currentPage === 1 ? 'bg-gray-300 text-gray-800' : 'bg-blue-600 text-white'
-                  }`}
-                >
-                  &lt;
-                </button>
-                {Array.from({ length: totalPages }, (_, i) => (
-                  <button
-                    key={i + 1}
-                    onClick={() => paginate(i + 1)}
-                    className={`px-4 py-2 rounded-md ${
-                      currentPage === i + 1 ? 'bg-blue-600 text-white' : 'bg-gray-300 text-gray-800'
-                    }`}
-                  >
-                    {i + 1}
-                  </button>
-                ))}
-                <button
-                  onClick={nextPage}
-                  disabled={currentPage === totalPages}
-                  className={`px-4 py-2 rounded-md ${
-                    currentPage === totalPages ? 'bg-gray-300 text-gray-800' : 'bg-blue-600 text-white'
-                  }`}
-                >
-                  &gt;
-                </button>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+            {destinations.map((dest) => (
+              <div
+                key={`${dest.city}-${dest.country}`}
+                onClick={() =>
+                  navigate(
+                    `/search?city=${encodeURIComponent(dest.city)}&country=${encodeURIComponent(dest.country)}`
+                  )
+                }
+                className="group relative rounded-2xl overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl transition duration-300 hover:-translate-y-2"
+              >
+                <img
+                  src={dest.imageUrl}
+                  alt={dest.city}
+                  className="w-full h-64 object-cover group-hover:scale-110 transition duration-500"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                <div className="absolute bottom-5 left-5 text-white">
+                  <h3 className="text-xl font-bold">{dest.city}</h3>
+                  <p className="text-sm opacity-90">{dest.country}</p>
+                  <p className="text-sm mt-1">{dest.count}+ hotels</p>
+                </div>
               </div>
-            )}
-          </>
+            ))}
+          </div>
         )}
       </div>
     </div>

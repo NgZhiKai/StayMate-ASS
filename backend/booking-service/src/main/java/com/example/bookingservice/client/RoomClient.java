@@ -2,6 +2,7 @@ package com.example.bookingservice.client;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -57,15 +58,19 @@ public class RoomClient {
         }
     }
 
-    public boolean markRoomAvailable(Long hotelId, Long roomId) {
+    /**
+     * Fetch all rooms for a hotel
+     * Returns empty list if service fails
+     */
+    @SuppressWarnings("unchecked")
+    public List<Map<String, Object>> getRoomsByHotelId(Long hotelId) {
         try {
-            String url = String.format("%s/rooms/%d/%d/available", roomServiceUrl, hotelId, roomId);
-            // Assuming RoomService exposes a PUT endpoint to mark a room as available
-            restTemplate.put(url, null);
-            return true;
+            String url = String.format("%s/rooms/hotel/%d", roomServiceUrl, hotelId);
+            List<Map<String, Object>> rooms = restTemplate.getForObject(url, List.class);
+            return rooms != null ? rooms : Collections.emptyList();
         } catch (Exception e) {
-            // log error
-            return false;
+            // log error if needed
+            return Collections.emptyList();
         }
     }
 }

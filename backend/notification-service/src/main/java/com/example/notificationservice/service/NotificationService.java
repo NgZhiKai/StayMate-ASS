@@ -41,11 +41,17 @@ public class NotificationService {
     public Notification markAsRead(Long notificationId) {
         Notification notification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new RuntimeException("Notification not found with ID: " + notificationId));
-        
+
         if (!notification.isRead()) {
             notification.setRead(true);
             notificationRepository.save(notification);
         }
         return notification;
     }
+
+    // Mark all notification for a user as read
+    public void markAllNotificationsAsRead(Long userId) {
+        notificationRepository.markAllAsReadByUserId(userId);
+    }
+
 }

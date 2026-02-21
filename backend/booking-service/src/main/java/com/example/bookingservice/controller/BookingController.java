@@ -1,10 +1,10 @@
 package com.example.bookingservice.controller;
 
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,15 +26,17 @@ public class BookingController {
         this.bookingService = bookingService;
     }
 
-    /** Create a new booking */
+    // ------------------- Booking CRUD -------------------
     @PostMapping
     public ResponseEntity<?> createBooking(@RequestBody BookingRequestDTO dto) {
         try {
-            Booking booking = bookingService.createBooking(dto);
-            Map<String, Object> response = Map.of(
-                    "message", "Booking created successfully",
-                    "bookingId", booking.getId());
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+            List<Booking> bookings = bookingService.createBooking(dto);
+
+            return ResponseEntity.status(HttpStatus.CREATED)
+                    .body(Map.of(
+                            "message", "Booking(s) created successfully",
+                            "bookings", bookings
+                    ));
 
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -44,88 +46,77 @@ public class BookingController {
         }
     }
 
-    /** Get booking by ID */
     @GetMapping("/{id}")
     public ResponseEntity<?> getBookingById(@PathVariable Long id) {
-        Booking dto = bookingService.getBookingById(id);
-
-        if (dto == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Booking not found");
+        Booking booking = bookingService.getBookingById(id);
+        if (booking == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Booking not found"));
         }
-
-        return ResponseEntity.ok(dto);
+        return ResponseEntity.ok(Map.of("data", booking));
     }
 
-    /** Cancel a booking */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> cancelBooking(@PathVariable Long id) {
         Booking booking = bookingService.cancelBooking(id);
         if (booking == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Booking not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "Booking not found"));
         }
-        Map<String, Object> response = Map.of(
+        return ResponseEntity.ok(Map.of(
                 "message", "Booking cancelled successfully",
                 "bookingId", booking.getId(),
-                "status", booking.getStatus());
-        return ResponseEntity.ok(response);
+                "status", booking.getStatus()));
     }
 
-    /** Get all bookings for a hotel */
+    @PostMapping("/{bookingId}/status")
+    public ResponseEntity<?> updateBookingStatus(
+            @PathVariable Long bookingId,
+            @RequestParam BookingStatus status) {
+        Booking updated = bookingService.updateBookingStatus(bookingId, status);
+        return ResponseEntity.ok(Map.of(
+                "message", "Booking status updated",
+                "bookingId", updated.getId(),
+                "status", updated.getStatus()));
+    }
+
+    // ------------------- Queries -------------------
+
     @GetMapping("/hotel/{hotelId}")
-    public ResponseEntity<List<BookingResponseDTO>> getBookingsForHotel(@PathVariable Long hotelId) {
+    public ResponseEntity<?> getBookingsForHotel(@PathVariable Long hotelId) {
         List<BookingResponseDTO> bookings = bookingService.getBookingsByHotel(hotelId);
-        if (bookings.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
-        }
-        return ResponseEntity.ok(bookings);
+        return ResponseEntity.ok(Map.of("data", bookings));
     }
 
-    /** Get all bookings for a user */
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<UserBookingResponseDTO>> getBookingsForUser(@PathVariable Long userId) {
+    public ResponseEntity<?> getBookingsForUser(@PathVariable Long userId) {
         List<UserBookingResponseDTO> bookings = bookingService.getBookingsByUser(userId);
-        if (bookings.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
-        }
-        return ResponseEntity.ok(bookings);
+        return ResponseEntity.ok(Map.of("data", bookings));
     }
 
-    /** Get all bookings */
-    @GetMapping
-    public ResponseEntity<List<Booking>> getAllBookings() {
-        List<Booking> bookings = bookingService.getAllBookings();
-        if (bookings.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.emptyList());
+    @GetMapping("/search/date")
+    public ResponseEntity<?> searchBookingsByDate(
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+
+        if (!endDate.isAfter(startDate)) {
+            return ResponseEntity.badRequest().body(Map.of("error", "End date must be after start date"));
         }
-        return ResponseEntity.ok(bookings);
+
+        List<Booking> bookings = bookingService.getBookingsByDateRange(startDate, endDate);
+        return ResponseEntity.ok(Map.of("data", bookings));
     }
 
-    /** Check room availability */
     @GetMapping("/availability")
-    public ResponseEntity<Boolean> checkRoomAvailability(
+    public ResponseEntity<?> checkRoomAvailability(
             @RequestParam Long hotelId,
             @RequestParam Long roomId,
-            @RequestParam LocalDate checkIn,
-            @RequestParam LocalDate checkOut) {
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkIn,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate checkOut) {
 
-        if (checkOut.isBefore(checkIn)) {
-            return ResponseEntity.badRequest().body(false);
+        if (!checkOut.isAfter(checkIn)) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Check-out must be after check-in"));
         }
 
         boolean available = bookingService.isRoomAvailable(hotelId, roomId, checkIn, checkOut);
-        return ResponseEntity.ok(available);
-    }
-
-    /**
-     * Update booking status endpoint.
-     */
-    @PostMapping("/{bookingId}/status")
-    public ResponseEntity<String> updateBookingStatus(
-            @PathVariable Long bookingId,
-            @RequestParam BookingStatus status) {
-
-        bookingService.updateBookingStatus(bookingId, status);
-        return ResponseEntity.ok("Booking status updated to " + status);
+        return ResponseEntity.ok(Map.of("available", available));
     }
 }

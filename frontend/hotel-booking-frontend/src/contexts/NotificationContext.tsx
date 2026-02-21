@@ -1,10 +1,18 @@
-import React, { createContext, useState, useEffect, useContext } from "react";
-import NotificationApi from "../services/notificationApi";
+import React, { createContext, useState, useEffect, useContext, useCallback, useMemo } from "react";
 import { Notification } from "../types/Notification";
+import { 
+  fetchNotificationsByUserId, 
+  markNotificationAsRead, 
+  markAllNotificationsAsRead 
+} from "../services/Notification/notificationApi";
 
 interface NotificationContextType {
   notifications: Notification[];
-  refreshNotifications: () => void;
+  loading: boolean;
+  error: string | null;
+  refreshNotifications: () => Promise<void>;
+  markAsRead: (notificationId: number) => Promise<void>;
+  markAllAsRead: () => Promise<void>;
 }
 
 const NotificationContext = createContext<NotificationContextType | null>(null);
@@ -17,20 +25,79 @@ export const useNotificationContext = () => {
 
 export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
 
-  const refreshNotifications = async () => {
-    const userId = Number(sessionStorage.getItem("userId"));
-    if (!userId) return;
-    const data = await NotificationApi.getNotificationsByUserId(userId);
-    setNotifications(data);
+  const getUserId = (): number | null => {
+    const storedUserId = sessionStorage.getItem("userId");
+    return storedUserId ? Number(storedUserId) : null;
   };
 
-  useEffect(() => {
-    refreshNotifications();
+  const refreshNotifications = useCallback(async () => {
+    const userId = getUserId();
+    if (!userId) {
+      setNotifications([]);
+      setLoading(false);
+      throw new Error("User not logged in.");
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      const data = await fetchNotificationsByUserId(userId);
+      setNotifications(data);
+    } catch (err: any) {
+      setNotifications([]);
+      setError(err.message || "Failed to fetch notifications.");
+      throw err;
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+  const markAsReadContext = useCallback(async (notificationId: number) => {
+    const userId = getUserId();
+    if (!userId) throw new Error("User not logged in.");
+
+    try {
+      await markNotificationAsRead(notificationId);
+      await refreshNotifications();
+    } catch (err: any) {
+      setError(err.message || "Failed to mark notification as read.");
+      throw err;
+    }
+  }, [refreshNotifications]);
+
+  const markAllAsReadContext = useCallback(async () => {
+    const userId = getUserId();
+    if (!userId) throw new Error("User not logged in.");
+
+    try {
+      await markAllNotificationsAsRead(userId);
+      await refreshNotifications();
+    } catch (err: any) {
+      setError(err.message || "Failed to mark all notifications as read.");
+      throw err;
+    }
+  }, [refreshNotifications]);
+
+  useEffect(() => {
+    refreshNotifications().catch((err) => console.error("Notification fetch error:", err));
+  }, [refreshNotifications]);
+
+  // Memoize the context value
+  const contextValue = useMemo(() => ({
+    notifications,
+    loading,
+    error,
+    refreshNotifications,
+    markAsRead: markAsReadContext,
+    markAllAsRead: markAllAsReadContext,
+  }), [notifications, loading, error, refreshNotifications, markAsReadContext, markAllAsReadContext]);
+
   return (
-    <NotificationContext.Provider value={{ notifications, refreshNotifications }}>
+    <NotificationContext.Provider value={contextValue}>
       {children}
     </NotificationContext.Provider>
   );

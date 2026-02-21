@@ -1,7 +1,6 @@
 package com.example.bookingservice.dto;
 
 import java.time.LocalDate;
-import com.example.bookingservice.entity.Booking;
 
 public class BookingResponseDTO {
     private Long bookingId;

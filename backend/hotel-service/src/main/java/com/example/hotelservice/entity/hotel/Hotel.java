@@ -24,6 +24,8 @@ public class Hotel {
     private String address;
     private double latitude;
     private double longitude;
+    private String city;
+    private String country;
 
     @OneToMany(mappedBy = "id.hotelId", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Room> rooms;
@@ -39,22 +41,50 @@ public class Hotel {
     private LocalTime checkOut;
 
     // Getters & Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public Long getId() {
+        return id;
+    }
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getAddress() { return address; }
-    public void setAddress(String address) { this.address = address; }
+    public String getName() {
+        return name;
+    }
 
-    public double getLatitude() { return latitude; }
-    public void setLatitude(double latitude) { this.latitude = latitude; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-    public double getLongitude() { return longitude; }
-    public void setLongitude(double longitude) { this.longitude = longitude; }
+    public String getAddress() {
+        return address;
+    }
 
-    public List<Room> getRooms() { return rooms; }
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public List<Room> getRooms() {
+        return rooms;
+    }
+
     public void setRooms(List<Room> rooms) {
         this.rooms = rooms;
         if (rooms != null) {
@@ -62,18 +92,59 @@ public class Hotel {
         }
     }
 
-    public byte[] getImage() { return image; }
-    public void setImage(byte[] image) { this.image = image; }
+    public byte[] getImage() {
+        return image;
+    }
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
 
-    public String getContact() { return contact; }
-    public void setContact(String contact) { this.contact = contact; }
+    public String getDescription() {
+        return description;
+    }
 
-    public LocalTime getCheckIn() { return checkIn; }
-    public void setCheckIn(LocalTime checkIn) { this.checkIn = checkIn; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public LocalTime getCheckOut() { return checkOut; }
-    public void setCheckOut(LocalTime checkOut) { this.checkOut = checkOut; }
+    public String getContact() {
+        return contact;
+    }
+
+    public void setContact(String contact) {
+        this.contact = contact;
+    }
+
+    public LocalTime getCheckIn() {
+        return checkIn;
+    }
+
+    public void setCheckIn(LocalTime checkIn) {
+        this.checkIn = checkIn;
+    }
+
+    public LocalTime getCheckOut() {
+        return checkOut;
+    }
+
+    public void setCheckOut(LocalTime checkOut) {
+        this.checkOut = checkOut;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
 }

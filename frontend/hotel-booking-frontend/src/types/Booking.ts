@@ -1,10 +1,10 @@
 export interface Booking {
-    userId: number;
-    hotelId: number;
-    roomId: number;
-    checkInDate: string;
-    checkOutDate: string;
-    totalAmount: number;
+  userId: number;
+  hotelId: number;
+  roomIds: number[];
+  checkInDate: string;
+  checkOutDate: string;
+  totalAmount: number;
 }
 
 export interface DetailedBooking {

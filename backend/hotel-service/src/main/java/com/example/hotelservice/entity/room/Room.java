@@ -1,7 +1,6 @@
 package com.example.hotelservice.entity.room;
 
 import com.example.hotelservice.entity.hotel.Hotel;
-import com.example.hotelservice.state.roomstate.*;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -31,59 +30,13 @@ public abstract class Room {
     @Column(name = "max_occupancy")
     private int maxOccupancy;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "status")
-    private RoomStatus status;
-
-    @Transient
-    @JsonIgnore
-    private RoomState roomState;
-
     protected Room() {
-        setStatus(RoomStatus.AVAILABLE);
     }
 
     protected Room(Hotel hotel, Long roomId, double pricePerNight, int maxOccupancy) {
         this.id = new RoomId(hotel.getId(), roomId);
         this.pricePerNight = pricePerNight;
         this.maxOccupancy = maxOccupancy;
-        setStatus(RoomStatus.AVAILABLE);
-    }
-
-    // Ensure state restored after DB operations
-    @PostLoad
-    @PostPersist
-    private void initState() {
-        updateState();
-    }
-
-    private void updateState() {
-        RoomStatus currentStatus = (status == null)
-                ? RoomStatus.AVAILABLE
-                : status;
-
-        switch (currentStatus) {
-            case AVAILABLE -> this.roomState = new AvailableState();
-            case BOOKED -> this.roomState = new BookedState();
-            case UNDER_MAINTENANCE -> this.roomState = new UnderMaintenanceState();
-            default -> throw new IllegalStateException("Unexpected room status: " + currentStatus);
-        }
-    }
-
-    // --- State Pattern Actions ---
-    public void book() {
-        getRoomState().book(this);
-        updateState();
-    }
-
-    public void checkOut() {
-        getRoomState().checkOut(this);
-        updateState();
-    }
-
-    public void markUnderMaintenance() {
-        getRoomState().markUnderMaintenance(this);
-        updateState();
     }
 
     // --- Getters & Setters ---
@@ -117,22 +70,5 @@ public abstract class Room {
 
     public void setMaxOccupancy(int maxOccupancy) {
         this.maxOccupancy = maxOccupancy;
-    }
-
-    public RoomStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(RoomStatus status) {
-        this.status = status;
-        updateState(); // keep state synced
-    }
-
-    @JsonIgnore
-    public RoomState getRoomState() {
-        if (roomState == null) {
-            updateState();
-        }
-        return roomState;
     }
 }

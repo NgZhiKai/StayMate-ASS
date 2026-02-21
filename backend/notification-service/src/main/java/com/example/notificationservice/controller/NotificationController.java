@@ -1,6 +1,7 @@
 package com.example.notificationservice.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -70,6 +71,13 @@ public class NotificationController {
         return ResponseEntity.ok(updated);
     }
 
+    @PutMapping("/user/{userId}/read")
+    public ResponseEntity<Map<String, String>> markAllAsRead(@PathVariable Long userId) {
+        notificationService.markAllNotificationsAsRead(userId);
+        Map<String, String> response = Map.of("message", "All notifications marked as read");
+        return ResponseEntity.ok(response);
+    }
+
     // Send promotion notifications to all users from User Service
     @PostMapping("/promotion")
     public ResponseEntity<String> sendPromotionNotifications(@RequestBody PromotionMessage request) {
@@ -91,7 +99,13 @@ public class NotificationController {
     // DTO for promotion message
     public static class PromotionMessage {
         private String message;
-        public String getMessage() { return message; }
-        public void setMessage(String message) { this.message = message; }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
+        }
     }
 }

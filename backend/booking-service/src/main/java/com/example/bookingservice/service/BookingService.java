@@ -1,9 +1,12 @@
 package com.example.bookingservice.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,105 +43,73 @@ public class BookingService {
         this.userClient = userClient;
     }
 
-    // ------------------- Booking Operations -------------------
-
+    // ------------------- Booking CRUD -------------------
     @Transactional
-    public Booking createBooking(BookingRequestDTO dto) {
-        // Validate input
-        if (dto.getHotelId() == null) {
-            throw new IllegalArgumentException("Hotel ID is required");
-        }
-        if (dto.getRoomId() == null) {
-            throw new IllegalArgumentException("Room ID is required");
-        }
-        if (dto.getUserId() == null) {
-            throw new IllegalArgumentException("User ID is required");
-        }
-        if (dto.getCheckInDate() == null || dto.getCheckOutDate() == null) {
-            throw new IllegalArgumentException("Check-in and check-out dates are required");
-        }
-        if (dto.getCheckOutDate().isBefore(dto.getCheckInDate())) {
-            throw new IllegalArgumentException("Check-out date must be after check-in date");
+    public List<Booking> createBooking(BookingRequestDTO dto) {
+
+        validateBookingRequest(dto);
+
+        if (dto.getRoomIds() == null || dto.getRoomIds().isEmpty()) {
+            throw new IllegalArgumentException("At least one room must be selected");
         }
 
-        // Check room availability
-        boolean available = isRoomAvailable(dto.getHotelId(), dto.getRoomId(),
-                dto.getCheckInDate(), dto.getCheckOutDate());
+        List<Booking> createdBookings = new ArrayList<>();
 
-        if (!available) {
-            throw new IllegalStateException(
-                    "Room " + dto.getRoomId() + " in hotel " + dto.getHotelId()
-                            + " is not available for selected dates");
+        for (Long roomId : dto.getRoomIds()) {
+
+            if (!isRoomAvailable(dto.getHotelId(), roomId,
+                    dto.getCheckInDate(), dto.getCheckOutDate())) {
+
+                throw new IllegalStateException(
+                        "Room " + roomId + " is not available");
+            }
+
+            Booking booking = new Booking();
+            booking.setHotelId(dto.getHotelId());
+            booking.setRoomId(roomId);
+            booking.setUserId(dto.getUserId());
+            booking.setCheckInDate(dto.getCheckInDate());
+            booking.setCheckOutDate(dto.getCheckOutDate());
+            booking.setTotalAmount(dto.getTotalAmount() / dto.getRoomIds().size());
+            booking.setBookingDate(LocalDate.now());
+            booking.setStatus(BookingStatus.PENDING);
+
+            createdBookings.add(bookingRepository.save(booking));
         }
 
-        // Create booking
-        Booking booking = new Booking();
-        booking.setHotelId(dto.getHotelId());
-        booking.setRoomId(dto.getRoomId());
-        booking.setUserId(dto.getUserId());
-        booking.setCheckInDate(dto.getCheckInDate());
-        booking.setCheckOutDate(dto.getCheckOutDate());
-        booking.setTotalAmount(Objects.requireNonNullElse(dto.getTotalAmount(), 0.0));
-        booking.setBookingDate(LocalDate.now());
-        booking.setStatus(BookingStatus.PENDING);
+        sendNotification(dto.getUserId(), "Your booking is pending confirmation.");
 
-        Booking savedBooking = bookingRepository.save(booking);
-
-        // Send notification (optional)
-        try {
-            notificationClient.sendNotification(dto.getUserId(),
-                    "Your booking is pending confirmation.");
-        } catch (Exception e) {
-            // Log failure but do not fail the booking
-            System.err.println("Failed to send notification: " + e.getMessage());
-        }
-
-        return savedBooking;
+        return createdBookings;
     }
 
     @Transactional
-    public Booking updateBooking(Booking booking) {
-        Booking updatedBooking = bookingRepository.save(booking);
+    public Booking updateBookingStatus(Long bookingId, BookingStatus status) {
+        Booking booking = getBookingById(bookingId);
+        if (booking == null)
+            throw new IllegalArgumentException("Booking not found");
 
-        String message = switch (booking.getStatus()) {
+        booking.setStatus(status);
+        Booking updated = bookingRepository.save(booking);
+
+        String message = switch (status) {
             case CONFIRMED -> "Your booking has been confirmed!";
             case CANCELLED -> "Your booking has been canceled.";
             default -> "Your booking status has been updated.";
         };
-
         sendNotification(booking.getUserId(), message);
-
-        return updatedBooking;
+        return updated;
     }
 
     @Transactional
-    public Booking cancelBooking(Long id) {
-        Booking booking = getBookingById(id);
-        if (booking == null) {
-            logger.warn("Booking with ID {} not found", id);
+    public Booking cancelBooking(Long bookingId) {
+        Booking booking = getBookingById(bookingId);
+        if (booking == null)
             return null;
-        }
 
         booking.setStatus(BookingStatus.CANCELLED);
-        Booking canceledBooking = bookingRepository.save(booking);
-        logger.info("Booking {} cancelled", id);
-
-        // Mark room as available via RoomClient
-        try {
-            boolean success = roomClient.markRoomAvailable(booking.getHotelId(), booking.getRoomId());
-            if (success) {
-                logger.info("Room {} in hotel {} marked as available", booking.getRoomId(), booking.getHotelId());
-            } else {
-                logger.warn("Failed to mark room {} in hotel {} as available", booking.getRoomId(),
-                        booking.getHotelId());
-            }
-        } catch (Exception e) {
-            logger.error("Error calling RoomService for room {} in hotel {}: {}", booking.getRoomId(),
-                    booking.getHotelId(), e.getMessage(), e);
-        }
-
+        Booking canceled = bookingRepository.save(booking);
         sendNotification(booking.getUserId(), "Your booking has been canceled.");
-        return canceledBooking;
+        return canceled;
     }
 
     // ------------------- Read Operations -------------------
@@ -159,32 +130,40 @@ public class BookingService {
                 .toList();
     }
 
-    public List<Booking> getAllBookings() {
-        return bookingRepository.findAll();
+    // ------------------- Availability -------------------
+
+    public boolean isRoomAvailable(Long hotelId, Long roomId, LocalDate checkIn, LocalDate checkOut) {
+        if (checkIn == null || checkOut == null || !checkOut.isAfter(checkIn)) {
+            throw new IllegalArgumentException("Invalid check-in/check-out dates");
+        }
+        return bookingRepository.findOverlappingBookings(hotelId, roomId, checkIn, checkOut).isEmpty();
     }
 
-    public boolean isRoomAvailable(Long hotelId, Long roomId,
-            LocalDate checkIn, LocalDate checkOut) {
-        // Validate dates
-        if (checkIn == null || checkOut == null) {
-            throw new IllegalArgumentException("Check-in and check-out dates must not be null");
-        }
-        if (checkOut.isBefore(checkIn) || checkOut.isEqual(checkIn)) {
-            throw new IllegalArgumentException("Check-out date must be after check-in date");
-        }
+    public List<Map<String, Object>> getAvailableRoomsForHotel(Long hotelId, LocalDate checkIn, LocalDate checkOut) {
+        List<Booking> overlappingBookings = bookingRepository.findByHotelId(hotelId).stream()
+                .filter(b -> b.getStatus() != BookingStatus.CANCELLED
+                        && b.getCheckInDate().isBefore(checkOut)
+                        && b.getCheckOutDate().isAfter(checkIn))
+                .toList();
 
-        // Query overlapping bookings
-        List<Booking> overlapping = bookingRepository.findOverlappingBookings(
-                hotelId, roomId, checkIn, checkOut);
+        List<Long> bookedRoomIds = overlappingBookings.stream()
+                .map(Booking::getRoomId)
+                .toList();
 
-        // If list is empty → room is available
-        return overlapping.isEmpty();
+        List<Map<String, Object>> allRooms = roomClient.getRoomsByHotelId(hotelId);
+
+        return allRooms.stream()
+                .filter(r -> !bookedRoomIds.contains(((Number) r.get("room_id")).longValue()))
+                .toList();
     }
 
-    public Booking updateBookingStatus(Long bookingId, BookingStatus status) {
-        Booking booking = getBookingById(bookingId);
-        booking.setStatus(status);
-        return bookingRepository.save(booking);
+    // ------------------- Search / Query -------------------
+
+    public List<Booking> getBookingsByDateRange(LocalDate startDate, LocalDate endDate) {
+        if (startDate == null || endDate == null || !endDate.isAfter(startDate)) {
+            return Collections.emptyList();
+        }
+        return bookingRepository.findBookingsByDateRange(startDate, endDate);
     }
 
     // ------------------- Mapping Helpers -------------------
@@ -206,9 +185,7 @@ public class BookingService {
         dto.setPhone((String) user.getOrDefault("phoneNumber", null));
 
         Map<String, Object> room = roomClient.getRoomById(b.getHotelId(), b.getRoomId());
-        if (!room.isEmpty() && room.containsKey("room_type")) {
-            dto.setRoomType(room.get("room_type").toString());
-        }
+        dto.setRoomType(room.getOrDefault("room_type", "").toString());
 
         return dto;
     }
@@ -223,16 +200,39 @@ public class BookingService {
         dto.setStatus(b.getStatus() != null ? b.getStatus().toString() : null);
 
         Map<String, Object> room = roomClient.getRoomById(b.getHotelId(), b.getRoomId());
-        if (!room.isEmpty() && room.containsKey("room_type")) {
-            dto.setRoomType(room.get("room_type").toString());
-        }
+        dto.setRoomType(room.getOrDefault("room_type", "").toString());
 
         return dto;
     }
 
-    // ------------------- Notification Helper -------------------
+    // ------------------- Helpers -------------------
 
     private void sendNotification(Long userId, String message) {
-        notificationClient.sendNotification(userId, message);
+        try {
+            notificationClient.sendNotification(userId, message);
+        } catch (Exception e) {
+            logger.warn("Failed to send notification: {}", e.getMessage());
+        }
+    }
+
+    private void validateBookingRequest(BookingRequestDTO dto) {
+
+        if (dto.getHotelId() == null)
+            throw new IllegalArgumentException("Hotel ID is required");
+
+        if (dto.getUserId() == null)
+            throw new IllegalArgumentException("User ID is required");
+
+        if (dto.getRoomIds() == null || dto.getRoomIds().isEmpty())
+            throw new IllegalArgumentException("At least one room must be selected");
+
+        if (dto.getRoomIds().stream().anyMatch(Objects::isNull))
+            throw new IllegalArgumentException("Room ID list contains null values");
+
+        if (dto.getCheckInDate() == null || dto.getCheckOutDate() == null)
+            throw new IllegalArgumentException("Check-in and check-out dates are required");
+
+        if (!dto.getCheckOutDate().isAfter(dto.getCheckInDate()))
+            throw new IllegalArgumentException("Check-out date must be after check-in date");
     }
 }

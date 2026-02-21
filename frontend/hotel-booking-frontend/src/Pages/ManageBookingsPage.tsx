@@ -1,63 +1,76 @@
-import React, { useEffect, useState } from 'react';
-import { cancelBooking, getAllBookings } from '../services/bookingApi';
-import { fetchHotelById } from '../services/hotelApi';
-import { getUserInfo } from '../services/userApi';
-import { DetailedBooking } from '../types/Booking';
+import React, { useEffect, useState, useCallback } from "react";
+import { cancelBooking, fetchBookings } from "../services/Booking/bookingApi";
+import { fetchHotelById } from "../services/Hotel/hotelApi";
+import { getUserInfo } from "../services/User/userApi";
+import { DetailedBooking } from "../types/Booking";
 
 const ITEMS_PER_PAGE = 8;
 
 const ManageBookingsPage: React.FC = () => {
   const [bookings, setBookings] = useState<DetailedBooking[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [bookingsPerPage] = useState(ITEMS_PER_PAGE); // Changed from 10 to 5
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchBookings = async () => {
-      try {
-        const result = await getAllBookings(); // Fetch bookings from the API
-        const bookingsWithDetails = await Promise.all(result.bookings.map(async (booking) => {
-          // Fetch user details
-          const userInfo = await getUserInfo(String(booking.userId));
-          // Fetch hotel details
-          const hotelInfo = await fetchHotelById(booking.hotelId);
+  // ------------------- Helpers -------------------
+
+  const fetchBookingDetails = useCallback(async () => {
+    try {
+      const result: DetailedBooking[] = await fetchBookings(); // API returns array of DetailedBooking
+
+      // Fetch user & hotel info in parallel for each booking
+      const detailedBookings = await Promise.all(
+        result.map(async (booking) => {
+          const [userInfo, hotelInfo] = await Promise.all([
+            getUserInfo(String(booking.userId)),
+            fetchHotelById(booking.hotelId),
+          ]);
 
           return {
             ...booking,
             userFirstName: userInfo.user.firstName,
             userLastName: userInfo.user.lastName,
             hotelName: hotelInfo.name,
-            hotelCheckInTime: hotelInfo.checkIn || 'N/A',
-            hotelCheckOutTime: hotelInfo.checkOut || 'N/A'
+            hotelCheckInTime: hotelInfo.checkIn || "N/A",
+            hotelCheckOutTime: hotelInfo.checkOut || "N/A",
           };
-        }));
+        })
+      );
 
-        setBookings(bookingsWithDetails);
-        setError('');
-      } catch (err: any) {
-        setError(err.message || 'Failed to load bookings');
-      }
-    };
-    fetchBookings();
+      setBookings(detailedBookings);
+      setError("");
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "Failed to load bookings");
+    }
   }, []);
 
-  const indexOfLastBooking = currentPage * bookingsPerPage;
-  const indexOfFirstBooking = indexOfLastBooking - bookingsPerPage;
+  useEffect(() => {
+    fetchBookingDetails();
+  }, [fetchBookingDetails]);
 
+  // ------------------- Pagination -------------------
+
+  const totalPages = Math.ceil(bookings.length / ITEMS_PER_PAGE);
+  const indexOfLastBooking = currentPage * ITEMS_PER_PAGE;
+  const indexOfFirstBooking = indexOfLastBooking - ITEMS_PER_PAGE;
   const currentBookings = bookings.slice(indexOfFirstBooking, indexOfLastBooking);
 
-  const totalPages = Math.ceil(bookings.length / bookingsPerPage);
+  const goToPage = (page: number) => setCurrentPage(page);
+  const prevPage = () => currentPage > 1 && setCurrentPage(currentPage - 1);
+  const nextPage = () => currentPage < totalPages && setCurrentPage(currentPage + 1);
 
-  const paginate = (pageNumber: number) => setCurrentPage(pageNumber);
+  // ------------------- Actions -------------------
 
   const handleCancel = async (bookingId: number) => {
     try {
       await cancelBooking(bookingId);
-      setBookings((prevBookings) => prevBookings.filter((booking) => booking.id !== bookingId));
+      setBookings((prev) => prev.filter((b) => b.bookingId !== bookingId));
     } catch (err: any) {
-      setError(err.message || 'Failed to cancel booking');
+      setError(err.message || "Failed to cancel booking");
     }
   };
+
+  // ------------------- Render -------------------
 
   return (
     <div className="p-6 bg-gray-900 text-white min-h-full relative">
@@ -66,40 +79,40 @@ const ManageBookingsPage: React.FC = () => {
       {error && <p className="text-red-600 text-center">{error}</p>}
 
       {bookings.length === 0 ? (
-        <div>No bookings found.</div>
+        <p className="text-center">No bookings found.</p>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {currentBookings.map((booking) => (
             <div
-              key={booking.id}
-              className={`flex flex-col p-3 rounded-lg ${booking.status === 'CANCELLED' ? 'bg-gray-700' : 'bg-gray-800'}`}
+              key={booking.bookingId}
+              className={`flex flex-col p-3 rounded-lg ${
+                booking.status === "CANCELLED" ? "bg-gray-700" : "bg-gray-800"
+              }`}
             >
-              <h2 className="text-lg font-semibold">Booking ID: {booking.id}</h2>
+              <h2 className="text-lg font-semibold">Booking ID: {booking.bookingId}</h2>
               <p className="text-sm">User: {booking.userFirstName} {booking.userLastName}</p>
               <p className="text-sm">Hotel: {booking.hotelName}</p>
               <p className="text-sm">
-                Check-in: {new Date(booking.checkInDate).toLocaleDateString()} at {booking.hotelCheckInTime?.slice(0, 5)}
+                Check-in: {new Date(booking.checkInDate).toLocaleDateString()} at {booking.hotelCheckInTime?.slice(0,5)}
               </p>
               <p className="text-sm">
-                Check-out: {new Date(booking.checkOutDate).toLocaleDateString()} at {booking.hotelCheckOutTime?.slice(0, 5)}
+                Check-out: {new Date(booking.checkOutDate).toLocaleDateString()} at {booking.hotelCheckOutTime?.slice(0,5)}
               </p>
               <p className="text-sm">
-                <span
-                  className={`font-semibold py-1 px-3 rounded-full inline-block ${
-                    booking.status === 'CONFIRMED'
-                      ? 'bg-green-100 text-green-600'
-                      : booking.status === 'CANCELLED'
-                      ? 'bg-red-100 text-red-600'
-                      : 'bg-yellow-100 text-yellow-600'
-                  }`}
-                >
+                <span className={`font-semibold py-1 px-3 rounded-full inline-block ${
+                  booking.status === "CONFIRMED"
+                    ? "bg-green-100 text-green-600"
+                    : booking.status === "CANCELLED"
+                    ? "bg-red-100 text-red-600"
+                    : "bg-yellow-100 text-yellow-600"
+                }`}>
                   {booking.status}
                 </span>
               </p>
 
-              {booking.status !== 'CANCELLED' && (
+              {booking.status !== "CANCELLED" && (
                 <button
-                  onClick={() => handleCancel(booking.id)}
+                  onClick={() => handleCancel(booking.bookingId)}
                   className="bg-red-500 text-white px-3 py-1 mt-2 rounded transition-all duration-300 transform hover:bg-red-400 hover:scale-105"
                 >
                   Cancel
@@ -110,57 +123,38 @@ const ManageBookingsPage: React.FC = () => {
         </div>
       )}
 
-      {/* Pagination Controls */}
+      {/* ------------------- Pagination ------------------- */}
       {totalPages > 1 && (
-      <div className="flex justify-center mt-6 space-x-2">
-        <button
-          onClick={() => paginate(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded disabled:opacity-50"
-        >
-          Prev
-        </button>
+        <div className="flex justify-center mt-6 space-x-2">
+          <button
+            onClick={prevPage}
+            disabled={currentPage === 1}
+            className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded disabled:opacity-50"
+          >
+            Prev
+          </button>
 
-        {Array.from({ length: totalPages }, (_, i) => i + 1)
-          .filter((page) => {
-            return (
-              page === 1 ||
-              page === totalPages ||
-              Math.abs(page - currentPage) <= 1
-            );
-          })
-          .reduce<(number | string)[]>((acc, page, index, pages) => {
-            if (index > 0 && (page as number) - (pages[index - 1] as number) > 1) {
-              acc.push('...');
-            }
-            acc.push(page);
-            return acc;
-          }, [])
-          .map((item, index) => (
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
             <button
-              key={index}
-              onClick={() => typeof item === 'number' && paginate(item)}
-              disabled={item === '...'}
+              key={page}
+              onClick={() => goToPage(page)}
               className={`px-3 py-1 rounded ${
-                item === currentPage
-                  ? 'bg-blue-600'
-                  : 'bg-gray-700 hover:bg-gray-600'
-              } ${item === '...' && 'cursor-default text-gray-400'}`}
+                page === currentPage ? "bg-blue-600" : "bg-gray-700 hover:bg-gray-600"
+              }`}
             >
-              {item}
+              {page}
             </button>
           ))}
 
-        <button
-          onClick={() => paginate(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
-    )}
-
+          <button
+            onClick={nextPage}
+            disabled={currentPage === totalPages}
+            className="px-3 py-1 bg-gray-700 hover:bg-gray-600 rounded disabled:opacity-50"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };

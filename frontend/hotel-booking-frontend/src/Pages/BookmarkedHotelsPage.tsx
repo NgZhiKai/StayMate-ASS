@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import HotelCard from '../components/Hotel/HotelCard';
-import { getBookmarkedHotelIds } from '../services/bookmarkApi';
-import { fetchHotelById } from '../services/hotelApi';
-import { getReviewsForHotel } from '../services/ratingApi';
+import { getBookmarkedHotelIds } from '../services/User/bookmarkApi';
+import { fetchHotelById } from '../services/Hotel/hotelApi';
+import { getReviewsForHotel } from '../services/Hotel/ratingApi';
 import { HotelData } from '../types/Hotels';
 
 const BookmarkedHotelsPage: React.FC = () => {

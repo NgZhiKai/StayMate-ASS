@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.hotelservice.dto.custom.CustomResponse;
+import com.example.hotelservice.dto.hotel.HotelDestinationDTO;
 import com.example.hotelservice.dto.hotel.HotelRequestDTO;
 import com.example.hotelservice.dto.room.RoomRequestDTO;
 import com.example.hotelservice.entity.hotel.Hotel;
@@ -211,6 +212,24 @@ public class HotelController {
                 new CustomResponse<>("Hotels found successfully", hotels));
     }
 
+    // ---------------- Search Hotels by City and Country ----------------
+    @Operation(summary = "Search hotels by city and country", description = "Search hotels by city and/or country")
+    @GetMapping("/search/location")
+    public ResponseEntity<CustomResponse<List<Hotel>>> searchHotelsByLocation(
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) String country) {
+
+        List<Hotel> hotels = hotelService.findHotelsByCityAndCountry(city, country);
+
+        if (hotels.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(new CustomResponse<>("No hotels found for the specified location", null));
+        }
+
+        return ResponseEntity.ok(
+                new CustomResponse<>("Hotels found successfully", hotels));
+    }
+
     // ---------------- Get Hotel Rooms ----------------
     @Operation(summary = "Get hotel rooms", description = "Get all rooms for a specific hotel")
     @GetMapping("/{id}/rooms")
@@ -229,4 +248,13 @@ public class HotelController {
         return ResponseEntity.ok(
                 hotelService.getNearbyHotels(latitude, longitude));
     }
+
+    // ---------------- Get hotel counts by city/country ----------------
+    @Operation(summary = "Get hotel counts by city and country", description = "Returns a list of city/country with number of hotels")
+    @GetMapping("/destinations")
+    public ResponseEntity<CustomResponse<List<Map<String, Object>>>> getHotelDestinations() {
+        List<Map<String, Object>> destinations = hotelService.getHotelCountsByCityCountry();
+        return ResponseEntity.ok(new CustomResponse<>("Destinations retrieved successfully", destinations));
+    }
+
 }

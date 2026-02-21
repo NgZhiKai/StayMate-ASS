@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { RegisterData } from "../../types/User";
-import MessageModal from "../MessageModal";
+import MessageModal from "../Modal/MessageModal";
 import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 
 interface RegisterFormProps {

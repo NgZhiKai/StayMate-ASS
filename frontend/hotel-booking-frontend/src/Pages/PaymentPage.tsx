@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import MessageModal from "../components/MessageModal";
+import MessageModal from "../components/Modal/MessageModal";
 import { useNotificationContext } from "../contexts/NotificationContext";
-import { getBookingById } from "../services/bookingApi";
-import { fetchHotelById } from "../services/hotelApi";
+import { fetchBookingById } from "../services/Booking/bookingApi";
+import { fetchHotelById } from "../services/Hotel/hotelApi";
 import { createAndProcessPayment, getPaymentsByBookingId } from "../services/paymentApi";
 
 const PaymentPage = () => {
@@ -36,7 +36,7 @@ const PaymentPage = () => {
       }
 
       try {
-        const booking = await getBookingById(bookingId);
+        const booking = await fetchBookingById(bookingId);
         setBookingDetails(booking);
 
         const hotel = await fetchHotelById(booking.hotelId);

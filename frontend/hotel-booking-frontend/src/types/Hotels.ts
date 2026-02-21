@@ -28,4 +28,13 @@ export interface SearchFilters {
     rooms: Room[];
     checkIn: string;
     checkOut: string;
+    country: string;
+    city: string;
+}
+
+export interface Destination {
+  city: string;
+  country: string;
+  count: number;
+  imageUrl: string;
 }
