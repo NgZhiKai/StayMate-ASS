@@ -10,16 +10,17 @@ import org.springframework.stereotype.Service;
 
 import com.example.paymentservice.client.BookingClient;
 import com.example.paymentservice.client.NotificationClient;
-import com.example.paymentservice.repository.PaymentRepository;
-import com.example.paymentservice.entity.PaymentMethod;
-import com.example.paymentservice.entity.PaymentStatus;
-import com.example.paymentservice.entity.Payment;
-import com.example.paymentservice.strategy.CreditCardPaymentStrategy;
-import com.example.paymentservice.strategy.PaypalPaymentStrategy;
-import com.example.paymentservice.strategy.StripePaymentStrategy;
-import com.example.paymentservice.strategy.PaymentContext;
 import com.example.paymentservice.dto.booking.BookingDTO;
 import com.example.paymentservice.dto.booking.UserBookingDTO;
+import com.example.paymentservice.entity.Payment;
+import com.example.paymentservice.entity.PaymentMethod;
+import com.example.paymentservice.entity.PaymentStatus;
+import com.example.paymentservice.repository.PaymentRepository;
+import com.example.paymentservice.strategy.CreditCardPaymentStrategy;
+import com.example.paymentservice.strategy.PaymentContext;
+import com.example.paymentservice.strategy.PaymentStrategy;
+import com.example.paymentservice.strategy.PaypalPaymentStrategy;
+import com.example.paymentservice.strategy.StripePaymentStrategy;
 
 @Service
 public class PaymentService {
@@ -31,8 +32,8 @@ public class PaymentService {
     private final NotificationClient notificationClient;
 
     public PaymentService(PaymentRepository paymentRepository,
-            BookingClient bookingClient,
-            NotificationClient notificationClient) {
+                          BookingClient bookingClient,
+                          NotificationClient notificationClient) {
         this.paymentRepository = paymentRepository;
         this.bookingClient = bookingClient;
         this.notificationClient = notificationClient;
@@ -40,50 +41,25 @@ public class PaymentService {
 
     /**
      * Creates and processes a payment.
-     * Updates booking status via BookingClient and sends notification.
      */
     public Payment createAndProcessPayment(Long bookingId, PaymentMethod paymentMethod, double amount) {
-        if (amount <= 0)
-            throw new IllegalArgumentException("Payment amount must be greater than zero.");
+        validateAmount(amount);
 
-        // Fetch booking DTO via client
-        BookingDTO booking = bookingClient.getBookingById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found with ID: " + bookingId));
+        BookingDTO booking = fetchBooking(bookingId);
 
-        // Check remaining amount
-        double totalPaid = getTotalPaidAmount(bookingId);
-        double remainingAmount = booking.getTotalAmount() - totalPaid;
-        if (amount > remainingAmount) {
-            throw new IllegalArgumentException(
-                    "Payment exceeds remaining balance. Remaining amount: " + remainingAmount);
-        }
+        validatePaymentAmount(booking, amount);
 
-        // 1. Create payment (PENDING)
-        Payment payment = new Payment();
-        payment.setBookingId(booking.getId());
-        payment.setPaymentMethod(paymentMethod);
-        payment.setAmount(amount);
-        payment.setTransactionDate(LocalDateTime.now());
-        payment.setStatus(PaymentStatus.PENDING);
-        payment = paymentRepository.save(payment);
+        Payment payment = createPayment(booking, paymentMethod, amount);
 
-        logger.info("Created payment {} for booking {} with amount ${}", payment.getId(), bookingId, amount);
-
-        // 2. Process payment via strategy
         processPayment(payment.getId(), paymentMethod);
 
-        // 3. Update booking status to CONFIRMED if fully paid
-        double updatedTotalPaid = totalPaid + amount;
-        if (updatedTotalPaid >= booking.getTotalAmount()) {
-            bookingClient.updateBookingStatus(booking.getId(), "CONFIRMED");
-            logger.info("Booking {} fully paid. Status update requested via BookingClient.", booking.getId());
-        }
+        updateBookingIfFullyPaid(booking, amount);
 
         return getPaymentById(payment.getId());
     }
 
     /**
-     * Process a payment using strategy pattern and send notification
+     * Process payment using Strategy pattern and notify user
      */
     public void processPayment(Long paymentId, PaymentMethod paymentMethod) {
         Payment payment = getPaymentById(paymentId);
@@ -93,26 +69,15 @@ public class PaymentService {
         }
 
         PaymentContext context = new PaymentContext();
-        switch (paymentMethod) {
-            case CREDIT_CARD -> context.setPaymentStrategy(new CreditCardPaymentStrategy());
-            case PAYPAL -> context.setPaymentStrategy(new PaypalPaymentStrategy());
-            case STRIPE -> context.setPaymentStrategy(new StripePaymentStrategy());
-            default -> throw new IllegalArgumentException("Unsupported payment method: " + paymentMethod);
-        }
+        context.setPaymentStrategy(getStrategy(paymentMethod));
 
         boolean success = context.executePayment(payment.getAmount());
         payment.setStatus(success ? PaymentStatus.SUCCESS : PaymentStatus.FAILED);
         paymentRepository.save(payment);
+
         logger.info("Payment {} processed with status: {}", paymentId, payment.getStatus());
 
-        // Send notification using BookingDTO
-        BookingDTO booking = bookingClient.getBookingById(payment.getBookingId())
-                .orElseThrow(() -> new RuntimeException("Booking not found with ID: " + payment.getBookingId()));
-
-        notificationClient.sendNotification(
-                booking.getUserId(),
-                "Your payment of $" + payment.getAmount() + " was " + payment.getStatus());
-        logger.info("Notification sent for payment {}", paymentId);
+        sendNotification(payment);
     }
 
     // -------------------- Read Methods --------------------
@@ -147,5 +112,71 @@ public class PaymentService {
 
     public List<Payment> getAllPayments() {
         return paymentRepository.findAll();
+    }
+
+    // -------------------- Helper Methods --------------------
+
+    private void validateAmount(double amount) {
+        if (amount <= 0)
+            throw new IllegalArgumentException("Payment amount must be greater than zero.");
+    }
+
+    private BookingDTO fetchBooking(Long bookingId) {
+        return bookingClient.getBookingById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found with ID: " + bookingId));
+    }
+
+    private void validatePaymentAmount(BookingDTO booking, double amount) {
+        Double totalAmount = booking.getTotalAmount();
+        if (totalAmount == null) {
+            throw new IllegalStateException("Booking total amount is missing for booking ID: " + booking.getId());
+        }
+
+        double remaining = totalAmount - getTotalPaidAmount(booking.getId());
+        if (amount > remaining) {
+            throw new IllegalArgumentException("Payment exceeds remaining balance. Remaining amount: " + remaining);
+        }
+    }
+
+    private Payment createPayment(BookingDTO booking, PaymentMethod method, double amount) {
+        Payment payment = new Payment();
+        payment.setBookingId(booking.getId());
+        payment.setPaymentMethod(method);
+        payment.setAmount(amount);
+        payment.setTransactionDate(LocalDateTime.now());
+        payment.setStatus(PaymentStatus.PENDING);
+
+        payment = paymentRepository.save(payment);
+        logger.info("Created payment {} for booking {} with amount ${}", payment.getId(), booking.getId(), amount);
+
+        return payment;
+    }
+
+    private void updateBookingIfFullyPaid(BookingDTO booking, double amount) {
+        Double totalAmount = booking.getTotalAmount();
+        if (totalAmount == null) return;
+
+        double updatedTotalPaid = getTotalPaidAmount(booking.getId()) + amount;
+        if (updatedTotalPaid >= totalAmount) {
+            bookingClient.updateBookingStatus(booking.getId(), "CONFIRMED");
+            logger.info("Booking {} fully paid. Status update requested via BookingClient.", booking.getId());
+        }
+    }
+
+    private void sendNotification(Payment payment) {
+        BookingDTO booking = fetchBooking(payment.getBookingId());
+        notificationClient.sendNotification(
+                booking.getUserId(),
+                "Your payment of $" + payment.getAmount() + " was " + payment.getStatus());
+        logger.info("Notification sent for payment {}", payment.getId());
+    }
+
+    private PaymentStrategy getStrategy(PaymentMethod method) {
+        return switch (method) {
+            case CREDIT_CARD -> new CreditCardPaymentStrategy();
+            case PAYPAL -> new PaypalPaymentStrategy();
+            case STRIPE -> new StripePaymentStrategy();
+            default -> throw new IllegalArgumentException("Unsupported payment method: " + method);
+        };
     }
 }

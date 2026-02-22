@@ -4,6 +4,11 @@ export interface Payment {
     amount: number;
     status: string;
     transactionDate: string;
-    paymentMethod?: string;
+    paymentMethod: string;
     amountPaid?: number;
+  }
+
+  export interface PaymentRequest {
+    bookingId: number;
+    amount: number;
   }

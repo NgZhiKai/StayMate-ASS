@@ -1,7 +1,7 @@
-// src/components/User/LoginForm.tsx
 import React, { useEffect, useState } from "react";
 import { LoginData } from "../../types/User";
 import MessageModal from "../Modal/MessageModal";
+import InputField from "../Form/InputField";
 
 interface LoginFormProps {
   loginData: LoginData;
@@ -27,8 +27,8 @@ const LoginForm: React.FC<LoginFormProps> = ({
   const closeModal = () => setIsModalOpen(false);
 
   return (
-    <div className="w-full bg-white rounded-2xl p-10">
-      <h2 className="text-2xl font-semibold mb-6 text-gray-800">Welcome Back 👋</h2>
+    <div className="w-full bg-white rounded-3xl p-10 shadow-2xl">
+      <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">Welcome Back 👋</h2>
 
       {error && (
         <MessageModal
@@ -46,36 +46,41 @@ const LoginForm: React.FC<LoginFormProps> = ({
         }}
         className="space-y-5"
       >
-        <input
+        <InputField
+          label="Email"
           type="email"
           name="email"
-          placeholder="Email"
           value={loginData.email}
           onChange={handleChange}
           readOnly={isEmailReadonly}
-          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none ${
-            isEmailReadonly ? "bg-gray-100 cursor-not-allowed" : ""
-          }`} 
-          required
         />
 
-        <input
+        <InputField
+          label="Password"
           type="password"
           name="password"
-          placeholder="Password"
           value={loginData.password}
           onChange={handleChange}
-          className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-indigo-500 outline-none"
-          required
         />
 
         <button
           type="submit"
-          className="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition duration-300 shadow-md"
+          className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg hover:scale-105 transition-transform duration-300"
         >
           Sign In
         </button>
       </form>
+
+      <div className="mt-6 text-center text-gray-400 text-sm">
+        By signing in, you agree to our{" "}
+        <a href="/stayMate/terms" className="underline hover:text-gray-700">
+          Terms of Service
+        </a>{" "}
+        and{" "}
+        <a href="/stayMate/privacy" className="underline hover:text-gray-700">
+          Privacy Policy
+        </a>.
+      </div>
     </div>
   );
 };

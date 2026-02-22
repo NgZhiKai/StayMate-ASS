@@ -9,9 +9,7 @@ const BOOKING_BASE = "/bookings";
 export const createBooking = async (
   bookingData: Booking
 ): Promise<{ message: string; bookings: DetailedBooking[] }> => {
-  console.log("Attempting to create booking with data:", bookingData);
   const response = await bookingApiClient.post(BOOKING_BASE, bookingData);
-
   if (!response.data?.message) {
     throw new Error(response.data?.error || "Failed to create booking");
   }

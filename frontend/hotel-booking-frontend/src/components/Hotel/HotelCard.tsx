@@ -1,116 +1,115 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardMedia, Typography, Box, Rating, Chip, Button } from '@mui/material';
-import { HotelData } from '../../types/Hotels';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from "react";
+import { HotelData } from "../../types/Hotels";
 
 interface HotelCardProps {
   hotel: HotelData;
+  layout?: "grid" | "list";
 }
 
-const HotelCard: React.FC<HotelCardProps> = ({ hotel }) => {
-  const navigate = useNavigate();
-  const defaultImage = 'https://archive.org/download/placeholder-image/placeholder-image.jpg';
-  const minPrice = Math.min(...hotel.rooms.map(room => room.pricePerNight));
-  const [showFullDescription, setShowFullDescription] = useState(false);
+const HotelCard: React.FC<HotelCardProps> = ({
+  hotel,
+  layout = "grid",
+}) => {
+  const [expanded, setExpanded] = useState(false);
 
-  const toggleDescription = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.stopPropagation();
-    setShowFullDescription(prev => !prev);
-  };
+  const defaultImage =
+    "https://archive.org/download/placeholder-image/placeholder-image.jpg";
+
+  const minPrice = Math.min(...hotel.rooms.map((r) => r.pricePerNight));
+  const maxPrice = Math.max(...hotel.rooms.map((r) => r.pricePerNight));
+
+  const description = hotel.description || "No description available.";
 
   return (
-    <Card
-      onClick={() => navigate(`/hotel/${hotel.id}`)}
-      sx={{
-        display: 'flex',
-        cursor: 'pointer',
-        borderRadius: 2,
-        overflow: 'hidden',
-        boxShadow: 2,
-        transition: 'transform 0.2s, box-shadow 0.2s',
-        '&:hover': { transform: 'translateY(-3px)', boxShadow: 4 },
-        height: 160,
-      }}
+    <div
+      className={`group h-full bg-white rounded-2xl border border-gray-100 
+      overflow-hidden transition-all duration-300 
+      hover:shadow-xl hover:-translate-y-1
+      ${
+        layout === "list"
+          ? "flex gap-6 p-4"
+          : "flex flex-col"
+      }`}
     >
-      {/* LEFT: IMAGE */}
-      <Box sx={{ position: 'relative', width: 160, flexShrink: 0 }}>
-        <CardMedia
-          component="img"
-          image={hotel.image ? `data:image/jpeg;base64,${hotel.image}` : defaultImage}
+      {/* Image Section */}
+      <div
+        className={`relative overflow-hidden ${
+          layout === "list"
+            ? "w-44 h-32 flex-shrink-0 rounded-xl"
+            : "w-full aspect-[4/3]"
+        }`}
+      >
+        <img
+          src={
+            hotel.image
+              ? `data:image/jpeg;base64,${hotel.image}`
+              : defaultImage
+          }
           alt={hotel.name}
-          sx={{ height: '100%', width: '100%', objectFit: 'cover' }}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
         />
-        <Chip
-          label={`$${minPrice}/night`}
-          size="small"
-          sx={{
-            position: 'absolute',
-            bottom: 6,
-            left: 6,
-            fontWeight: 'bold',
-            fontSize: '0.65rem',
-            backgroundColor: 'rgba(33, 150, 243, 0.85)',
-            color: '#fff',
-            height: 20,
-            px: 0.5
-          }}
-        />
-      </Box>
 
-      {/* RIGHT: CONTENT */}
-      <CardContent sx={{ flex: 1, p: 1.5, display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-        <Box>
-          <Typography variant="subtitle2" fontWeight={500}>
+        {/* Rating Badge */}
+        {hotel.averageRating !== undefined && hotel.averageRating !== null && (
+          <div className="absolute top-3 right-3 z-10 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-xs font-semibold shadow">
+            ⭐ {hotel.averageRating.toFixed(1)}
+          </div>
+        )}
+      </div>
+
+      {/* Content */}
+      <div
+        className={`flex flex-col flex-1 ${
+          layout === "grid" ? "p-4" : ""
+        }`}
+      >
+        <div>
+          <h3 className="font-semibold text-lg text-gray-900 leading-snug">
             {hotel.name}
-          </Typography>
+          </h3>
 
-          {/* Address - wraps nicely */}
-          <Typography variant="body2" color="text.secondary" sx={{ fontSize: '0.75rem', mt: 0.25, lineHeight: 1.2 }}>
+          <p className="text-sm text-gray-500 mt-1">
             {hotel.address}
-          </Typography>
+          </p>
 
-          {/* Rating */}
-          <Box display="flex" alignItems="center" gap={0.5} mt={0.5}>
-            <Rating value={hotel.averageRating || 0} readOnly precision={0.1} size="small" />
-            <Typography variant="caption" color="text.secondary">
-              {hotel.averageRating?.toFixed(1) || '0.0'}
-            </Typography>
-          </Box>
-
-          {/* Description */}
-          {hotel.description && (
+          {layout === "grid" ? (
+            <p className="text-sm text-gray-600 mt-3 leading-relaxed line-clamp-3">
+              {description}
+            </p>
+          ) : (
             <>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{
-                  mt: 0.5,
-                  fontSize: '0.7rem',
-                  lineHeight: 1.2,
-                  display: '-webkit-box',
-                  WebkitLineClamp: showFullDescription ? 3 : 2,
-                  WebkitBoxOrient: 'vertical',
-                  overflow: 'hidden',
-                  textOverflow: 'ellipsis'
-                }}
+              <p
+                className={`text-sm text-gray-600 mt-3 leading-relaxed ${
+                  expanded ? "" : "line-clamp-3"
+                }`}
               >
-                {hotel.description}
-              </Typography>
+                {description}
+              </p>
 
-              {hotel.description.length > 80 && (
-                <Button
-                  onClick={toggleDescription}
-                  size="small"
-                  sx={{ textTransform: 'none', p: 0, mt: 0.25, fontSize: '0.65rem', color: 'primary.main' }}
+              {description.length > 120 && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setExpanded(!expanded);
+                  }}
+                  className="text-sm text-pink-600 font-medium mt-1 hover:underline"
                 >
-                  {showFullDescription ? 'Show less' : 'Show more'}
-                </Button>
+                  {expanded ? "Show less" : "Show more"}
+                </button>
               )}
             </>
           )}
-        </Box>
-      </CardContent>
-    </Card>
+        </div>
+
+        {/* Price */}
+        <div className="mt-auto pt-4 text-base font-semibold text-gray-900">
+          ${minPrice} – ${maxPrice}
+          <span className="text-gray-500 font-normal text-sm">
+            {" "} / night
+          </span>
+        </div>
+      </div>
+    </div>
   );
 };
 

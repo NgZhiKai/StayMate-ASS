@@ -1,25 +1,36 @@
 package com.example.notificationservice.client;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 public class UserClient {
 
     private final RestTemplate restTemplate;
-    private static final String USER_SERVICE_URL = "http://localhost:8081/users"; // replace with your UserService URL
+    private final String userServiceUrl;
 
-    public UserClient(RestTemplate restTemplate) {
+    public UserClient(RestTemplate restTemplate, @Value("${user.service.url}") String userServiceUrl) {
         this.restTemplate = restTemplate;
+        this.userServiceUrl = userServiceUrl;
     }
 
     public List<Long> getAllUserIds() {
-        UsersResponse response = restTemplate.getForObject(USER_SERVICE_URL, UsersResponse.class);
+        String url = UriComponentsBuilder.fromHttpUrl(userServiceUrl)
+                .path("/users")
+                .toUriString();
+
+        UsersResponse response = restTemplate.getForObject(url, UsersResponse.class);
+
+        if (response == null || response.getData() == null) {
+            return List.of(); // return empty list instead of null to avoid NPE
+        }
+
         return response.getData().stream()
-                       .map(UsersResponse.UserDTO::getId)
-                       .collect(Collectors.toList());
+                .map(UsersResponse.UserDTO::getId)
+                .toList();
     }
 }

@@ -20,7 +20,7 @@ const Sidebar: React.FC<{ isOpen: boolean; toggleSidebar: () => void }> = ({
 
   return (
     <div
-      className={`fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-gradient-to-b from-indigo-600 via-purple-600 to-pink-500 text-white p-6 shadow-2xl rounded-tr-3xl rounded-br-3xl transition-transform duration-300 z-40
+      className={`fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 bg-gradient-to-b from-indigo-600 via-purple-600 to-pink-500 text-white p-6 shadow-2xl rounded-tr-3xl rounded-br-3xl transition-transform duration-300 z-40 select-none
       ${isOpen ? "translate-x-0" : "-translate-x-64"}`}
     >
       <nav className="flex flex-col space-y-4">
@@ -52,12 +52,6 @@ const Sidebar: React.FC<{ isOpen: boolean; toggleSidebar: () => void }> = ({
               <Hotel size={20} /> Bookmarked Hotels
             </Link>
             <Link
-              to="/bookings"
-              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:opacity-90 shadow-md transition-all duration-300"
-            >
-              <Calendar size={20} /> My Bookings
-            </Link>
-            <Link
               to="/my-payments"
               className="flex items-center gap-3 px-4 py-3 rounded-xl hover:opacity-90 shadow-md transition-all duration-300"
             >
@@ -71,13 +65,6 @@ const Sidebar: React.FC<{ isOpen: boolean; toggleSidebar: () => void }> = ({
         {/* Admin Links */}
         {isLoggedIn && role === "admin" && (
           <div className="flex flex-col space-y-2">
-            <Link
-              to="/bookings"
-              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:opacity-90 shadow-md transition-all duration-300"
-            >
-              <Calendar size={20} /> My Bookings
-            </Link>
-
             {/* Admin Dropdown */}
             <div className="flex flex-col">
               <button

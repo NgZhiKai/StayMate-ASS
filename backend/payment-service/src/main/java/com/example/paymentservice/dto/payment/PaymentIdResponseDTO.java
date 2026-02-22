@@ -3,12 +3,14 @@ package com.example.paymentservice.dto.payment;
 import java.time.LocalDateTime;
 
 import com.example.paymentservice.entity.Payment;
+import com.example.paymentservice.entity.PaymentMethod;
 import com.example.paymentservice.entity.PaymentStatus;
 
 public class PaymentIdResponseDTO {
     private Long paymentId;
     private Long bookingId;
     private double amountPaid;
+    private PaymentMethod paymentMethod;
     private PaymentStatus paymentStatus;
     private LocalDateTime paymentDateTime;
 
@@ -16,6 +18,7 @@ public class PaymentIdResponseDTO {
         this.paymentId = payment.getId();
         this.bookingId = payment.getBookingId();
         this.amountPaid = payment.getAmount();
+        this.paymentMethod = payment.getPaymentMethod();
         this.paymentStatus = payment.getStatus();
         this.paymentDateTime = payment.getTransactionDate();
     }
@@ -59,4 +62,13 @@ public class PaymentIdResponseDTO {
     public void setPaymentDateTime(LocalDateTime paymentDateTime) {
         this.paymentDateTime = paymentDateTime;
     }
+
+    public PaymentMethod getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(PaymentMethod paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
 }

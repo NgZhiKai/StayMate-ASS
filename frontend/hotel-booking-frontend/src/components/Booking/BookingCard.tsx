@@ -1,106 +1,80 @@
 import React from "react";
-import { DetailedBooking } from "../../types/Booking";
-import { CreditCard, XCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-interface BookingCardProps {
-  booking: DetailedBooking;
+// Lightweight type for display
+export interface BookingCardData {
+  bookingId: number;
+  roomType: string;
+  status: "PENDING" | "CONFIRMED" | "CANCELLED";
   hotelName: string;
-  hotelCheckIn: string;
-  hotelCheckOut: string;
-  onCancelBooking: (bookingId: number) => void;
-  onMakePayment: (bookingId: number) => void;
+  checkInDate: string;
+  checkOutDate: string;
 }
 
-const formatDate = (date: string) => {
-  const d = new Date(date);
-  const day = String(d.getDate()).padStart(2, "0");
-  const month = d.toLocaleString("default", { month: "short" });
-  const year = d.getFullYear();
-  return `${day} ${month} ${year}`;
+// Status styles
+export const statusStyles = {
+  PENDING: {
+    bg: "bg-gradient-to-r from-yellow-100 via-yellow-200 to-yellow-100",
+    text: "text-yellow-700",
+  },
+  CONFIRMED: {
+    bg: "bg-gradient-to-r from-green-100 via-green-200 to-green-100",
+    text: "text-green-700",
+  },
+  CANCELLED: {
+    bg: "bg-gradient-to-r from-red-100 via-red-200 to-red-100 line-through",
+    text: "text-red-700",
+  },
 };
 
-const BookingCard: React.FC<BookingCardProps> = ({
-  booking,
-  hotelName,
-  hotelCheckIn,
-  hotelCheckOut,
-  onCancelBooking,
-  onMakePayment,
-}) => {
-  const handleCancel = () => {
-    onCancelBooking(booking.bookingId);
-  };
+interface Props {
+  booking: BookingCardData;
+  loadingIds: number[];
+  onCancel: (id: number) => void;
+}
 
-  const handlePayment = () => {
-    onMakePayment(booking.bookingId);
-  };
-
-  const isPending = booking.status === "PENDING";
+const BookingCard: React.FC<Props> = ({ booking, loadingIds, onCancel }) => {
+  const navigate = useNavigate();
 
   return (
     <div
-      className={`bg-gray-800 rounded-xl p-4 w-full max-w-md mx-auto text-sm text-gray-300 shadow hover:shadow-lg transition-all duration-200 ${
-        booking.status === "CANCELLED" ? "opacity-60 cursor-not-allowed" : ""
-      }`}
+      className={`p-4 rounded-xl shadow-md hover:shadow-lg transition flex justify-between items-center ${statusStyles[booking.status].bg}`}
     >
-      {/* Header: Hotel Name + Status */}
-      <div className="flex justify-between items-center mb-3">
-        <h3 className="text-lg font-semibold text-white truncate">
-          {hotelName || "Loading..."}
-        </h3>
-        <span
-          className={`text-xs font-semibold px-2 py-1 rounded-full ${
-            booking.status === "CONFIRMED"
-              ? "bg-green-200 text-green-800"
-              : booking.status === "CANCELLED"
-              ? "bg-red-200 text-red-800"
-              : "bg-yellow-200 text-yellow-800"
-          }`}
-        >
+      <div>
+        <p className="font-semibold text-gray-800">{booking.roomType}</p>
+        <p className="text-xs text-gray-500">
+          {new Date(booking.checkInDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })} →{" "}
+          {new Date(booking.checkOutDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
+        </p>
+        <p className={`mt-1 text-sm font-semibold ${statusStyles[booking.status].text}`}>
           {booking.status}
-        </span>
-      </div>
-  
-      {/* Booking Info */}
-      <div className="space-y-1.5 mb-2 text-sm">
-        <p>
-          <span className="font-medium text-gray-400">Check-in:</span>{" "}
-          {formatDate(booking.checkInDate)}{" "}
-          <span className="text-gray-500">{hotelCheckIn}</span>
-        </p>
-        <p>
-          <span className="font-medium text-gray-400">Check-out:</span>{" "}
-          {formatDate(booking.checkOutDate)}{" "}
-          <span className="text-gray-500">{hotelCheckOut}</span>
-        </p>
-        <p>
-          <span className="font-medium text-gray-400">Room:</span>{" "}
-          {booking.roomType}
         </p>
       </div>
-  
-      {/* Actions */}
-      {isPending && (
-        <div className="flex justify-end gap-2 mt-4">
+
+      <div className="flex gap-2">
+        {booking.status !== "CANCELLED" && (
           <button
-            onClick={handlePayment}
-            className="flex items-center gap-1 bg-blue-600 hover:bg-blue-500 text-white text-xs px-3 py-1.5 rounded-md transition"
+            onClick={() => onCancel(booking.bookingId)}
+            disabled={loadingIds.includes(booking.bookingId)}
+            className="px-3 py-1 bg-gradient-to-r from-red-500 via-pink-500 to-purple-500 text-white rounded-md hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <CreditCard size={14} />
-            Pay
+            {loadingIds.includes(booking.bookingId) ? "Cancelling..." : "Cancel"}
           </button>
+        )}
+
+        {booking.status === "PENDING" && (
           <button
-            onClick={handleCancel}
-            className="flex items-center gap-1 bg-red-600 hover:bg-red-500 text-white text-xs px-3 py-1.5 rounded-md transition"
+            onClick={() =>
+              navigate("/select-payment", { state: { bookingId: booking.bookingId, hotelName: booking.hotelName } })
+            }
+            className="px-3 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-md hover:opacity-90 transition"
           >
-            <XCircle size={14} />
-            Cancel
+            Pay Now
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
-  
 };
 
 export default BookingCard;

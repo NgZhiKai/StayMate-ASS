@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CreditCard } from "lucide-react";
-import { getAllPayments } from "../services/paymentApi";
+import { getAllPayments } from "../services/Payment/paymentApi";
 import { Payment } from "../types/Payment";
 import { fetchBookingById } from "../services/Booking/bookingApi";
 

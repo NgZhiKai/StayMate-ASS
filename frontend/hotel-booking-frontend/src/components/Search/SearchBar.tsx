@@ -12,6 +12,7 @@ interface SearchBarProps {
   onSearch: () => void;
   placeholder?: string;
   buttonLabel?: string;
+  className?: string;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({

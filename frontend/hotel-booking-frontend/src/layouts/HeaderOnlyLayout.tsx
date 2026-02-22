@@ -1,6 +1,6 @@
 // layouts/HeaderOnlyLayout.tsx
 import React from "react";
-import Header from "../components/Misc/Header";
+import Header from "../components/Header/Header";
 
 interface HeaderOnlyLayoutProps {
   children: React.ReactNode;

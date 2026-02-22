@@ -1,147 +1,36 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import CreateBookingForm from "../../components/Booking/CreateBookingForm";
 import { useNotificationContext } from "../../contexts/NotificationContext";
-import { createBooking, searchBookingsByDate } from "../../services/Booking/bookingApi";
-import { getHotelRooms } from "../../services/Hotel/roomApi";
-import { Booking } from "../../types/Booking";
-import { Room } from "../../types/Room";
+import { useBookingContext } from "../../contexts/BookingContext";
+
+import CreateBookingForm from "../../components/Booking/CreateBookingForm";
+import AnimatedModal from "../../components/Modal/Modal";
+import useBookingLogic from "../../hooks/useBookingLogic";
 
 const CreateBookingPage: React.FC = () => {
   const navigate = useNavigate();
   const { hotelId } = useParams<{ hotelId: string }>();
   const { refreshNotifications } = useNotificationContext();
+  const { refreshBookings } = useBookingContext();
   const userId = Number(sessionStorage.getItem("userId") || 0);
 
-  const [bookingData, setBookingData] = useState<Booking>({
-    userId,
-    hotelId: hotelId ? Number(hotelId) : 0,
-    roomIds: [],
-    checkInDate: "",
-    checkOutDate: "",
-    totalAmount: 0,
+  const {
+    bookingData,
+    availableRooms,
+    isSubmitting,
+    validationErrors,
+    handleInputChange,
+    handleRoomSelect,
+    handleSubmit,
+    showModal,
+    modalMessage,
+    handleModalClose,
+    showLoginPrompt,
+  } = useBookingLogic(userId, Number(hotelId), refreshNotifications, async () => {
+    // Refresh booking context after success
+    await refreshBookings();
+    navigate("/"); // go to home page after booking
   });
-  const [validationErrors, setValidationErrors] = useState<{ [key: string]: string }>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [allRooms, setAllRooms] = useState<Room[]>([]);
-  const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
-  const [showLoginPrompt, setShowLoginPrompt] = useState(!userId);
-  const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState("");
-
-  useEffect(() => {
-    if (!hotelId) return;
-
-    const fetchRooms = async () => {
-      try {
-        const roomsData = await getHotelRooms(Number(hotelId));
-        const mappedRooms: Room[] = roomsData.map((r: any) => ({
-          room_type: r.room_type || r.roomType || "Unknown",
-          id: { hotelId: r.hotelId ?? r.id?.hotelId, roomId: r.roomId ?? r.id?.roomId },
-          pricePerNight: r.pricePerNight ?? r.price,
-          maxOccupancy: r.maxOccupancy ?? r.capacity ?? 2,
-          status: r.status ?? "AVAILABLE",
-        }));
-
-        setAllRooms(mappedRooms);
-        setAvailableRooms(mappedRooms);
-      } catch (err) {
-        console.error("Failed to fetch rooms:", err);
-      }
-    };
-
-    fetchRooms();
-  }, [hotelId]);
-
-  useEffect(() => {
-    const fetchAvailableRooms = async () => {
-      const { checkInDate, checkOutDate } = bookingData;
-      if (!checkInDate || !checkOutDate || allRooms.length === 0) return;
-
-      try {
-        const bookings = await searchBookingsByDate(checkInDate, checkOutDate);
-        const bookedRoomIds = bookings
-          .filter((b) => b.hotelId === Number(hotelId))
-          .map((b) => b.roomId);
-
-        const available = allRooms.filter((r) => !bookedRoomIds.includes(r.id.roomId));
-        setAvailableRooms(available);
-      } catch {
-        setAvailableRooms(allRooms);
-      }
-    };
-
-    fetchAvailableRooms();
-  }, [bookingData.checkInDate, bookingData.checkOutDate, allRooms, hotelId]);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setBookingData((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleRoomSelect = (roomType: string, selectedCount: number) => {
-    setBookingData((prev) => {
-      const remainingRoomIds = prev.roomIds.filter((id) => {
-        const room = availableRooms.find((r) => r.id.roomId === id);
-        return room?.room_type !== roomType;
-      });
-
-      const roomsOfType = availableRooms.filter((r) => r.room_type === roomType);
-      const selectedIds = roomsOfType.slice(0, selectedCount).map((r) => r.id.roomId);
-
-      const updatedRoomIds = [...remainingRoomIds, ...selectedIds];
-
-      const nights =
-        prev.checkInDate && prev.checkOutDate
-          ? Math.max(
-              1,
-              (new Date(prev.checkOutDate).getTime() - new Date(prev.checkInDate).getTime()) /
-                (1000 * 60 * 60 * 24)
-            )
-          : 1;
-
-      const total = updatedRoomIds.reduce((sum, id) => {
-        const room = availableRooms.find((r) => r.id.roomId === id);
-        return room ? sum + room.pricePerNight * nights : sum;
-      }, 0);
-
-      return { ...prev, roomIds: updatedRoomIds, totalAmount: total };
-    });
-  };
-
-  const validateForm = () => {
-    const errors: { [key: string]: string } = {};
-    if (!bookingData.roomIds.length) errors.roomIds = "At least one room must be selected.";
-    if (!bookingData.checkInDate) errors.checkInDate = "Check-in date is required.";
-    if (!bookingData.checkOutDate) errors.checkOutDate = "Check-out date is required.";
-    if (bookingData.checkInDate && bookingData.checkOutDate) {
-      const checkIn = new Date(bookingData.checkInDate);
-      const checkOut = new Date(bookingData.checkOutDate);
-      if (checkOut <= checkIn) errors.checkOutDate = "Check-out must be after check-in.";
-    }
-    return errors;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    const errors = validateForm();
-    if (Object.keys(errors).length) return setValidationErrors(errors);
-
-    setIsSubmitting(true);
-    try {
-      await createBooking(bookingData);
-      refreshNotifications();
-      setModalMessage("Booking created successfully!");
-      setShowModal(true);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleModalClose = () => {
-    setShowModal(false);
-    navigate("/bookings");
-  };
 
   if (showLoginPrompt)
     return (
@@ -151,36 +40,28 @@ const CreateBookingPage: React.FC = () => {
     );
 
   return (
-  <div className="bg-gradient-to-br from-purple-100 via-pink-100 to-red-100 min-h-screen select-none pt-24 pb-12">
-    {/* pt-24 = space for fixed header if any */}
-    <div className="max-w-3xl mx-auto px-6">
-      <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8">
-        <CreateBookingForm
-          bookingData={bookingData}
-          rooms={availableRooms}
-          isSubmitting={isSubmitting}
-          errors={validationErrors}
-          handleInputChange={handleInputChange}
-          handleRoomSelect={handleRoomSelect}
-          handleSubmit={handleSubmit}
-        />
-      </div>
-    </div>
-
-    {showModal && (
-      <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-        <div className="bg-white p-6 rounded-lg shadow-lg text-center max-w-sm">
-          <p className="text-gray-900 font-semibold mb-4">{modalMessage}</p>
-          <button
-            className="px-4 py-2 bg-gradient-to-r from-green-400 to-blue-500 text-white rounded-lg hover:opacity-90"
-            onClick={handleModalClose}
-          >
-            OK
-          </button>
+    <div className="bg-gradient-to-br from-purple-100 via-pink-100 to-red-100 min-h-screen select-none pt-24 pb-12">
+      <div className="max-w-3xl mx-auto px-6">
+        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8">
+          <CreateBookingForm
+            bookingData={bookingData}
+            rooms={availableRooms}
+            isSubmitting={isSubmitting}
+            errors={validationErrors}
+            handleInputChange={handleInputChange}
+            handleRoomSelect={handleRoomSelect}
+            handleSubmit={handleSubmit}
+          />
         </div>
       </div>
-    )}
-  </div>
+
+      {showModal && (
+        <AnimatedModal
+          message={modalMessage}
+          onClose={handleModalClose}
+        />
+      )}
+    </div>
   );
 };
 

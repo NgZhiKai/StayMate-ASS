@@ -8,6 +8,7 @@ public class UserBookingDTO {
         private Long roomId;
         private LocalDate checkInDate;
         private LocalDate checkOutDate;
+        private String roomType;
         private Double totalAmount;
         private String status;
 
@@ -67,6 +68,12 @@ public class UserBookingDTO {
                 this.status = status;
         }
 
-        // ---------------- Getters & Setters ----------------
+        public String getRoomType() {
+                return roomType;
+        }
+
+        public void setRoomType(String roomType) {
+                this.roomType = roomType;
+        }
 
 }

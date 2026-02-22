@@ -12,10 +12,11 @@ type HotelDetailsProps = {
   formatToAMPM: (timeString: string) => string;
   renderStars: (rating: number) => React.ReactNode;
   isBookmarked: boolean;
+  canBookmark: boolean; // whether user can bookmark
   handleBookmarkToggle: () => void;
   handleDeleteHotel: () => void;
   setIsReviewModalOpen: (open: boolean) => void;
-  userId: number;
+  userId: number | null; // allow null for guests
 };
 
 const HotelDetails: React.FC<HotelDetailsProps> = ({
@@ -26,6 +27,7 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({
   formatToAMPM,
   renderStars,
   isBookmarked,
+  canBookmark,
   handleBookmarkToggle,
   handleDeleteHotel,
   setIsReviewModalOpen,
@@ -60,9 +62,14 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({
               <p className="mt-2 text-lg opacity-90">{hotel.address}</p>
             </div>
             <div className="flex items-center gap-4">
-              <button onClick={handleBookmarkToggle} className="text-white text-2xl hover:scale-110 transition">
+              <button
+                onClick={canBookmark ? handleBookmarkToggle : undefined}
+                className={`text-2xl hover:scale-110 transition ${canBookmark ? "text-white" : "text-gray-400 cursor-not-allowed"}`}
+                title={canBookmark ? "Bookmark" : "Login to bookmark"}
+              >
                 {isBookmarked ? <FaBookmark /> : <FaRegBookmark />}
               </button>
+
               {userId && !isAdmin && (
                 <button
                   onClick={handleBookClick}
