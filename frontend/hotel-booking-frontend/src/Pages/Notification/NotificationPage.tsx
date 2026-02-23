@@ -1,45 +1,69 @@
-import React, { useState } from "react";
+import React from "react";
+import {
+  NotificationHeader,
+  NotificationLayout,
+  NotificationList,
+  NotificationPagination,
+} from "../../components/Notification";
 import { useNotificationContext } from "../../contexts/NotificationContext";
-import NotificationHeader from "../../components/Notifications/NotificationHeader";
-import NotificationList from "../../components/Notifications/NotificationList";
-import Pagination from "../../components/Notifications/Pagination";
+import { useMarkNotification, useSmartPagination } from "../../hooks";
+import { Notification } from "../../types/Notification";
 
 const ITEMS_PER_PAGE = 6;
 
 const NotificationsPage: React.FC = () => {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [markingId, setMarkingId] = useState<number | null>(null);
+  const { notifications, loading, error, markAsRead, markAllAsRead } =
+    useNotificationContext();
 
-  const { notifications, loading, error, markAsRead, markAllAsRead } = useNotificationContext();
+  // sort notifications by read + date
+  const sortedNotifications: Notification[] = [...notifications].sort(
+    (a, b) => {
+      if (a.isread === b.isread) {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+      return a.isread ? 1 : -1;
+    }
+  );
 
-  const handleMarkAsRead = async (id: number) => {
-    setMarkingId(id);
-    await markAsRead(id);
-    setMarkingId(null);
-  };
+  const { currentPage, totalPages, paginatedData, goToPage, pages } =
+    useSmartPagination<Notification>({
+      data: sortedNotifications,
+      itemsPerPage: ITEMS_PER_PAGE,
+    });
 
-  const sortedNotifications = [...notifications].sort((a, b) => {
-    if (a.isread === b.isread) return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-    return a.isread ? 1 : -1;
-  });
+  const { markingId, handleMarkAsRead } = useMarkNotification(markAsRead);
 
-  const totalPages = Math.ceil(sortedNotifications.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentNotifications = sortedNotifications.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-full text-gray-400">
+        Loading notifications...
+      </div>
+    );
 
-  const goToPage = (page: number) => {
-    if (page >= 1 && page <= totalPages) setCurrentPage(page);
-  };
-
-  if (loading) return <div className="flex justify-center items-center h-full text-gray-400">Loading notifications...</div>;
-  if (error) return <div className="flex justify-center items-center h-full text-red-500">{error}</div>;
+  if (error)
+    return (
+      <div className="flex justify-center items-center h-full text-red-500">
+        {error}
+      </div>
+    );
 
   return (
-    <div className="p-6 min-h-full bg-gray-50 select-none">
+    <NotificationLayout>
       <NotificationHeader onMarkAll={markAllAsRead} />
-      <NotificationList notifications={currentNotifications} onMarkAsRead={handleMarkAsRead} markingId={markingId} />
-      <Pagination currentPage={currentPage} totalPages={totalPages} goToPage={goToPage} />
-    </div>
+      <NotificationList
+        key={currentPage} // triggers animation
+        notifications={paginatedData}
+        onMarkAsRead={handleMarkAsRead}
+        markingId={markingId}
+        className="animate-fadeIn"
+      />
+      <NotificationPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        pages={pages}
+        goToPage={goToPage}
+      />
+    </NotificationLayout>
   );
 };
 

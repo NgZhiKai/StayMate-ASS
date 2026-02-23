@@ -1,10 +1,6 @@
-import React, { createContext, useState, useEffect, useContext, useCallback, useMemo } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { notificationApi } from "../services/Notification";
 import { Notification } from "../types/Notification";
-import { 
-  fetchNotificationsByUserId, 
-  markNotificationAsRead, 
-  markAllNotificationsAsRead 
-} from "../services/Notification/notificationApi";
 
 interface NotificationContextType {
   notifications: Notification[];
@@ -45,8 +41,8 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     setError(null);
 
     try {
-      const data = await fetchNotificationsByUserId(userId);
-      setNotifications(data);
+      const data = await notificationApi.fetchByUserId(userId);
+      setNotifications(data.notifications);
     } catch (err: any) {
       setNotifications([]);
       setError(err.message || "Failed to fetch notifications.");
@@ -61,7 +57,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     if (!userId) throw new Error("User not logged in.");
 
     try {
-      await markNotificationAsRead(notificationId);
+      await notificationApi.markAsRead(notificationId);
       await refreshNotifications();
     } catch (err: any) {
       setError(err.message || "Failed to mark notification as read.");
@@ -74,7 +70,7 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     if (!userId) throw new Error("User not logged in.");
 
     try {
-      await markAllNotificationsAsRead(userId);
+      await notificationApi.markAllAsRead(userId);
       await refreshNotifications();
     } catch (err: any) {
       setError(err.message || "Failed to mark all notifications as read.");
