@@ -1,44 +1,39 @@
 import React from "react";
 
 interface InputFieldProps {
-  label: string;
+  label?: string;
   type: string;
+  name: string;
   value: string;
-  name?: string;
-  placeholder?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   readOnly?: boolean;
+  placeholder?: string;
+  required?: boolean;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
   label,
   type,
-  value,
   name,
-  placeholder = "",
+  value,
   onChange,
   readOnly = false,
+  placeholder,
+  required = false,
 }) => {
   return (
-    <div className="relative w-full">
+    <div className="flex flex-col">
+      {label && <label className="mb-1 font-medium text-gray-700">{label}</label>}
       <input
         type={type}
         name={name}
         value={value}
         onChange={onChange}
-        placeholder=" "
         readOnly={readOnly}
-        className={`peer w-full px-4 pt-5 pb-2 rounded-xl border text-gray-800 placeholder-transparent focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition
-          ${readOnly ? "bg-gray-100 cursor-not-allowed" : "bg-white"}`}
-        required
+        placeholder={placeholder}
+        required={required}
+        className="px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
       />
-      <label
-        className="absolute left-4 top-2.5 text-gray-400 text-sm transition-all
-          peer-placeholder-shown:top-5 peer-placeholder-shown:text-gray-400 peer-placeholder-shown:text-base
-          peer-focus:top-2.5 peer-focus:text-indigo-500 peer-focus:text-sm"
-      >
-        {label}
-      </label>
     </div>
   );
 };

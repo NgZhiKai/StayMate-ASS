@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { deleteHotel } from "../services/Hotel/hotelApi";
-import { getUserInfo } from "../services/User/userApi";
+import { userApi } from "../services/User";
 
 export const useHotelActions = (hotelId: number | null, setReviews: any, setUserInfo: any) => {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ export const useHotelActions = (hotelId: number | null, setReviews: any, setUser
   const handleReviewSubmitted = async (review: any) => {
     if (!review) return;
     setReviews((prev: any) => [...prev, review]);
-    const user = await getUserInfo(String(review.userId));
+    const user = await userApi.getUserInfo(String(review.userId));
     setUserInfo((prev: any) => ({ ...prev, [review.userId]: user.user }));
   };
 

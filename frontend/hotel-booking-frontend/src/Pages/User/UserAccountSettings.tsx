@@ -4,7 +4,7 @@ import ConfirmationModal from "../../components/Modal/ConfirmationModal";
 import MessageModal from "../../components/Modal/MessageModal";
 import AccountSettingsForm from "../../components/User/AccountSettingsForm";
 import { AuthContext } from "../../contexts/AuthContext";
-import { deleteUser, getUserInfo, updateUser } from "../../services/User/userApi";
+import { userApi } from "../../services/User";
 
 const UserAccountSettings = () => {
   const [userInfo, setUserInfo] = useState({
@@ -40,7 +40,7 @@ const UserAccountSettings = () => {
       const userId = sessionStorage.getItem("userId");
       if (!userId) throw new Error("User not logged in.");
 
-      const { user } = await getUserInfo(userId);
+      const { user } = await userApi.getUserInfo(userId);
       setUserInfo({
         firstName: user.firstName,
         lastName: user.lastName,
@@ -69,7 +69,7 @@ const UserAccountSettings = () => {
       const userId = sessionStorage.getItem("userId");
       if (!userId) throw new Error("User not logged in.");
 
-      await updateUser(userId, { ...userInfo, firstName, lastName, phoneNumber });
+      await userApi.updateUser(userId, { ...userInfo, firstName, lastName, phoneNumber });
       setUserInfo((prev) => ({ ...prev, firstName, lastName, phoneNumber }));
 
       setMessageModal({ isOpen: true, message: "Name and phone updated successfully!", type: "success" });
@@ -87,7 +87,7 @@ const UserAccountSettings = () => {
         const userId = sessionStorage.getItem("userId");
         if (!userId) throw new Error("User not logged in.");
 
-        await updateUser(userId, { ...userInfo, email });
+        await userApi.updateUser(userId, { ...userInfo, email });
         setUserInfo((prev) => ({ ...prev, email }));
         setNewEmail("");
 
@@ -115,7 +115,7 @@ const UserAccountSettings = () => {
         const userId = sessionStorage.getItem("userId");
         if (!userId) throw new Error("User not logged in.");
 
-        await updateUser(userId, { ...userInfo, password: passwords.newPassword } as any);
+        await userApi.updateUser(userId, { ...userInfo, password: passwords.newPassword } as any);
 
         setPasswords({ currentPassword: "", newPassword: "" });
         setMessageModal({ isOpen: true, message: "Password changed successfully!", type: "success" });
@@ -138,7 +138,7 @@ const UserAccountSettings = () => {
         const userId = sessionStorage.getItem("userId");
         if (!userId) throw new Error("User not logged in.");
 
-        const response = await deleteUser(userId);
+        const response = await userApi.deleteUser(userId);
         setMessageModal({ isOpen: true, message: response.message, type: "success" });
         logout();
         navigate("/");

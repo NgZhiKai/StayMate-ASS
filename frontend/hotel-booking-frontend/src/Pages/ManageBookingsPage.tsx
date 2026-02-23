@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { cancelBooking, fetchBookings } from "../services/Booking/bookingApi";
 import { fetchHotelById } from "../services/Hotel/hotelApi";
-import { getUserInfo } from "../services/User/userApi";
+import { userApi } from "../services/User";
 import { DetailedBooking } from "../types/Booking";
 
 const ITEMS_PER_PAGE = 8;
@@ -21,7 +21,7 @@ const ManageBookingsPage: React.FC = () => {
       const detailedBookings = await Promise.all(
         result.map(async (booking) => {
           const [userInfo, hotelInfo] = await Promise.all([
-            getUserInfo(String(booking.userId)),
+            userApi.getUserInfo(String(booking.userId)),
             fetchHotelById(booking.hotelId),
           ]);
 

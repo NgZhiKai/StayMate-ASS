@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.userservice.dto.CustomResponse;
+import com.example.userservice.dto.ResetPasswordRequestDTO;
 import com.example.userservice.dto.UserCreationRequestDTO;
 import com.example.userservice.dto.UserLoginRequestDTO;
 import com.example.userservice.dto.UserRequestUpdateDto;
@@ -176,6 +178,41 @@ public class UserController {
             userService.deleteUser(id);
             return ResponseEntity.ok(new CustomResponse<>("User deleted successfully", null));
         } catch (ResourceNotFoundException | InvalidUserException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new CustomResponse<>(ex.getMessage(), null));
+        }
+    }
+
+    // ---------------- Forgot Password ----------------
+    @PostMapping("/forgot-password")
+    public ResponseEntity<CustomResponse<Void>> forgotPassword(
+            @RequestParam String email) {
+
+        try {
+            userService.sendPasswordReset(email);
+            return ResponseEntity.ok(
+                    new CustomResponse<>("Password reset link sent to your email.", null));
+        } catch (InvalidUserException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(new CustomResponse<>(ex.getMessage(), null));
+        }
+    }
+
+    // ---------------- Forgot Password ----------------
+    @PostMapping("/reset-password")
+    public ResponseEntity<CustomResponse<Void>> resetPassword(
+            @Valid @RequestBody ResetPasswordRequestDTO request) {
+
+        try {
+            userService.resetPassword(
+                    request.getToken(),
+                    request.getNewPassword());
+
+            return ResponseEntity.ok(
+                    new CustomResponse<>("Password reset successful.", null));
+
+        } catch (InvalidUserException ex) {
+
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new CustomResponse<>(ex.getMessage(), null));
         }

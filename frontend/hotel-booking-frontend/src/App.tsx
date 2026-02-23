@@ -12,7 +12,7 @@ import MainLayout from "./layouts/MainLayout";
 import SignInPage from "./Pages/Auth/SignInPage";
 import LoginPage from "./Pages/Auth/LoginPage";
 import RegisterPage from "./Pages/Auth/RegisterPage";
-import VerifyEmailPage from "./Pages/Auth/VerficationPage";
+import VerifyEmailPage from "./Pages/Auth/VerifyEmailPage";
 import HomePage from "./Pages/HomePage";
 import HotelDetailsPage from "./Pages/Hotel/HotelDetailsPage";
 import CreateUpdateHotelPage from "./Pages/Hotel/CreateUpdateHotelPage";
@@ -33,6 +33,8 @@ import SelectPaymentPage from "./Pages/Payment/SelectPaymentPage";
 import BookmarkedHotelsPage from "./Pages/BookmarkedHotelsPage";
 import PrivacyPolicyPage from "./Pages/Legal/PrivacyPolicyPage";
 import TermsOfServicePage from "./Pages/Legal/TermsOfServicePage";
+import VerifyResetTokenPage from "./Pages/Auth/VerifyResetTokenPage";
+import ResetPasswordPage from "./Pages/Auth/ResetPasswordPage";
 
 const App: React.FC = () => {
   const [isOpen, setIsOpen] = useState(() => {
@@ -109,6 +111,22 @@ const AppRoutes: React.FC = () => (
       element={
         <HeaderOnlyLayout>
           <PrivacyPolicyPage />
+        </HeaderOnlyLayout>
+      }
+    />
+    <Route
+      path="/verify-reset-token"
+      element={
+        <HeaderOnlyLayout>
+          <VerifyResetTokenPage />
+        </HeaderOnlyLayout>
+      }
+    />
+    <Route
+      path="/reset-password"
+      element={
+        <HeaderOnlyLayout>
+          <ResetPasswordPage />
         </HeaderOnlyLayout>
       }
     />

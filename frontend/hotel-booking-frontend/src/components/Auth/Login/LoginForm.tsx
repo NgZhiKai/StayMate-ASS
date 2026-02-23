@@ -1,43 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { LoginData } from "../../types/User";
-import MessageModal from "../Modal/MessageModal";
-import InputField from "../Form/InputField";
+import React from "react";
+import { LoginData } from "../../../types/User";
+import { GradientButton } from "../../Button";
+import { InputField } from "../../Form";
 
 interface LoginFormProps {
   loginData: LoginData;
-  error: string | null;
-  onLogin: (loginData: LoginData) => void;
+  onLogin: (data: LoginData) => void;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   isEmailReadonly?: boolean;
+  isLoading?: boolean;
+  onForgotClick: () => void;
 }
 
 const LoginForm: React.FC<LoginFormProps> = ({
   loginData,
-  error,
   onLogin,
   handleChange,
   isEmailReadonly = false,
+  isLoading = false,
+  onForgotClick,
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  useEffect(() => {
-    setIsModalOpen(!!error);
-  }, [error]);
-
-  const closeModal = () => setIsModalOpen(false);
-
   return (
     <div className="w-full bg-white rounded-3xl p-10 shadow-2xl">
-      <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">Welcome Back 👋</h2>
-
-      {error && (
-        <MessageModal
-          isOpen={isModalOpen}
-          message={error}
-          onClose={closeModal}
-          type="error"
-        />
-      )}
+      <h2 className="text-3xl font-bold mb-6 text-gray-800 text-center">
+        Welcome Back 👋
+      </h2>
 
       <form
         onSubmit={(e) => {
@@ -53,6 +40,8 @@ const LoginForm: React.FC<LoginFormProps> = ({
           value={loginData.email}
           onChange={handleChange}
           readOnly={isEmailReadonly}
+          placeholder="Enter your email"
+          required
         />
 
         <InputField
@@ -61,14 +50,28 @@ const LoginForm: React.FC<LoginFormProps> = ({
           name="password"
           value={loginData.password}
           onChange={handleChange}
+          placeholder="Enter your password"
+          required
         />
 
-        <button
+        <div className="text-right">
+          <button
+            type="button"
+            onClick={onForgotClick}
+            className="text-sm font-medium text-indigo-600 hover:underline"
+          >
+            Forgot Password?
+          </button>
+        </div>
+
+        <GradientButton
           type="submit"
-          className="w-full py-3 rounded-xl font-semibold text-white bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-lg hover:scale-105 transition-transform duration-300"
+          loading={isLoading}
+          className="w-full py-3 text-white font-semibold rounded-xl shadow-lg hover:scale-105 transition-transform duration-300"
+          gradient="from-indigo-500 via-purple-500 to-pink-500"
         >
-          Sign In
-        </button>
+          Login
+        </GradientButton>
       </form>
 
       <div className="mt-6 text-center text-gray-400 text-sm">

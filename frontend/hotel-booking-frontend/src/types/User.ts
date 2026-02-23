@@ -22,3 +22,8 @@ export interface RegisterData {
   phoneNumber: string;
   role: "CUSTOMER" | "ADMIN";
 }
+
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
+}

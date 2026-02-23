@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { fetchHotelById } from "../services/Hotel/hotelApi";
 import { getReviewsForHotel } from "../services/Hotel/ratingApi";
-import { getUserInfo } from "../services/User/userApi";
+import { userApi } from "../services/User";
 import { HotelData } from "../types/Hotels";
 import { Review } from "../types/Review";
 
@@ -26,7 +26,7 @@ export const useHotelData = (hotelId: number) => {
         const uniqueUserIds = [...new Set(reviewsData.map(r => r.userId))];
 
         const users = await Promise.all(
-          uniqueUserIds.map(id => getUserInfo(String(id)))
+          uniqueUserIds.map(id => userApi.getUserInfo(String(id)))
         );
 
         const userMap = users.reduce((acc, user, index) => {

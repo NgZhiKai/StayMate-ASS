@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.userservice.client.EmailClient;
+import com.example.userservice.dto.EmailRequestDTO;
 import com.example.userservice.dto.VerificationResult;
 import com.example.userservice.entity.user.User;
 import com.example.userservice.entity.user.UserRole;
@@ -53,7 +54,8 @@ public class UserService {
         String verificationLink = baseUrl + "/verify?token=" + token;
 
         // Send email with token
-        emailClient.sendVerificationEmail(user.getEmail(), token, verificationLink);
+        EmailRequestDTO emailRequest = new EmailRequestDTO(email, token, "verification", verificationLink);
+        emailClient.sendEmail(emailRequest);
 
         return token;
     }
@@ -92,7 +94,8 @@ public class UserService {
         String verificationLink = baseUrl + "/verify?token=" + token;
 
         // Send verification email via EmailClient
-        emailClient.sendVerificationEmail(savedUser.getEmail(), token, verificationLink);
+        EmailRequestDTO emailRequest = new EmailRequestDTO(user.getEmail(), token, "verification", verificationLink);
+        emailClient.sendEmail(emailRequest);
 
         return savedUser;
     }
@@ -190,6 +193,29 @@ public class UserService {
 
         // Return verification token (replace with JWT in production)
         return user.getVerificationToken();
+    }
+
+    public void sendPasswordReset(String email) {
+        User user = getUserByEmail(email);
+
+        String resetToken = generateVerificationToken(user);
+        String verificationLink = baseUrl + "/reset?token=" + resetToken;
+
+        user.setVerificationToken(resetToken);
+        userRepository.save(user);
+
+        EmailRequestDTO emailRequest = new EmailRequestDTO(user.getEmail(), resetToken, "reset", verificationLink);
+        emailClient.sendEmail(emailRequest);
+    }
+
+    public void resetPassword(String token, String newPassword) {
+
+        // 1. Find the user by token
+        User user = userRepository.findByVerificationToken(token)
+                .orElseThrow(() -> new InvalidUserException("Invalid or expired token"));
+
+        user.setPassword(newPassword);
+        userRepository.save(user);
     }
 
 }

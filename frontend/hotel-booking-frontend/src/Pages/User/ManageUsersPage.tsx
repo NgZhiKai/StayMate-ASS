@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAllUsers, deleteUser, updateUser, registerUser } from '../../services/User/userApi';
+import { userApi } from '../../services/User';
 import { User, RegisterData } from '../../types/User';
 import UserModal from '../../components/Modal/UserModal';
 import { Edit, Trash, User as UserIcon, Shield as AdminIcon } from 'lucide-react';
@@ -30,7 +30,7 @@ const ManageUsers: React.FC = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const result = await getAllUsers();
+        const result = await userApi.getAllUsers();
         setUsers(result.users);
         setError('');
       } catch (err: any) {
@@ -58,7 +58,7 @@ const ManageUsers: React.FC = () => {
 
   const handleDelete = async (userId: number) => {
     try {
-      await deleteUser(String(userId));
+      await userApi.deleteUser(String(userId));
   
       setUsers((prev) => {
         const updatedUsers = prev.filter((u) => u.id !== userId);
@@ -84,7 +84,7 @@ const ManageUsers: React.FC = () => {
     try {
       if (userData.id === 0) {
         const { id, ...newUserData } = userData;
-        const response: RegisterResponse = await registerUser(newUserData as RegisterData);
+        const response: RegisterResponse = await userApi.registerUser(newUserData as RegisterData);
 
         if (response?.data) {
           setUsers((prev) => [...prev, response.data]);
@@ -98,7 +98,7 @@ const ManageUsers: React.FC = () => {
           setTimeout(() => setMessageModalOpen(false), 3000);
         }
       } else {
-        const response: UpdateResponse = await updateUser(String(userData.id), userData);
+        const response: UpdateResponse = await userApi.updateUser(String(userData.id), userData);
 
         if (response?.user) {
           setUsers((prev) =>
