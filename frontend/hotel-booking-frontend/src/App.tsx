@@ -30,7 +30,7 @@ import MyPaymentsPage from "./Pages/MyPaymentsPage";
 import AdminPaymentsPage from "./Pages/AdminPaymentsPage";
 import PaymentPage from "./Pages/Payment/PaymentPage";
 import SelectPaymentPage from "./Pages/Payment/SelectPaymentPage";
-import BookmarkedHotelsPage from "./Pages/BookmarkedHotelsPage";
+import BookmarkedHotelsPage from "./Pages/BookmarkedHotels/BookmarkedHotelsPage";
 import PrivacyPolicyPage from "./Pages/Legal/PrivacyPolicyPage";
 import TermsOfServicePage from "./Pages/Legal/TermsOfServicePage";
 import VerifyResetTokenPage from "./Pages/Auth/VerifyResetTokenPage";

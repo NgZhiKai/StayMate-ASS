@@ -1,49 +1,65 @@
-// hooks/useBookmark.ts
-import { useEffect, useState } from "react";
-import { addBookmark, removeBookmark, getBookmarkedHotelIds } from "../services/User/bookmarkApi";
+import { useEffect, useState, useCallback } from "react";
+import { bookmarkApi } from "../services/User";
 
-export const useBookmark = (userId: number | null, hotelId: number | null) => {
+interface UseBookmarkReturn {
+  isBookmarked: boolean;
+  canBookmark: boolean;
+  toggleBookmark: () => Promise<void>;
+  loading: boolean;
+  error: string | null;
+}
+
+export const useBookmark = (
+  userId: number | null,
+  hotelId: number | null
+): UseBookmarkReturn => {
   const [isBookmarked, setIsBookmarked] = useState(false);
-  const [canBookmark, setCanBookmark] = useState(false); // whether user can actually bookmark
+  const [canBookmark, setCanBookmark] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!userId || !hotelId) {
       setIsBookmarked(false);
       setCanBookmark(false);
+      setLoading(false);
       return;
     }
 
     setCanBookmark(true);
+    setLoading(true);
 
     const loadBookmarks = async () => {
       try {
-        const bookmarked = await getBookmarkedHotelIds(userId);
-        if (Array.isArray(bookmarked)) {
-          setIsBookmarked(bookmarked.includes(hotelId));
-        }
-      } catch (error) {
-        console.error("Failed to load bookmarks:", error);
+        const { hotelIds } = await bookmarkApi.getBookmarkedHotelIds(userId);
+        setIsBookmarked(hotelIds.includes(hotelId));
+      } catch (err) {
+        console.error("Failed to load bookmarks:", err);
+        setError("Failed to load bookmarks");
+      } finally {
+        setLoading(false);
       }
     };
 
     loadBookmarks();
   }, [userId, hotelId]);
 
-  const toggleBookmark = async () => {
-    if (!canBookmark || !hotelId || !userId) return;
+  const toggleBookmark = useCallback(async () => {
+    if (!canBookmark || !userId || !hotelId) return;
 
     try {
       if (isBookmarked) {
-        await removeBookmark(userId, hotelId);
+        await bookmarkApi.removeBookmark(userId, hotelId);
         setIsBookmarked(false);
       } else {
-        await addBookmark(userId, hotelId);
+        await bookmarkApi.addBookmark(userId, [hotelId]);
         setIsBookmarked(true);
       }
-    } catch (error) {
-      console.error("Bookmark error:", error);
+    } catch (err) {
+      console.error("Bookmark error:", err);
+      setError("Failed to update bookmark");
     }
-  };
+  }, [canBookmark, isBookmarked, userId, hotelId]);
 
-  return { isBookmarked, canBookmark, toggleBookmark };
+  return { isBookmarked, canBookmark, toggleBookmark, loading, error };
 };

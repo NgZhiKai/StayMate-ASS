@@ -12,3 +12,5 @@ export interface Payment {
     bookingId: number;
     amount: number;
   }
+
+  export type PaymentType = "CREDIT_CARD" | "PAYPAL" | "STRIPE";

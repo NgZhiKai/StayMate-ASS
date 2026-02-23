@@ -1,6 +1,5 @@
 import React from "react";
-
-type PaymentType = "CREDIT_CARD" | "PAYPAL" | "STRIPE";
+import { PaymentType } from "../../types/Payment";
 
 interface PaymentOptionCardProps {
   option: { id: PaymentType; label: string; logos: string[] };

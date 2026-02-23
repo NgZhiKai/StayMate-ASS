@@ -1,5 +1,6 @@
 import React from "react";
-import PaymentOptionCard, { PaymentType } from "./PaymentOptionCard";
+import { PaymentType } from "../../types/Payment";
+import PaymentOptionCard from "./PaymentOptionCard";
 
 interface PaymentOptionsGridProps {
   options: { id: PaymentType; label: string; logos: string[] }[];

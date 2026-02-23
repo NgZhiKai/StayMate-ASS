@@ -1,9 +1,12 @@
+export { useBookmarkedHotels } from "./useBookmarkedHotels";
 export { useLoginHandlers } from "./useLoginHandlers";
 export { useMarkNotification } from "./useMarkNotification";
 export { useNotificationsPagination } from "./useNotificationsPagination";
 export { useRegister } from "./useRegister";
 export { useResetPassword } from "./useResetPassword";
+export { useSelectPayment } from "./useSelectPayment";
 export { useSignIn } from "./useSignIn";
 export { useSmartPagination } from "./useSmartPagination";
 export { useUserAccount } from "./useUserAccount";
-
+export { usePaymentPage } from "./usePaymentPage";
+export { useMyPayments } from "./useMyPayments";

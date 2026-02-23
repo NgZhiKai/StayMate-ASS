@@ -1,63 +1,46 @@
-// src/services/bookmarkService.ts
 
-import axios from "axios";
+import { handleApiError } from "../../utils/handleApiError";
 import { userApiClient } from "./userApiClient";
 
 const BOOKMARK_BASE = "/bookmarks";
 
-const handleApiError = (error: unknown): never => {
-  if (axios.isAxiosError(error)) {
-    throw new Error(
-      error.response?.data?.message ||
-      error.response?.data ||
-      "Something went wrong"
-    );
-  }
-  throw new Error("Unexpected error occurred");
+const bookmarkApi = {
+  /**
+   * Get all bookmarked hotel IDs for a user.
+   */
+  getBookmarkedHotelIds: async (userId: number): Promise<{ hotelIds: number[] }> => {
+    try {
+      const response = await userApiClient.get(`${BOOKMARK_BASE}/${userId}`);
+      const hotelIds = response.data ?? [];
+      return { hotelIds };
+    } catch (err: any) {
+      throw new Error(handleApiError(err));
+    }
+  },
+
+  /**
+   * Add one or more bookmarks for a user.
+   */
+  addBookmark: async (userId: number, hotelIds: number[]): Promise<{ message: string }> => {
+    try {
+      const response = await userApiClient.post(BOOKMARK_BASE, { userId, hotelIds });
+      return { message: response.data?.message ?? "Bookmark added successfully" };
+    } catch (err: any) {
+      throw new Error(handleApiError(err));
+    }
+  },
+
+  /**
+   * Remove a bookmark for a user.
+   */
+  removeBookmark: async (userId: number, hotelId: number): Promise<{ message: string }> => {
+    try {
+      const response = await userApiClient.delete(`${BOOKMARK_BASE}/${userId}/${hotelId}`);
+      return { message: response.data?.message ?? "Bookmark removed successfully" };
+    } catch (err: any) {
+      throw new Error(handleApiError(err));
+    }
+  },
 };
 
-/**
- * Get all bookmarked hotel IDs for a user.
- */
-export const getBookmarkedHotelIds = async (
-  userId: number
-): Promise<number[]> => {
-  try {
-    const response = await userApiClient.get<number[]>(
-      `${BOOKMARK_BASE}/${userId}`
-    );
-    return response.data;
-  } catch (error) {
-    handleApiError(error);
-    throw error;
-  }
-};
-
-/**
- * Add a bookmark.
- */
-export const addBookmark = async (
-  userId: number,
-  hotelId: number
-): Promise<void> => {
-  try {
-    await userApiClient.post(`${BOOKMARK_BASE}`, {
-      userId,
-      hotelIds: [hotelId], // backend expects array
-    });
-  } catch (error) {
-    handleApiError(error);
-  }
-};
-
-/**
- * Remove a bookmark.
- */
-export const removeBookmark = async (
-  userId: number,
-  hotelId: number
-): Promise<void> => {
-  await userApiClient.delete(
-    `${BOOKMARK_BASE}/${userId}/${hotelId}`
-  );
-};
+export default bookmarkApi;

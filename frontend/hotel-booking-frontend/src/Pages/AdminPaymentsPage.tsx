@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { CreditCard } from "lucide-react";
-import { getAllPayments } from "../services/Payment/paymentApi";
+import { paymentApi } from "../services/Payment";
 import { Payment } from "../types/Payment";
 import { fetchBookingById } from "../services/Booking/bookingApi";
 
@@ -16,7 +16,7 @@ const AdminPaymentsPage: React.FC = () => {
   useEffect(() => {
     const fetchPayments = async () => {
       try {
-        const data = await getAllPayments();
+        const data = await paymentApi.getAllPayments();
         setPayments(data);
 
         // Fetch booking details for each payment
