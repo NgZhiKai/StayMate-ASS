@@ -5,9 +5,9 @@ type ConfirmationModalProps = {
   onClose: () => void;
   onConfirm: () => void;
   message: string;
-  confirmText?: string; // custom confirm button text
-  cancelText?: string;  // custom cancel button text
-  type?: "warning" | "danger" | "info"; // optional styling variant
+  confirmText?: string;
+  cancelText?: string;
+  type?: "warning" | "danger" | "info";
 };
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
@@ -21,51 +21,56 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
 }) => {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
-  // Open/close the dialog
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
 
-    if (isOpen && !dialog.open) {
-      dialog.showModal();
-    } else if (!isOpen && dialog.open) {
-      dialog.close();
-    }
+    if (isOpen && !dialog.open) dialog.showModal();
+    else if (!isOpen && dialog.open) dialog.close();
   }, [isOpen]);
 
-  // Handle escape key / cancel
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-
     const handleCancel = (e: Event) => {
       e.preventDefault();
       onClose();
     };
-
     dialog.addEventListener("cancel", handleCancel);
     return () => dialog.removeEventListener("cancel", handleCancel);
   }, [onClose]);
 
-  // Determine colors based on type
+  // Modern gradient styling based on type
   const typeStyles = {
-    warning: { bg: "bg-yellow-100", text: "text-yellow-600", button: "bg-yellow-600 hover:bg-yellow-700" },
-    danger: { bg: "bg-red-100", text: "text-red-600", button: "bg-red-600 hover:bg-red-700" },
-    info: { bg: "bg-blue-100", text: "text-blue-600", button: "bg-blue-600 hover:bg-blue-700" },
+    warning: {
+      iconBg: "bg-gradient-to-br from-yellow-300 to-yellow-500",
+      iconText: "text-yellow-800",
+      confirmBtn: "bg-gradient-to-r from-yellow-400 to-yellow-600 hover:from-yellow-500 hover:to-yellow-700",
+    },
+    danger: {
+      iconBg: "bg-gradient-to-br from-red-400 to-red-600",
+      iconText: "text-white",
+      confirmBtn: "bg-gradient-to-r from-red-500 to-red-700 hover:from-red-600 hover:to-red-800",
+    },
+    info: {
+      iconBg: "bg-gradient-to-br from-blue-400 to-blue-600",
+      iconText: "text-white",
+      confirmBtn: "bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800",
+    },
   }[type];
 
   return (
     <dialog
       ref={dialogRef}
       aria-labelledby="confirmation-modal-title"
-      className="fixed inset-0 m-auto w-full max-w-md p-0 border-none rounded-2xl shadow-2xl backdrop:bg-black/50 backdrop:backdrop-blur-sm"
+      className="fixed inset-0 m-auto w-full max-w-md p-0 border-none rounded-3xl shadow-2xl backdrop:bg-black/50 backdrop:backdrop-blur-sm select-none"
     >
-      <div className="relative p-8 bg-white border border-gray-300 rounded-2xl">
+      <div className="relative p-8 bg-white rounded-3xl shadow-xl">
         {/* Close Button */}
         <button
           onClick={onClose}
           aria-label="Close modal"
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 transition text-lg"
         >
           ✕
         </button>
@@ -73,32 +78,35 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
         {/* Header */}
         <div className="flex flex-col items-center text-center mb-6">
           <div
-            className={`flex items-center justify-center h-14 w-14 rounded-full mb-4 text-xl font-bold ${typeStyles.bg} ${typeStyles.text}`}
+            className={`flex items-center justify-center h-16 w-16 rounded-full mb-4 text-2xl font-bold ${typeStyles.iconBg} ${typeStyles.iconText} shadow-lg`}
           >
             !
           </div>
-          <h2 id="confirmation-modal-title" className="text-xl font-semibold text-gray-900">
+          <h2
+            id="confirmation-modal-title"
+            className="text-2xl font-semibold text-gray-900"
+          >
             Confirm Action
           </h2>
         </div>
 
         {/* Message */}
         <div
-          className="text-gray-800 text-base leading-relaxed text-center mb-8"
+          className="text-gray-700 text-center text-base mb-8 leading-relaxed"
           dangerouslySetInnerHTML={{ __html: message }}
         />
 
         {/* Action Buttons */}
-        <div className="flex justify-center space-x-4">
+        <div className="flex justify-center gap-4">
           <button
             onClick={onClose}
-            className="px-6 py-2.5 rounded-lg font-medium bg-gray-200 hover:bg-gray-300 text-gray-900 transition"
+            className="px-6 py-3 rounded-lg font-medium bg-gray-200 hover:bg-gray-300 text-gray-900 transition shadow-sm"
           >
             {cancelText}
           </button>
           <button
             onClick={onConfirm}
-            className={`px-6 py-2.5 rounded-lg font-medium text-white transition ${typeStyles.button}`}
+            className={`px-6 py-3 rounded-lg font-medium text-white transition shadow-md ${typeStyles.confirmBtn}`}
           >
             {confirmText}
           </button>

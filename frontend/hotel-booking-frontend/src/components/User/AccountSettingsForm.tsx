@@ -1,208 +1,141 @@
-import React, { useState, useEffect } from "react";
-import MessageModal from "../Modal/MessageModal";
+import React, { useEffect, useState } from "react";
+import { User } from "../../types/User";
+import { GridLayout } from "../Layout";
+import { MessageModal } from "../Modal";
+import DeleteAccountSection from "./DeleteAccountSection";
+import EmailSection from "./EmailSection";
+import NamePhoneSection from "./NamePhoneSection";
+import PasswordSection from "./PasswordSection";
 
-type AccountSettingsFormProps = {
-  userInfo: { firstName: string; lastName: string; email: string; phoneNumber: string; role: string };
-  newEmail: string;
-  setNewEmail: React.Dispatch<React.SetStateAction<string>>;
+interface Props {
+  userInfo: User;
   passwords: { currentPassword: string; newPassword: string };
   setPasswords: React.Dispatch<React.SetStateAction<{ currentPassword: string; newPassword: string }>>;
+  newEmail: string;                                  // <-- add this
+  setNewEmail: React.Dispatch<React.SetStateAction<string>>; // <-- add this
   handleNamePhoneUpdate: (firstName: string, lastName: string, phoneNumber: string) => void;
   handleEmailChange: (email: string) => void;
   handlePasswordChange: () => void;
   handleDeleteAccount: () => void;
-};
+}
 
-const AccountSettingsForm: React.FC<AccountSettingsFormProps> = ({
+const AccountSettingsForm: React.FC<Props> = ({
   userInfo,
-  newEmail,
-  setNewEmail,
   passwords,
   setPasswords,
+  newEmail,
+  setNewEmail,
   handleNamePhoneUpdate,
   handleEmailChange,
   handlePasswordChange,
   handleDeleteAccount,
 }) => {
-  const [loading, setLoading] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [loadingAction, setLoadingAction] = useState<{ [key: string]: boolean }>({ namePhone: false, email: false, password: false, delete: false });
 
-  const [firstName, setFirstName] = useState(userInfo.firstName || "");
-  const [lastName, setLastName] = useState(userInfo.lastName || "");
-  const [phoneNumber, setPhoneNumber] = useState(userInfo.phoneNumber || "");
-
+  // sync form state when userInfo changes
   useEffect(() => {
-    setFirstName(userInfo.firstName || "");
-    setLastName(userInfo.lastName || "");
-    setPhoneNumber(userInfo.phoneNumber || "");
+    if (userInfo) {
+      setFirstName(userInfo.firstName);
+      setLastName(userInfo.lastName);
+      setPhoneNumber(userInfo.phoneNumber);
+      setNewEmail("");
+    }
   }, [userInfo]);
 
-  const isValidEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-  const isValidPassword = (password: string) => password.length >= 8;
+  const showError = (message: string) => {
+    setErrorMessage(message);
+    setIsModalOpen(true);
+  };
 
-  // ---------------- Name & Phone ----------------
-  const handleNamePhoneSubmit = async () => {
-    setLoading(true);
-    setErrorMessage(null);
-
+  const handleUpdateNamePhone = async () => {
+    setLoadingAction(prev => ({ ...prev, namePhone: true }));
     try {
       await handleNamePhoneUpdate(firstName, lastName, phoneNumber);
     } catch {
-      setErrorMessage("Failed to update name/phone. Please try again.");
-      setIsModalOpen(true);
+      showError("Failed to update name/phone.");
     }
-    setLoading(false);
+    setLoadingAction(prev => ({ ...prev, namePhone: false }));
   };
 
-  // ---------------- Email ----------------
-  const handleEmailSubmit = async () => {
-    setLoading(true);
-    setErrorMessage(null);
-
-    if (newEmail.trim() && !isValidEmail(newEmail)) {
-      setErrorMessage("Please enter a valid email address.");
-      setIsModalOpen(true);
-      setLoading(false);
-      return;
-    }
-
+  const handleUpdateEmail = async () => {
+    setLoadingAction(prev => ({ ...prev, email: true }));
     try {
-      if (newEmail.trim()) await handleEmailChange(newEmail);
-    } catch {
-      setErrorMessage("Failed to update email. Please try again.");
-      setIsModalOpen(true);
+      if (newEmail.trim()) {
+        const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail);
+        if (!isValidEmail) throw new Error("Invalid email.");
+        await handleEmailChange(newEmail);
+      }
+    } catch (err: any) {
+      showError(err.message || "Failed to update email.");
     }
-
-    setNewEmail("");
-    setLoading(false);
+    setLoadingAction(prev => ({ ...prev, email: false }));
   };
 
-  // ---------------- Password ----------------
-  const handlePasswordSubmit = async () => {
-    setLoading(true);
-    setErrorMessage(null);
-
-    if (!isValidPassword(passwords.newPassword)) {
-      setErrorMessage("Password must be at least 8 characters long.");
-      setIsModalOpen(true);
-      setLoading(false);
-      return;
-    }
-
+  const handleUpdatePassword = async () => {
+    setLoadingAction(prev => ({ ...prev, password: true }));
     try {
+      if (passwords.newPassword.length < 8) throw new Error("Password must be at least 8 characters.");
       await handlePasswordChange();
-    } catch {
-      setErrorMessage("Failed to change password. Please try again.");
-      setIsModalOpen(true);
+    } catch (err: any) {
+      showError(err.message || "Failed to change password.");
     }
-    setLoading(false);
+    setLoadingAction(prev => ({ ...prev, password: false }));
   };
+
+  const handleDelete = async () => {
+    setLoadingAction(prev => ({ ...prev, delete: true }));
+    try {
+      await handleDeleteAccount();
+    } catch {
+      showError("Failed to delete account.");
+    }
+    setLoadingAction(prev => ({ ...prev, delete: false }));
+  };
+
+  if (!userInfo) return <p>Loading user info...</p>;
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Account Settings</h2>
+    <>
+      <GridLayout columns={2} gap="gap-6">
+        <NamePhoneSection
+          firstName={firstName}
+          lastName={lastName}
+          phoneNumber={phoneNumber}
+          setFirstName={setFirstName}
+          setLastName={setLastName}
+          setPhoneNumber={setPhoneNumber}
+          onUpdate={handleUpdateNamePhone}
+          loading={loadingAction.namePhone}
+        />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* ---------------- Name & Phone ---------------- */}
-        <div className="space-y-2 p-4 border border-gray-200 rounded-xl bg-gray-50">
-          <p className="text-gray-500 text-sm font-medium">Name & Phone</p>
-          <input
-            type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            placeholder="First Name"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
-          />
-          <input
-            type="text"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            placeholder="Last Name"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
-          />
-          <input
-            type="text"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            placeholder="Phone Number"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
-          />
-          <button
-            onClick={handleNamePhoneSubmit}
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-green-500 to-teal-500 text-white px-4 py-2 rounded-lg text-sm hover:from-green-600 hover:to-teal-600 disabled:opacity-50"
-          >
-            {loading ? "Updating..." : "Update Name & Phone"}
-          </button>
-        </div>
+        <EmailSection
+          newEmail={newEmail}
+          setNewEmail={setNewEmail}
+          currentEmail={userInfo.email}
+          onUpdate={handleUpdateEmail}
+          loading={loadingAction.email}
+        />
 
-        {/* ---------------- Email ---------------- */}
-        <div className="space-y-2 p-4 border border-gray-200 rounded-xl bg-gray-50">
-          <p className="text-gray-500 text-sm font-medium">Email</p>
-          <input
-            type="email"
-            placeholder="Enter new email"
-            value={newEmail}
-            onChange={(e) => setNewEmail(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-blue-400 bg-white"
-          />
-          <button
-            onClick={handleEmailSubmit}
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-4 py-2 rounded-lg text-sm hover:from-blue-600 hover:to-indigo-600 disabled:opacity-50"
-          >
-            {loading ? "Updating..." : "Update Email"}
-          </button>
-          <p className="text-gray-500 text-sm mt-1">Current email: {userInfo.email}</p>
-        </div>
+        <PasswordSection
+          passwords={passwords}
+          setPasswords={setPasswords}
+          onUpdate={handleUpdatePassword}
+          loading={loadingAction.password}
+        />
 
-        {/* ---------------- Password ---------------- */}
-        <div className="space-y-2 p-4 border border-gray-200 rounded-xl bg-gray-50">
-          <p className="text-gray-500 text-sm font-medium">Password</p>
-          <input
-            type="password"
-            placeholder="Current password"
-            value={passwords.currentPassword}
-            onChange={(e) => setPasswords((prev) => ({ ...prev, currentPassword: e.target.value }))}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white"
-          />
-          <input
-            type="password"
-            placeholder="New password"
-            value={passwords.newPassword}
-            onChange={(e) => setPasswords((prev) => ({ ...prev, newPassword: e.target.value }))}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-purple-400 bg-white"
-          />
-          <button
-            onClick={handlePasswordSubmit}
-            disabled={loading}
-            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-lg text-sm hover:from-purple-600 hover:to-pink-600 disabled:opacity-50"
-          >
-            {loading ? "Changing..." : "Change Password"}
-          </button>
-        </div>
+        <DeleteAccountSection
+          onDelete={handleDelete}
+          loading={loadingAction.delete}
+        />
+      </GridLayout>
 
-        {/* ---------------- Delete Account ---------------- */}
-        <div className="space-y-2 p-4 border border-red-300 rounded-xl bg-red-50 text-center">
-          <p className="text-red-600 text-sm font-medium">Delete Account</p>
-          <button
-            onClick={handleDeleteAccount}
-            className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-lg text-sm hover:from-red-600 hover:to-red-700"
-          >
-            Delete Account
-          </button>
-        </div>
-      </div>
-
-      {/* Message Modal */}
-      <MessageModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        message={errorMessage || ""}
-        type="error"
-      />
-    </div>
+      <MessageModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} message={errorMessage || ""} type="error" />
+    </>
   );
 };
 

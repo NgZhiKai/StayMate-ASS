@@ -71,7 +71,7 @@ const userApi = {
 
   deleteUser: async (id: string): Promise<{ message: string }> => {
     const response = await userApiClient.delete(`${USER_BASE}/${id}`);
-    if (response.status === 204) return { message: "User deleted successfully." };
+    if (response.status === 200 || response.status === 204) return { message: "User deleted successfully." };
     throw new Error(response.data?.message || "Failed to delete user.");
   },
 

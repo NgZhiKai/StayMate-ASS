@@ -5,3 +5,5 @@ export { useRegister } from "./useRegister";
 export { useResetPassword } from "./useResetPassword";
 export { useSignIn } from "./useSignIn";
 export { useSmartPagination } from "./useSmartPagination";
+export { useUserAccount } from "./useUserAccount";
+

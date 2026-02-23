@@ -143,14 +143,14 @@ public class UserService {
 
     // ---------------- Delete User ----------------
     public void deleteUser(Long id) {
-        try {
-            userRepository.deleteById(id);
-        } catch (DataIntegrityViolationException e) {
-            User user = getUserById(id);
-            user.setDeleted(true);
-            user.setEmail(null);
-            userRepository.save(user);
+        User user = userRepository.findById(id).orElse(null);
+        if (user == null || user.isDeleted()) {
+            return;
         }
+
+        user.setDeleted(true);
+        user.setEmail(null);
+        userRepository.save(user);
     }
 
     // ---------------- Verification ----------------
