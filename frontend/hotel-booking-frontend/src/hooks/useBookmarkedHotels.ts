@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { fetchHotelById } from "../services/Hotel/hotelApi";
-import { getReviewsForHotel } from "../services/Hotel/ratingApi";
+import { hotelApi } from "../services/Hotel";
+import { ratingApi } from "../services/Hotel";
 import { bookmarkApi } from "../services/User";
 import { HotelData } from "../types/Hotels";
 
@@ -22,8 +22,8 @@ export const useBookmarkedHotels = (userId: number) => {
 
         const hotelData = await Promise.all(
           hotelIds.map(async (id) => {
-            const hotel = await fetchHotelById(id);
-            const reviews = await getReviewsForHotel(id);
+            const hotel = await hotelApi.fetchHotelById(id);
+            const reviews = await ratingApi.getReviewsForHotel(id);
             const averageRating =
               reviews.length > 0
                 ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length

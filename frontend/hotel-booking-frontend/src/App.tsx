@@ -2,39 +2,39 @@ import React, { useEffect, useState } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 
 import { AuthProvider } from "./contexts/AuthContext";
-import { NotificationProvider } from "./contexts/NotificationContext";
 import { BookingProvider } from "./contexts/BookingContext";
+import { NotificationProvider } from "./contexts/NotificationContext";
 
 import HeaderOnlyLayout from "./layouts/HeaderOnlyLayout";
 import MainLayout from "./layouts/MainLayout";
 
 // Pages
-import SignInPage from "./Pages/Auth/SignInPage";
-import LoginPage from "./Pages/Auth/LoginPage";
-import RegisterPage from "./Pages/Auth/RegisterPage";
-import VerifyEmailPage from "./Pages/Auth/VerifyEmailPage";
-import HomePage from "./Pages/HomePage";
-import HotelDetailsPage from "./Pages/Hotel/HotelDetailsPage";
-import CreateUpdateHotelPage from "./Pages/Hotel/CreateUpdateHotelPage";
-import CreateBookingPage from "./Pages/Booking/CreateBookingPage";
-import NearMePage from "./Pages/NearMe/NearMePage";
-import UserAccountSettings from "./Pages/User/UserAccountSettings";
-import SearchResultsPage from "./Pages/Hotel/SearchResultsPage";
-import LogOutPage from "./Pages/Auth/LogoutPage";
-import ManageUsersPage from "./Pages/User/ManageUsersPage";
-import ManageBookingsPage from "./Pages/ManageBookingsPage";
-import BookingPage from "./Pages/Booking/BookingPage";
-import BookedHotelsPage from "./Pages/BookedHotelsPage";
-import NotifcationsPage from "./Pages/Notification/NotificationPage";
-import MyPaymentsPage from "./Pages/MyPaymentsPage";
 import AdminPaymentsPage from "./Pages/AdminPaymentsPage";
-import PaymentPage from "./Pages/Payment/PaymentPage";
-import SelectPaymentPage from "./Pages/Payment/SelectPaymentPage";
+import LoginPage from "./Pages/Auth/LoginPage";
+import LogOutPage from "./Pages/Auth/LogoutPage";
+import RegisterPage from "./Pages/Auth/RegisterPage";
+import ResetPasswordPage from "./Pages/Auth/ResetPasswordPage";
+import SignInPage from "./Pages/Auth/SignInPage";
+import VerifyEmailPage from "./Pages/Auth/VerifyEmailPage";
+import VerifyResetTokenPage from "./Pages/Auth/VerifyResetTokenPage";
+import BookedHotelsPage from "./Pages/BookedHotelsPage";
+import BookingPage from "./Pages/Booking/BookingPage";
+import CreateBookingPage from "./Pages/Booking/CreateBookingPage";
 import BookmarkedHotelsPage from "./Pages/BookmarkedHotels/BookmarkedHotelsPage";
+import HomePage from "./Pages/HomePage";
+import CreateUpdateHotelPage from "./Pages/Hotel/CreateUpdateHotelPage";
+import HotelDetailsPage from "./Pages/Hotel/HotelDetailsPage";
+import SearchResultsPage from "./Pages/Hotel/SearchResultsPage";
 import PrivacyPolicyPage from "./Pages/Legal/PrivacyPolicyPage";
 import TermsOfServicePage from "./Pages/Legal/TermsOfServicePage";
-import VerifyResetTokenPage from "./Pages/Auth/VerifyResetTokenPage";
-import ResetPasswordPage from "./Pages/Auth/ResetPasswordPage";
+import ManageBookingsPage from "./Pages/ManageBookingsPage";
+import NearMePage from "./Pages/NearMe/NearMePage";
+import NotifcationsPage from "./Pages/Notification/NotificationPage";
+import MyPaymentsPage from "./Pages/Payment/MyPaymentsPage";
+import PaymentPage from "./Pages/Payment/PaymentPage";
+import SelectPaymentPage from "./Pages/Payment/SelectPaymentPage";
+import ManageUsersPage from "./Pages/User/ManageUsersPage";
+import UserAccountSettings from "./Pages/User/UserAccountSettings";
 
 const App: React.FC = () => {
   const [isOpen, setIsOpen] = useState(() => {

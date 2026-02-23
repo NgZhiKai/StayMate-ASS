@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import DropdownWrapper from "./DropdownWrapper";
-import { fetchHotelById } from "../../services/Hotel/hotelApi";
+import { hotelApi } from "../../services/Hotel";
 import { useBookingContext } from "../../contexts/BookingContext";
 
 interface HotelGrouped {
@@ -98,7 +98,7 @@ export default function CalendarDropdown({ isOpen }: Props) {
       const newNames: Record<number, string> = {};
       for (const id of idsToFetch) {
         try {
-          const hotel = await fetchHotelById(id);
+          const hotel = await hotelApi.fetchHotelById(id);
           newNames[id] = hotel.name;
         } catch {
           newNames[id] = `Hotel ${id}`;

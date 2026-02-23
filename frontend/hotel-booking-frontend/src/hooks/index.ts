@@ -10,3 +10,4 @@ export { useSmartPagination } from "./useSmartPagination";
 export { useUserAccount } from "./useUserAccount";
 export { usePaymentPage } from "./usePaymentPage";
 export { useMyPayments } from "./useMyPayments";
+export { useGeolocation } from "./useGeolocation";

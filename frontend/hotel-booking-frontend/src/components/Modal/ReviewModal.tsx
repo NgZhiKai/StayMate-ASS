@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import { createReview } from "../../services/Hotel/ratingApi";
+import { ratingApi } from "../../services/Hotel";
 import { Review } from "../../types/Review";
 
 interface ReviewModalProps {
@@ -57,7 +57,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
         rating,
       };
 
-      const createdReview = await createReview(review);
+      const createdReview = await ratingApi.createReview(review);
       onReviewSubmitted(createdReview);
       setSuccessMessage("Review submitted successfully!");
       setTimeout(() => onClose(), 1000); // auto-close after success

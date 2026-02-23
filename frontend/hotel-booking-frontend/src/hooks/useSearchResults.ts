@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { searchHotelsByLocation, fetchHotelDestinations } from "../services/Hotel/hotelApi";
+import { hotelApi } from "../services/Hotel";
 import { HotelData } from "../types/Hotels";
 
 export interface Destination {
@@ -20,7 +20,7 @@ export const useSearchResults = (city: string, country: string) => {
     const loadHotels = async () => {
       try {
         setLoading(true);
-        const data = await searchHotelsByLocation(city, country);
+        const data = await hotelApi.searchHotelsByLocation(city, country);
         setHotels(data);
       } catch (err) {
         console.error(err);
@@ -35,7 +35,7 @@ export const useSearchResults = (city: string, country: string) => {
   useEffect(() => {
     const loadDestinations = async () => {
       try {
-        const data = await fetchHotelDestinations();
+        const data = await hotelApi.fetchHotelDestinations();
         setDestinations(data);
       } catch (err) {
         console.error("Failed to load popular destinations", err);

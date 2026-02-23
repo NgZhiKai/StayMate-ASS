@@ -1,7 +1,7 @@
 // hooks/useHotelActions.ts
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { deleteHotel } from "../services/Hotel/hotelApi";
+import { hotelApi } from "../services/Hotel";
 import { userApi } from "../services/User";
 
 export const useHotelActions = (hotelId: number | null, setReviews: any, setUserInfo: any) => {
@@ -14,7 +14,7 @@ export const useHotelActions = (hotelId: number | null, setReviews: any, setUser
   const confirmDeletion = async () => {
     if (!hotelId) return;
     try {
-      await deleteHotel(hotelId);
+      await hotelApi.deleteHotel(hotelId);
       setIsDeleteModalOpen(false);
       setMessage("Hotel deleted successfully!");
       setMessageType("success");

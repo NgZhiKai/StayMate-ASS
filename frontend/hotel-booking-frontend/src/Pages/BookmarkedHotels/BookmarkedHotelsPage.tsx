@@ -1,7 +1,7 @@
 import React from "react";
 import { useBookmarkedHotels } from "../../hooks/useBookmarkedHotels";
 import { BookmarkedHotelsList, BookmarkedHotelsEmpty, BookmarkedHotelsError } from "../../components/BookmarkedHotels";
-import { LoadingSpinner } from "../../components/BookmarkedHotels/LoadingSpinner";
+import { LoadingSpinner } from "../../components/Misc";
 
 const BookmarkedHotelsPage: React.FC = () => {
   const userId = Number(sessionStorage.getItem("userId"));
@@ -9,7 +9,7 @@ const BookmarkedHotelsPage: React.FC = () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center">
+      <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center select-none">
         Your Bookmarked Hotels
       </h1>
 

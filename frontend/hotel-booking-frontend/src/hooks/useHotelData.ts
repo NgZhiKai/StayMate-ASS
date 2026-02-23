@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchHotelById } from "../services/Hotel/hotelApi";
-import { getReviewsForHotel } from "../services/Hotel/ratingApi";
+import { hotelApi, ratingApi } from "../services/Hotel";
 import { userApi } from "../services/User";
 import { HotelData } from "../types/Hotels";
 import { Review } from "../types/Review";
@@ -15,8 +14,8 @@ export const useHotelData = (hotelId: number) => {
     const fetchData = async () => {
       try {
         const [hotelData, reviewsData] = await Promise.all([
-          fetchHotelById(hotelId),
-          getReviewsForHotel(hotelId),
+          hotelApi.fetchHotelById(hotelId),
+          ratingApi.getReviewsForHotel(hotelId),
         ]);
 
         setHotel(hotelData);

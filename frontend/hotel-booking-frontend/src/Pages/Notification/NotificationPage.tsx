@@ -1,4 +1,5 @@
 import React from "react";
+import { LoadingSpinner } from "../../components/Misc";
 import {
   NotificationHeader,
   NotificationLayout,
@@ -35,8 +36,8 @@ const NotificationsPage: React.FC = () => {
 
   if (loading)
     return (
-      <div className="flex justify-center items-center h-full text-gray-400">
-        Loading notifications...
+      <div className="flex justify-center items-center h-full">
+        <LoadingSpinner />
       </div>
     );
 

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { createBooking, searchBookingsByDate } from "../services/Booking/bookingApi";
+import { roomApi } from "../services/Hotel";
 import { Booking } from "../types/Booking";
 import { Room } from "../types/Room";
-import { createBooking, searchBookingsByDate } from "../services/Booking/bookingApi";
-import { getHotelRooms } from "../services/Hotel/roomApi";
 
 const useBookingLogic = (
   userId: number,
@@ -33,7 +33,7 @@ const useBookingLogic = (
 
     const fetchRooms = async () => {
       try {
-        const roomsData = await getHotelRooms(hotelId);
+        const roomsData = await roomApi.getHotelRooms(hotelId);
         const mappedRooms: Room[] = roomsData.map((r: any) => ({
           room_type: r.room_type || r.roomType || "Unknown",
           id: { hotelId: r.hotelId ?? r.id?.hotelId, roomId: r.roomId ?? r.id?.roomId },

@@ -1,5 +1,5 @@
-import NearMeLayout from "../../components/map/NearMeLayout";
-import { useGeolocation } from "../../hooks/useGeolocation";
+import { NearMeLayout } from "../../components/map";
+import { useGeolocation } from "../../hooks";
 import { useNearbyHotelsQuery } from "../../services/queries";
 
 const NearMePage = () => {

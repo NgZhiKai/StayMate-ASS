@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import HotelForm from '../../components/Hotel/HotelForm';
 import MessageModal from '../../components/Modal/MessageModal'; // Make sure the path is correct
-import { createHotel, fetchHotelById, updateHotel } from '../../services/Hotel/hotelApi';
+import { hotelApi } from '../../services/Hotel';
 
 const CreateUpdateHotelPage: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
@@ -16,7 +16,7 @@ const CreateUpdateHotelPage: React.FC = () => {
     if (id) {
       const fetchHotelData = async () => {
         try {
-          const data = await fetchHotelById(Number(id));
+          const data = await hotelApi.fetchHotelById(Number(id));
           setHotelData(data);
         } catch (error) {
           console.error('Failed to fetch hotel data:', error);
@@ -32,11 +32,11 @@ const CreateUpdateHotelPage: React.FC = () => {
   const handleSaveHotel = async (formData: FormData) => {
     try {
       if (id) {
-        await updateHotel(Number(id), formData);
+        await hotelApi.updateHotel(Number(id), formData);
         setModalMessage('Hotel updated successfully!');
         setModalType('success');
       } else {
-        await createHotel(formData);
+        await hotelApi.createHotel(formData);
         setModalMessage('Hotel created successfully!');
         setModalType('success');
       }

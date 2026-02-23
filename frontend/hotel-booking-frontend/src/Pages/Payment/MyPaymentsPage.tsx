@@ -1,4 +1,5 @@
 import React from "react";
+import { LoadingSpinner } from "../../components/Misc";
 import { BookingPaymentCard, PaymentsPagination } from "../../components/Payment";
 import { useMyPayments, useSmartPagination } from "../../hooks";
 
@@ -15,8 +16,8 @@ const MyPaymentsPage: React.FC = () => {
 
   if (loading)
     return (
-      <div className="p-6 text-white text-center">
-        Loading payments...
+      <div className="flex justify-center items-center h-full">
+        <LoadingSpinner />
       </div>
     );
 

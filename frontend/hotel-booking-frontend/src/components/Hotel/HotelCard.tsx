@@ -25,7 +25,7 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel, layout = "grid" }) => {
   return (
     <div
       onClick={handleClick}
-      className={`group cursor-pointer h-full bg-gradient-to-br from-white to-pink-50 rounded-2xl border border-gray-100
+      className={`group cursor-pointer h-full bg-gradient-to-br from-white to-pink-50 rounded-2xl border border-gray-100 select-none
         overflow-hidden transition-all duration-300 hover:shadow-2xl hover:-translate-y-1
         ${layout === "list" ? "flex gap-6 p-4" : "flex flex-col"}`}
     >

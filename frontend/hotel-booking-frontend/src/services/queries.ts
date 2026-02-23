@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getHotelsNearby } from "./Hotel/hotelApi";
-import { getReviewsForHotel } from "./Hotel/ratingApi";
+import { ratingApi, hotelApi } from "./Hotel";
 
 export const useNearbyHotelsQuery = (
   location: [number, number] | null
@@ -10,14 +9,14 @@ export const useNearbyHotelsQuery = (
     queryFn: async () => {
       if (!location) return [];
 
-      const nearby = await getHotelsNearby(
+      const nearby = await hotelApi.getHotelsNearby(
         location[0],
         location[1]
       );
 
       return Promise.all(
         nearby.map(async (hotel) => {
-          const reviews = await getReviewsForHotel(hotel.id);
+          const reviews = await ratingApi.getReviewsForHotel(hotel.id);
 
           const averageRating =
             reviews.length > 0

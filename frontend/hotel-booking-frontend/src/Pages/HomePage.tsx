@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchHotelDestinations } from "../services/Hotel/hotelApi";
+import { hotelApi } from "../services/Hotel";
 import SearchBar from "../components/Search/SearchBar";
 
 interface Destination {
@@ -21,7 +21,7 @@ const HomePage: React.FC = () => {
     const loadDestinations = async () => {
       try {
         setLoading(true);
-        const data = await fetchHotelDestinations();
+        const data = await hotelApi.fetchHotelDestinations();
         setDestinations(data || []); // <-- fallback to empty array
       } catch (err) {
         console.error("Failed to fetch destinations:", err);

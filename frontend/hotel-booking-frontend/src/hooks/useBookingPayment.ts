@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { fetchBookingById } from "../services/Booking/bookingApi";
-import { fetchHotelById } from "../services/Hotel/hotelApi";
+import { hotelApi } from "../services/Hotel";
 import { paymentApi } from "../services/Payment";
 
 export const useBookingPayment = (bookingId?: number) => {
@@ -18,7 +18,7 @@ export const useBookingPayment = (bookingId?: number) => {
         const bookingData = await fetchBookingById(bookingId);
         setBooking(bookingData);
 
-        const hotelData = await fetchHotelById(bookingData.hotelId);
+        const hotelData = await hotelApi.fetchHotelById(bookingData.hotelId);
         setHotel(hotelData);
 
         const payments = await paymentApi.getPaymentsByBookingId(bookingId);
