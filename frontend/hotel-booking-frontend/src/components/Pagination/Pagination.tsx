@@ -7,7 +7,7 @@ interface Props {
   goToPage: (page: number) => void;
 }
 
-const NotificationPagination: React.FC<Props> = ({
+const Pagination: React.FC<Props> = ({
   currentPage,
   totalPages,
   pages,
@@ -88,4 +88,4 @@ const NotificationPagination: React.FC<Props> = ({
   );
 };
 
-export default NotificationPagination;
+export default Pagination;

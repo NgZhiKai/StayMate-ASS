@@ -1,7 +1,8 @@
 import { CreditCard } from "lucide-react";
 import React from "react";
 import { LoadingSpinner } from "../../components/Misc";
-import { BookingPaymentCard, HeroSection, PaymentsPagination } from "../../components/Payment";
+import { Pagination } from "../../components/Pagination";
+import { BookingPaymentCard, HeroSection } from "../../components/Payment";
 import { useMyPayments, useSmartPagination } from "../../hooks";
 
 const ITEMS_PER_PAGE = 3;
@@ -45,7 +46,7 @@ const MyPaymentsPage: React.FC = () => {
               ))}
             </div>
 
-            <PaymentsPagination
+            <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
               pages={pages}

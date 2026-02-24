@@ -1,3 +1,4 @@
+export { useBookings } from "./useBookings";
 export { useBookingLogic } from "./useBookingLogic";
 export { useBookmarkedHotels } from "./useBookmarkedHotels";
 export { useDestinations } from "./useDestinations";
@@ -20,3 +21,4 @@ export { useSignIn } from "./useSignIn";
 export { useSmartPagination } from "./useSmartPagination";
 export { useUserAccount } from "./useUserAccount";
 export { useUsers } from "./useUsers";
+

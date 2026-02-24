@@ -3,11 +3,10 @@ import mastercard from "../../assets/logos/mastercard.png";
 import paypal from "../../assets/logos/paypal.png";
 import stripe from "../../assets/logos/stripe.png";
 import visa from "../../assets/logos/visa.png";
-import { PageAction } from "../../components/Layout";
-import PageHeader from "../../components/Layout/PageHeader";
-import { PaymentType } from "../../components/Payment/PaymentOptionCard";
-import PaymentSelection from "../../components/Payment/PaymentSelection";
-import { useSelectPayment } from "../../hooks/useSelectPayment";
+import { PageAction, PageHeader } from "../../components/Layout";
+import { PaymentSelection } from "../../components/Payment";
+import { useSelectPayment } from "../../hooks";
+import { PaymentType } from "../../types/Payment";
 
 const paymentOptions = [
   { id: "CREDIT_CARD" as PaymentType, label: "Credit Card", logos: [mastercard, visa] },

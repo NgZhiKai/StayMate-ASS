@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { LoadingSpinner } from "../../components/Misc";
-import { HeroSection, PaymentsPagination } from "../../components/Payment";
-import { useGroupedPayments } from "../../hooks/useGroupedPayments";
+import { Pagination } from "../../components/Pagination";
+import { HeroSection } from "../../components/Payment";
 import { AdminPaymentCard } from "../../components/Payment/AdminPaymentCard";
+import { useGroupedPayments } from "../../hooks/useGroupedPayments";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -60,7 +61,7 @@ const AdminPaymentsPage: React.FC = () => {
         )}
 
         {totalPages > 1 && (
-          <PaymentsPagination
+          <Pagination
             currentPage={currentPage}
             totalPages={totalPages}
             pages={Array.from({ length: totalPages }, (_, i) => i + 1)}

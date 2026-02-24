@@ -35,8 +35,7 @@ public class BookingController {
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(Map.of(
                             "message", "Booking(s) created successfully",
-                            "bookings", bookings
-                    ));
+                            "bookings", bookings));
 
         } catch (IllegalArgumentException | IllegalStateException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -118,5 +117,16 @@ public class BookingController {
 
         boolean available = bookingService.isRoomAvailable(hotelId, roomId, checkIn, checkOut);
         return ResponseEntity.ok(Map.of("available", available));
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllBookings() {
+        try {
+            List<Booking> bookings = bookingService.getAllBookings();
+            return ResponseEntity.ok(Map.of("data", bookings));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Failed to fetch bookings"));
+        }
     }
 }

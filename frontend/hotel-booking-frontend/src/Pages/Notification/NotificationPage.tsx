@@ -3,12 +3,12 @@ import { LoadingSpinner } from "../../components/Misc";
 import {
   NotificationHeader,
   NotificationLayout,
-  NotificationList,
-  NotificationPagination,
+  NotificationList
 } from "../../components/Notification";
 import { useNotificationContext } from "../../contexts/NotificationContext";
 import { useMarkNotification, useSmartPagination } from "../../hooks";
 import { Notification } from "../../types/Notification";
+import { Pagination } from "../../components/Pagination";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -58,7 +58,7 @@ const NotificationsPage: React.FC = () => {
         markingId={markingId}
         className="animate-fadeIn"
       />
-      <NotificationPagination
+      <Pagination
         currentPage={currentPage}
         totalPages={totalPages}
         pages={pages}

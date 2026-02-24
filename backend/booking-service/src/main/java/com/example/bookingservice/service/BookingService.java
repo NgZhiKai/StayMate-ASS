@@ -130,6 +130,10 @@ public class BookingService {
                 .toList();
     }
 
+    public List<Booking> getAllBookings() {
+        return bookingRepository.findAll();
+    }
+
     // ------------------- Availability -------------------
 
     public boolean isRoomAvailable(Long hotelId, Long roomId, LocalDate checkIn, LocalDate checkOut) {

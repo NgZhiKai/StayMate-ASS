@@ -1,8 +1,10 @@
 import { Shield, User as UserIcon } from "lucide-react";
+import { useState } from "react";
 import { GradientButton } from "../../components/Button";
 import { MessageModal, UserModal } from "../../components/Modal";
-import { HeroSection, UserPagination, UsersTable } from "../../components/User";
-import { usePagination, useUsers } from "../../hooks";
+import { Pagination } from "../../components/Pagination";
+import { HeroSection, UsersTable } from "../../components/User";
+import { useUsers } from "../../hooks";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -22,14 +24,46 @@ const ManageUsers: React.FC = () => {
     submitUser,
   } = useUsers();
 
-  // Filter out any nulls just in case
+  // Filter valid users
   const validUsers = users.filter((u): u is NonNullable<typeof u> => u !== null);
 
-  const admins = validUsers.filter(u => u.role === "ADMIN");
-  const normalUsers = validUsers.filter(u => u.role !== "ADMIN");
+  // Separate admins and normal users
+  const admins = validUsers.filter((u) => u.role === "ADMIN");
+  const normalUsers = validUsers.filter((u) => u.role !== "ADMIN");
 
-  const adminPagination = usePagination(admins, ITEMS_PER_PAGE);
-  const userPagination = usePagination(normalUsers, ITEMS_PER_PAGE);
+  // ------------------- Admin Pagination -------------------
+  const [adminPage, setAdminPage] = useState(1);
+  const adminTotalPages = Math.ceil(admins.length / ITEMS_PER_PAGE);
+  const adminPaginated = admins.slice((adminPage - 1) * ITEMS_PER_PAGE, adminPage * ITEMS_PER_PAGE);
+
+  const generateAdminPages = (): (number | string)[] => {
+    if (adminTotalPages <= 7) return Array.from({ length: adminTotalPages }, (_, i) => i + 1);
+    const pages: (number | string)[] = [1];
+    if (adminPage > 4) pages.push("...");
+    const start = Math.max(2, adminPage - 1);
+    const end = Math.min(adminTotalPages - 1, adminPage + 1);
+    for (let i = start; i <= end; i++) pages.push(i);
+    if (adminPage < adminTotalPages - 3) pages.push("...");
+    pages.push(adminTotalPages);
+    return pages;
+  };
+
+  // ------------------- User Pagination -------------------
+  const [userPage, setUserPage] = useState(1);
+  const userTotalPages = Math.ceil(normalUsers.length / ITEMS_PER_PAGE);
+  const userPaginated = normalUsers.slice((userPage - 1) * ITEMS_PER_PAGE, userPage * ITEMS_PER_PAGE);
+
+  const generateUserPages = (): (number | string)[] => {
+    if (userTotalPages <= 7) return Array.from({ length: userTotalPages }, (_, i) => i + 1);
+    const pages: (number | string)[] = [1];
+    if (userPage > 4) pages.push("...");
+    const start = Math.max(2, userPage - 1);
+    const end = Math.min(userTotalPages - 1, userPage + 1);
+    for (let i = start; i <= end; i++) pages.push(i);
+    if (userPage < userTotalPages - 3) pages.push("...");
+    pages.push(userTotalPages);
+    return pages;
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-pink-50 via-white to-blue-50">
@@ -45,16 +79,17 @@ const ManageUsers: React.FC = () => {
         </div>
 
         <UsersTable
-          users={adminPagination.paginatedData}
+          users={adminPaginated}
           onEdit={openEditModal}
           onDelete={deleteUser}
           icon={<Shield className="text-indigo-500" size={20} />}
         />
 
-        <UserPagination
-          currentPage={adminPagination.page}
-          totalPages={adminPagination.totalPages}
-          goToPage={adminPagination.setPage}
+        <Pagination
+          currentPage={adminPage}
+          totalPages={adminTotalPages}
+          pages={generateAdminPages()}
+          goToPage={setAdminPage}
         />
       </section>
 
@@ -63,16 +98,17 @@ const ManageUsers: React.FC = () => {
         <h2 className="text-2xl font-semibold text-green-500 mb-4">Users</h2>
 
         <UsersTable
-          users={userPagination.paginatedData}
+          users={userPaginated}
           onEdit={openEditModal}
           onDelete={deleteUser}
           icon={<UserIcon className="text-green-400" size={20} />}
         />
 
-        <UserPagination
-          currentPage={userPagination.page}
-          totalPages={userPagination.totalPages}
-          goToPage={userPagination.setPage}
+        <Pagination
+          currentPage={userPage}
+          totalPages={userTotalPages}
+          pages={generateUserPages()}
+          goToPage={setUserPage}
         />
       </section>
 
