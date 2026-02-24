@@ -44,19 +44,21 @@ export default function Header() {
     };
 
   return (
-    <header className="fixed top-0 left-0 w-full h-16 bg-white/80 backdrop-blur-md shadow-sm flex items-center px-6 z-[9999] select-none">
+    <header className="fixed top-0 left-0 w-full h-16 bg-white/80 backdrop-blur-md shadow-sm flex items-center justify-between px-6 z-[9999] select-none">
       {/* LEFT SIDE */}
-      <button
-        onClick={() => navigate("/")}
-        className="flex items-center flex-1 focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded"
-      >
-        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold">
-          SM
-        </div>
-        <span className="ml-3 text-2xl font-serif italic font-semibold text-gray-800">
-          StayMate
-        </span>
-      </button>
+      <div className="flex items-center space-x-3">
+        <button
+          onClick={() => navigate("/")}
+          className="flex items-center focus:outline-none focus:ring-2 focus:ring-indigo-500 rounded"
+        >
+          <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold">
+            SM
+          </div>
+          <span className="ml-3 text-2xl font-serif italic font-semibold text-gray-800">
+            StayMate
+          </span>
+        </button>
+      </div>
 
       {/* RIGHT SIDE */}
       <div className="flex items-center space-x-4 relative" ref={wrapperRef}>

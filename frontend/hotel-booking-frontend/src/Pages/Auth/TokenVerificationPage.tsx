@@ -5,16 +5,16 @@ import { TokenVerificationForm, TokenVerificationLayout } from "../../components
 interface TokenVerificationPageProps {
   title: string;
   verifyFunction: (token: string) => Promise<any>;
-  successRedirect: string;
   successMessage: string;
+  successRedirect: string;
   email?: string;
 }
 
 const TokenVerificationPage: React.FC<TokenVerificationPageProps> = ({
   title,
   verifyFunction,
-  successRedirect,
   successMessage,
+  successRedirect,
   email,
 }) => {
   const navigate = useNavigate();
@@ -33,13 +33,20 @@ const TokenVerificationPage: React.FC<TokenVerificationPageProps> = ({
 
     try {
       setStatus("loading");
-      await verifyFunction(token.trim());
+      const response = await verifyFunction(token.trim());
+      const { tokenType, userId } = response;
 
       setStatus("success");
       setMessage(successMessage);
 
       setTimeout(() => {
-        navigate(`${successRedirect}?token=${encodeURIComponent(token.trim())}`);
+        if (tokenType === "NEW_USER" && successRedirect === "/login") {
+          navigate("/register", { state: { userId } });
+        } else if (tokenType === "EXISTING_USER" && successRedirect === "/login") {
+          navigate(`${successRedirect}`, { state: { userId } });
+        } else {
+          navigate(`${successRedirect}?token=${token ? encodeURIComponent(token.trim()) : ""}`);
+        }
       }, 1500);
     } catch (err: any) {
       setStatus("error");
@@ -49,7 +56,7 @@ const TokenVerificationPage: React.FC<TokenVerificationPageProps> = ({
 
   return (
     <TokenVerificationLayout
-      heading={status === "loading" ? "Verifying..." : title}
+      title={title}
       status={status}
       message={
         status === "loading"

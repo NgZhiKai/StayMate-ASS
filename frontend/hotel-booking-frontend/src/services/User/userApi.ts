@@ -18,7 +18,6 @@ const userApi = {
   registerUser: async (userData: RegisterData) => {
     const response = await userApiClient.post(`${USER_BASE}/register`, userData);
     const data = response.data;
-
     return {
       user: data?.user ?? null,
       verificationRequired: data?.verificationRequired ?? true,

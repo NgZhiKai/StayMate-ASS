@@ -17,7 +17,6 @@ import ResetPasswordPage from "./Pages/Auth/ResetPasswordPage";
 import SignInPage from "./Pages/Auth/SignInPage";
 import VerifyEmailPage from "./Pages/Auth/VerifyEmailPage";
 import VerifyResetTokenPage from "./Pages/Auth/VerifyResetTokenPage";
-import BookedHotelsPage from "./Pages/BookedHotelsPage";
 import BookingPage from "./Pages/Booking/BookingPage";
 import CreateBookingPage from "./Pages/Booking/CreateBookingPage";
 import BookmarkedHotelsPage from "./Pages/BookmarkedHotels/BookmarkedHotelsPage";
@@ -144,7 +143,6 @@ const AppRoutes: React.FC = () => (
       <Route path="admin/users" element={<ManageUsersPage />} />
       <Route path="admin/bookings" element={<ManageBookingsPage />} />
       <Route path="bookings" element={<BookingPage />} />
-      <Route path="booked-hotels" element={<BookedHotelsPage />} />
       <Route path="notifications" element={<NotifcationsPage />} />
       <Route path="my-payments" element={<MyPaymentsPage />} />
       <Route path="admin/payments" element={<AdminPaymentsPage />} />

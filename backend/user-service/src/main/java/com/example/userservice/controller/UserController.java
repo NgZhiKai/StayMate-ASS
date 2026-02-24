@@ -82,8 +82,9 @@ public class UserController {
             String lastName = body.get("lastName");
             String phone = body.get("phoneNumber");
             String password = body.get("password");
+            String email = body.get("email");
 
-            User completedUser = userService.completeRegistration(userId, firstName, lastName, phone, password);
+            User completedUser = userService.completeRegistration(userId, firstName, lastName, phone, password, email);
             UserResponseDTO dto = UserResponseDTO.fromEntity(completedUser);
 
             return ResponseEntity.status(HttpStatus.CREATED)

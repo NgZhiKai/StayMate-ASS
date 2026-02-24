@@ -1,10 +1,9 @@
-// components/Button/GradientButton.tsx
 import React from "react";
 import ClipLoader from "react-spinners/ClipLoader";
 
 interface GradientButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   loading?: boolean;
-  gradient?: string; // tailwind gradient classes
+  gradient?: string;
 }
 
 const GradientButton: React.FC<GradientButtonProps> = ({

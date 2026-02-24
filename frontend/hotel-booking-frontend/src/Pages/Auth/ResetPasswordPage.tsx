@@ -6,7 +6,7 @@ import { useResetPassword } from "../../hooks/useResetPassword";
 const ResetPasswordPage: React.FC = () => {
   const location = useLocation();
   const params = new URLSearchParams(location.search);
-  const token = params.get("token");
+  const token = params.get("token") ?? "";
 
   const {
     password,

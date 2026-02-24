@@ -60,20 +60,36 @@ public class UserService {
         return token;
     }
 
-    public User completeRegistration(Long userId, String firstName, String lastName, String phone, String password) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new InvalidUserException("User not found"));
+    public User completeRegistration(Long userId, String firstName, String lastName, String phone, String password,
+            String email) {
 
-        if (!user.isVerified()) {
-            throw new InvalidUserException("Email not verified yet.");
+        User user;
+
+        if (userId == 0) {
+            user = new User();
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setPhoneNumber(phone);
+            user.setPassword(password);
+            user.setEmail(email);
+            user.setVerified(true);
+
+            return userRepository.save(user);
+        } else {
+            user = userRepository.findById(userId)
+                    .orElseThrow(() -> new InvalidUserException("User not found"));
+
+            if (!user.isVerified()) {
+                throw new InvalidUserException("Email not verified yet.");
+            }
+
+            user.setFirstName(firstName);
+            user.setLastName(lastName);
+            user.setPhoneNumber(phone);
+            user.setPassword(password);
+
+            return userRepository.save(user);
         }
-
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        user.setPhoneNumber(phone);
-        user.setPassword(password);
-
-        return userRepository.save(user);
     }
 
     // ---------------- User Registration ----------------
@@ -186,7 +202,7 @@ public class UserService {
             throw new InvalidUserException("Invalid email or password.");
         if (!user.isVerified())
             throw new InvalidUserException("Email not verified.");
-        
+
         return user.getVerificationToken();
     }
 

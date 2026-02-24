@@ -43,7 +43,7 @@ const Sidebar: React.FC<{ isOpen: boolean; toggleSidebar: () => void }> = ({
         <hr className="border-purple-300 opacity-50" />
 
         {/* Authenticated Customer */}
-        {isLoggedIn && role === "customer" && (
+        {isLoggedIn && (
           <div className="flex flex-col space-y-2">
             <Link
               to="/bookmarked-hotels"

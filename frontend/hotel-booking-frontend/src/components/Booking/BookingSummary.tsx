@@ -1,5 +1,6 @@
 import React from "react";
 import { Booking } from "../../types/Booking";
+import { GradientButton } from "../Button";
 
 interface Props {
   bookingData: Booking;
@@ -49,7 +50,7 @@ const BookingSummary: React.FC<Props> = ({ bookingData, selectedRooms, isSubmitt
       </div>
 
       {/* Submit */}
-      <button
+      <GradientButton
         type="button"
         onClick={onSubmit}
         disabled={isSubmitting || selectedRooms.length === 0}
@@ -60,7 +61,7 @@ const BookingSummary: React.FC<Props> = ({ bookingData, selectedRooms, isSubmitt
           }`}
       >
         {isSubmitting ? "Booking..." : `Book Now ($${bookingData.totalAmount})`}
-      </button>
+      </GradientButton>
     </div>
   );
 };

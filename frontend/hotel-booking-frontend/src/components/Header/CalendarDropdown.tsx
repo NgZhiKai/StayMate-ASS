@@ -109,10 +109,6 @@ export default function CalendarDropdown({ isOpen }: Props) {
     fetchNames();
   }, [filteredBookings, hotelNames]);
 
-  const handleCancelBooking = (bookingId: number) => {
-    updateBookingStatus(bookingId, "CANCELLED");
-  };
-
   const handleKeyPress = (e: KeyboardEvent<HTMLButtonElement>, hotelId: number, hotel: HotelGrouped) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
