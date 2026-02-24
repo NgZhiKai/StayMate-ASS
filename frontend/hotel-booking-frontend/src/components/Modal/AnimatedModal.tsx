@@ -6,7 +6,7 @@ interface Props {
   onClose: () => void;
 }
 
-const Modal: React.FC<Props> = ({ message, onClose }) => {
+const AnimatedModal: React.FC<Props> = ({ message, onClose }) => {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
@@ -44,4 +44,4 @@ const Modal: React.FC<Props> = ({ message, onClose }) => {
   );
 };
 
-export default Modal;
+export default AnimatedModal;

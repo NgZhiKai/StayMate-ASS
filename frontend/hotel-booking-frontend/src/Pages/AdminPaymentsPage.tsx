@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { CreditCard } from "lucide-react";
 import { paymentApi } from "../services/Payment";
 import { Payment } from "../types/Payment";
-import { fetchBookingById } from "../services/Booking/bookingApi";
+import { bookingApi } from "../services/Booking";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -21,7 +21,7 @@ const AdminPaymentsPage: React.FC = () => {
 
         // Fetch booking details for each payment
         const bookingDetailsPromises = data.map(async (payment) => {
-          const bookingData = await fetchBookingById(payment.bookingId);
+          const bookingData = await bookingApi.fetchBookingById(payment.bookingId);
           return { bookingId: payment.bookingId, bookingData };
         });
 

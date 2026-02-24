@@ -30,118 +30,107 @@ const CreateBookingForm: React.FC<Props> = ({
     {}
   );
 
+  const hasDates = Boolean(bookingData.checkInDate && bookingData.checkOutDate);
+  const validDates =
+    hasDates &&
+    new Date(bookingData.checkInDate) < new Date(bookingData.checkOutDate);
+  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+
   return (
     <form
       onSubmit={handleSubmit}
-      className="space-y-6 bg-white/90 backdrop-blur-md p-6 rounded-3xl shadow-2xl max-w-3xl mx-auto"
+      className="bg-white rounded-3xl shadow-2xl p-6 md:p-10 space-y-8"
     >
-      {/* Title */}
-      <h2 className="text-3xl font-bold mb-6 text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
-        Create Booking
+      <h2 className="text-4xl font-extrabold text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+        Reserve Your Stay
       </h2>
 
-      {/* Check-in / Check-out */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Date Validation */}
+      {hasDates && !validDates && (
+        <div className="w-full bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded-md font-medium text-sm">
+          ⚠️ Check-in date must be before check-out date.
+        </div>
+      )}
+
+      {/* Dates */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {["checkInDate", "checkOutDate"].map((field, i) => (
-          <div key={i} className="flex flex-col">
-            <label className="mb-2 font-semibold text-gray-700 capitalize">
-              {field === "checkInDate" ? "Check-in Date" : "Check-out Date"}
-            </label>
+          <div key={i} className="relative">
             <input
               type="date"
               name={field}
+              min={today}
               value={bookingData[field as keyof Booking] as string}
               onChange={handleInputChange}
-              className="w-full p-3 rounded-xl border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-400 transition"
+              className="peer w-full p-4 rounded-xl border border-gray-300 bg-gray-50 focus:ring-2 focus:ring-indigo-400 outline-none transition"
             />
-            {errors[field] && <p className="text-red-500 text-xs mt-1">{errors[field]}</p>}
+            <label className="absolute left-4 top-2 text-gray-500 text-sm peer-focus:-top-3 peer-focus:text-indigo-500 peer-focus:text-xs transition-all">
+              {field === "checkInDate" ? "Check-in" : "Check-out"}
+            </label>
+            {errors[field] && (
+              <p className="text-red-500 text-xs mt-1 absolute -bottom-5">
+                {errors[field]}
+              </p>
+            )}
           </div>
         ))}
       </div>
 
-      {/* Rooms Selection */}
+      {/* Rooms */}
       <div>
-        <label className="block mb-3 font-semibold text-gray-700">Select Rooms</label>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <p className="mb-3 font-semibold text-gray-700 text-lg">Select Rooms</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {Object.entries(groupedRooms).map(([type, info]) => {
             const selectedCount = bookingData.roomIds.filter((id) =>
               rooms.filter((r) => r.room_type === type).map((r) => r.id.roomId).includes(id)
             ).length;
 
-            const isSelected = selectedCount > 0;
-
             return (
               <div
                 key={type}
-                className={`
-                  p-4 rounded-2xl flex flex-col transition-shadow duration-300
-                  ${isSelected
-                    ? "bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100 shadow-xl border-2 border-transparent"
-                    : "bg-white shadow hover:shadow-lg border border-gray-200"
-                  }
-                `}
+                className={`relative p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between ${
+                  validDates
+                    ? "bg-white shadow hover:shadow-lg border-gray-200"
+                    : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                }`}
               >
-                <div className="flex justify-between items-center mb-2">
+                <div className="flex justify-between items-center mb-3">
                   <p className="font-medium text-gray-800">{type}</p>
                   <p className="text-sm text-gray-500">
                     ${info.price}/night — {info.available} available
                   </p>
                 </div>
 
-                {/* Dropdown */}
-                <div className="relative w-24">
-                  <select
-                    value={selectedCount}
-                    onChange={(e) => handleRoomSelect(type, Number(e.target.value))}
-                    className={`
-                      w-full p-2 text-sm rounded-lg border focus:outline-none focus:ring-2 focus:ring-indigo-400 appearance-none bg-white
-                      ${isSelected ? "font-semibold text-indigo-700" : "text-gray-900"}
-                    `}
-                  >
-                    {Array.from({ length: info.available + 1 }).map((_, i) => (
-                      <option key={i} value={i}>
-                        {i}
-                      </option>
-                    ))}
-                  </select>
-                  {/* Arrow */}
-                  <div className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
-                    <svg
-                      className="w-4 h-4 text-gray-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                {validDates ? (
+                  <div className="flex items-center justify-between mt-2">
+                    <button
+                      type="button"
+                      onClick={() => selectedCount > 0 && handleRoomSelect(type, selectedCount - 1)}
+                      className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 text-lg font-bold text-gray-700"
                     >
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
+                      -
+                    </button>
+                    <span className="mx-4 text-gray-800 font-medium">{selectedCount}</span>
+                    <button
+                      type="button"
+                      onClick={() => selectedCount < info.available && handleRoomSelect(type, selectedCount + 1)}
+                      className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold hover:opacity-90"
+                    >
+                      +
+                    </button>
                   </div>
-                </div>
+                ) : (
+                  <p className="text-gray-400 text-sm mt-2">Select valid dates first</p>
+                )}
+
+                {errors.roomIds && selectedCount === 0 && (
+                  <p className="text-red-500 text-xs mt-2">{errors.roomIds}</p>
+                )}
               </div>
             );
           })}
         </div>
-        {errors.roomIds && <p className="text-red-500 text-xs mt-1">{errors.roomIds}</p>}
       </div>
-
-      {/* Total */}
-      <div>
-        <label className="block mb-2 font-semibold text-gray-700">Total Amount</label>
-        <input
-          type="number"
-          value={bookingData.totalAmount}
-          readOnly
-          className="w-full p-3 rounded-xl bg-gray-100 text-gray-900 border border-gray-300 cursor-not-allowed"
-        />
-      </div>
-
-      {/* Submit */}
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full p-4 rounded-2xl font-bold bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-pink-500 hover:to-indigo-500 transition-all duration-300 text-white shadow-lg"
-      >
-        {isSubmitting ? "Booking..." : `Book Now ($${bookingData.totalAmount})`}
-      </button>
     </form>
   );
 };

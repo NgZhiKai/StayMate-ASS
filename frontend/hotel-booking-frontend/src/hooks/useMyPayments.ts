@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { paymentApi } from "../services/Payment";
-import { fetchBookingById } from "../services/Booking/bookingApi";
+import { bookingApi } from "../services/Booking";
 import { Payment } from "../types/Payment";
 import { DetailedBooking } from "../types/Booking";
 
@@ -47,7 +47,7 @@ export const useMyPayments = () => {
         await Promise.all(
           bookingIds.map(async (bookingId) => {
             try {
-              const booking: DetailedBooking = await fetchBookingById(bookingId);
+              const booking: DetailedBooking = await bookingApi.fetchBookingById(bookingId);
               grouped[bookingId].totalAmount = booking.totalAmount ?? 0;
               grouped[bookingId].totalPaid = grouped[bookingId].payments
                 .filter((p) => p.status === "SUCCESS")

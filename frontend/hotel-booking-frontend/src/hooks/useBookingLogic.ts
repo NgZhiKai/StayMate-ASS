@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createBooking, searchBookingsByDate } from "../services/Booking/bookingApi";
+import { bookingApi } from "../services/Booking";
 import { roomApi } from "../services/Hotel";
 import { Booking } from "../types/Booking";
 import { Room } from "../types/Room";
 
-const useBookingLogic = (
+export const useBookingLogic = (
   userId: number,
   hotelId: number,
   refreshNotifications: () => void,
@@ -59,7 +59,7 @@ const useBookingLogic = (
       if (!checkInDate || !checkOutDate || allRooms.length === 0) return;
 
       try {
-        const bookings = await searchBookingsByDate(checkInDate, checkOutDate);
+        const bookings = await bookingApi.searchBookingsByDate(checkInDate, checkOutDate);
         const bookedRoomIds = bookings
           .filter((b) => b.hotelId === hotelId)
           .map((b) => b.roomId);
@@ -129,7 +129,7 @@ const useBookingLogic = (
 
     setIsSubmitting(true);
     try {
-      await createBooking(bookingData);
+      await bookingApi.createBooking(bookingData);
       refreshNotifications();
       setModalMessage("Booking created successfully!");
       setShowModal(true);
@@ -158,5 +158,3 @@ const useBookingLogic = (
     showLoginPrompt,
   };
 };
-
-export default useBookingLogic;

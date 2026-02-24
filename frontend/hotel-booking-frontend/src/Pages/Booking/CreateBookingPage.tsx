@@ -3,9 +3,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useNotificationContext } from "../../contexts/NotificationContext";
 import { useBookingContext } from "../../contexts/BookingContext";
 
-import CreateBookingForm from "../../components/Booking/CreateBookingForm";
-import AnimatedModal from "../../components/Modal/Modal";
-import useBookingLogic from "../../hooks/useBookingLogic";
+import { CreateBookingForm, BookingSummary, LoginPrompt } from "../../components/Booking";
+import { AnimatedModal } from "../../components/Modal";
+import { useBookingLogic } from "../../hooks";
 
 const CreateBookingPage: React.FC = () => {
   const navigate = useNavigate();
@@ -27,22 +27,24 @@ const CreateBookingPage: React.FC = () => {
     handleModalClose,
     showLoginPrompt,
   } = useBookingLogic(userId, Number(hotelId), refreshNotifications, async () => {
-    // Refresh booking context after success
     await refreshBookings();
-    navigate("/"); // go to home page after booking
+    navigate("/"); // return home after booking
   });
 
-  if (showLoginPrompt)
-    return (
-      <div className="flex justify-center items-center min-h-screen bg-gradient-to-br from-purple-400 to-pink-400">
-        <p className="text-white text-lg font-semibold">Please log in to create a booking.</p>
-      </div>
-    );
+  if (showLoginPrompt) return <LoginPrompt />;
+
+  const selectedRooms = Object.entries(
+    availableRooms.reduce<Record<string, number>>((acc, room) => {
+      if (!acc[room.room_type]) acc[room.room_type] = 0;
+      if (bookingData.roomIds.includes(room.id.roomId)) acc[room.room_type] += 1;
+      return acc;
+    }, {})
+  ).filter(([_, count]) => count > 0);
 
   return (
-    <div className="bg-gradient-to-br from-purple-100 via-pink-100 to-red-100 min-h-screen select-none pt-24 pb-12">
-      <div className="max-w-3xl mx-auto px-6">
-        <div className="bg-white/95 backdrop-blur-sm rounded-3xl shadow-2xl p-8">
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-red-50 pt-24 pb-12 px-4 md:px-8 select-none">
+      <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div className="lg:col-span-2">
           <CreateBookingForm
             bookingData={bookingData}
             rooms={availableRooms}
@@ -53,14 +55,17 @@ const CreateBookingPage: React.FC = () => {
             handleSubmit={handleSubmit}
           />
         </div>
+        <div className="hidden lg:block">
+          <BookingSummary
+            bookingData={bookingData}
+            selectedRooms={selectedRooms}
+            isSubmitting={isSubmitting}
+            onSubmit={() => handleSubmit({} as any)}
+          />
+        </div>
       </div>
 
-      {showModal && (
-        <AnimatedModal
-          message={modalMessage}
-          onClose={handleModalClose}
-        />
-      )}
+      {showModal && <AnimatedModal message={modalMessage} onClose={handleModalClose} />}
     </div>
   );
 };

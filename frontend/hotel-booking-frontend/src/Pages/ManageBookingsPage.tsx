@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { cancelBooking, fetchBookings } from "../services/Booking/bookingApi";
+import { bookingApi } from "../services/Booking";
 import { hotelApi } from "../services/Hotel";
 import { userApi } from "../services/User";
 import { DetailedBooking } from "../types/Booking";
@@ -15,7 +15,7 @@ const ManageBookingsPage: React.FC = () => {
 
   const fetchBookingDetails = useCallback(async () => {
     try {
-      const result: DetailedBooking[] = await fetchBookings(); // API returns array of DetailedBooking
+      const result: DetailedBooking[] = await bookingApi.fetchBookings(); // API returns array of DetailedBooking
 
       // Fetch user & hotel info in parallel for each booking
       const detailedBookings = await Promise.all(
@@ -63,7 +63,7 @@ const ManageBookingsPage: React.FC = () => {
 
   const handleCancel = async (bookingId: number) => {
     try {
-      await cancelBooking(bookingId);
+      await bookingApi.cancelBooking(bookingId);
       setBookings((prev) => prev.filter((b) => b.bookingId !== bookingId));
     } catch (err: any) {
       setError(err.message || "Failed to cancel booking");

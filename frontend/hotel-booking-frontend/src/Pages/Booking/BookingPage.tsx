@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { useBookingContext, Booking } from "../../contexts/BookingContext";
-import { cancelBooking } from "../../services/Booking/bookingApi";
-
-import HotelHeader from "../../components/Booking/HotelHeader";
-import BookingSection from "../../components/Booking/BookingSection";
-import { BookingCardData } from "../../components/Booking/BookingCard";
+import { BookingsByStatus, HotelHeader, NoBookings } from "../../components/Booking";
+import { useBookingContext } from "../../contexts/BookingContext";
+import { bookingApi } from "../../services/Booking";
+import { BookingCardData } from "../../types/Booking";
 
 const BookingPage: React.FC = () => {
   const location = useLocation();
@@ -20,6 +18,7 @@ const BookingPage: React.FC = () => {
     checkOutDate: string;
   };
 
+  // Filter bookings based on location state
   useEffect(() => {
     if (!state?.bookingIds) return;
 
@@ -40,7 +39,7 @@ const BookingPage: React.FC = () => {
   const handleCancel = async (bookingId: number) => {
     try {
       setLoadingIds((prev) => [...prev, bookingId]);
-      await cancelBooking(bookingId);
+      await bookingApi.cancelBooking(bookingId);
       updateBookingStatus(bookingId, "CANCELLED");
     } catch (err) {
       console.error("Cancel booking failed:", err);
@@ -49,46 +48,21 @@ const BookingPage: React.FC = () => {
     }
   };
 
-  if (!selectedBookings.length)
-    return <div className="flex justify-center items-center h-full text-gray-400">No bookings found.</div>;
-
-  const bookingsByStatus = {
-    PENDING: selectedBookings.filter((b) => b.status === "PENDING"),
-    CONFIRMED: selectedBookings.filter((b) => b.status === "CONFIRMED"),
-    CANCELLED: selectedBookings.filter((b) => b.status === "CANCELLED"),
-  };
+  if (!selectedBookings.length) return <NoBookings />;
 
   return (
     <div className="p-6 bg-gray-50 min-h-full select-none">
-      <HotelHeader hotelName={state?.hotelName} checkInDate={state.checkInDate} checkOutDate={state.checkOutDate} />
+      <HotelHeader
+        hotelName={state?.hotelName}
+        checkInDate={state.checkInDate}
+        checkOutDate={state.checkOutDate}
+      />
 
-      {bookingsByStatus.PENDING.length > 0 && (
-        <BookingSection
-          title="Pending Bookings"
-          bookings={bookingsByStatus.PENDING}
-          loadingIds={loadingIds}
-          onCancel={handleCancel}
-        />
-      )}
-
-      {bookingsByStatus.CONFIRMED.length > 0 && (
-        <BookingSection
-          title="Confirmed Bookings"
-          bookings={bookingsByStatus.CONFIRMED}
-          loadingIds={loadingIds}
-          onCancel={handleCancel}
-        />
-      )}
-
-      {bookingsByStatus.CANCELLED.length > 0 && (
-        <BookingSection
-          title="Cancelled Bookings"
-          bookings={bookingsByStatus.CANCELLED}
-          loadingIds={loadingIds}
-          onCancel={handleCancel}
-          showCount
-        />
-      )}
+      <BookingsByStatus
+        bookings={selectedBookings}
+        loadingIds={loadingIds}
+        onCancel={handleCancel}
+      />
     </div>
   );
 };

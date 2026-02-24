@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useMemo, ReactNode } from "react";
-import { fetchBookingsForUser } from "../services/Booking/bookingApi";
+import React, { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { bookingApi } from "../services/Booking";
 
 export interface Booking {
   bookingId: number;
@@ -30,7 +30,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ userId, childr
   const loadBookings = useCallback(async () => {
     if (!userId) return; // no user, skip fetching
     try {
-      const data = await fetchBookingsForUser(userId);
+      const data = await bookingApi.fetchBookingsForUser(userId);
       setBookings(data);
     } catch (err) {
       console.error("Failed to fetch bookings:", err);

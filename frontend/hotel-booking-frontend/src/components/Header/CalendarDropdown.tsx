@@ -1,10 +1,10 @@
-import { useMemo, useState, useEffect, KeyboardEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { KeyboardEvent, useEffect, useMemo, useState } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
-import DropdownWrapper from "./DropdownWrapper";
-import { hotelApi } from "../../services/Hotel";
+import { useNavigate } from "react-router-dom";
 import { useBookingContext } from "../../contexts/BookingContext";
+import { hotelApi } from "../../services/Hotel";
+import DropdownWrapper from "./DropdownWrapper";
 
 interface HotelGrouped {
   hotelId: number;
@@ -160,7 +160,7 @@ export default function CalendarDropdown({ isOpen }: Props) {
         />
 
         {/* Booking List */}
-        <div className="relative mt-4 max-h-[280px] overflow-y-auto space-y-3">
+        <div className="relative mt-4 max-h-[280px] overflow-y-auto space-y-3 scrollbar-none">
           {groupedBookings.length === 0 ? (
             <p className="text-sm text-gray-400 text-center">No bookings for this day.</p>
           ) : (

@@ -3,12 +3,22 @@ import DropdownWrapper from "./DropdownWrapper";
 
 interface Props {
   isOpen: boolean;
-  initial: string;
+  initial?: string; // optional now
   onLogout?: () => void; // optional
 }
 
 export default function UserMenu({ isOpen, initial, onLogout }: Props) {
   const navigate = useNavigate();
+
+  // If no initial is passed, compute from sessionStorage
+  const userInitials =
+    initial ||
+    (() => {
+      const firstName = sessionStorage.getItem("firstName") || "";
+      const lastName = sessionStorage.getItem("lastName") || "";
+      const userInitials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase() || "U";
+      return userInitials;
+    })();
 
   return (
     <div className="relative">
@@ -19,7 +29,7 @@ export default function UserMenu({ isOpen, initial, onLogout }: Props) {
         aria-haspopup="true"
         aria-expanded={isOpen}
       >
-        {initial || "U"}
+        {userInitials}
       </button>
 
       <DropdownWrapper isOpen={isOpen}>

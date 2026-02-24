@@ -28,6 +28,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const { user } = await userApi.getUserInfo(id);
       setRole(user.role.toLowerCase());
       sessionStorage.setItem("role", user.role.toLowerCase());
+      if (user.firstName) sessionStorage.setItem("firstName", user.firstName);
+      if (user.lastName) sessionStorage.setItem("lastName", user.lastName);
     } catch (err) {
       console.error("Failed to fetch user role:", err);
       setRole(null);
@@ -59,6 +61,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("userId");
     sessionStorage.removeItem("role");
+    sessionStorage.removeItem("firstName");
+    sessionStorage.removeItem("lastName");
+
 
     setIsLoggedIn(false);
     setUserId(null);

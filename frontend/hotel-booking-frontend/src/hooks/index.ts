@@ -1,5 +1,7 @@
+export { useBookingLogic } from "./useBookingLogic";
 export { useBookmarkedHotels } from "./useBookmarkedHotels";
 export { useDestinations } from "./useDestinations";
+export { useDropdownManager } from "./useDropdownManager";
 export { useGeolocation } from "./useGeolocation";
 export { useLoginHandlers } from "./useLoginHandlers";
 export { useMarkNotification } from "./useMarkNotification";

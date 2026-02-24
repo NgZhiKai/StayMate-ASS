@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import DropdownWrapper from "./DropdownWrapper";
 import { useNotificationContext } from "../../contexts/NotificationContext";
+import DropdownWrapper from "./DropdownWrapper";
 
 interface Props {
   isOpen: boolean;
@@ -37,7 +37,7 @@ export default function NotificationDropdown({ isOpen }: Props) {
           </span>
         </div>
 
-        <div className="space-y-2 max-h-64 overflow-y-auto">
+        <div className="space-y-2 max-h-64 overflow-y-auto scrollbar-none">
           {topFive.length === 0 ? (
             <p className="text-sm text-gray-400">
               No notifications.

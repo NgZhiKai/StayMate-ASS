@@ -1,21 +1,28 @@
-import { useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { Calendar as CalendarIcon, Mail } from "lucide-react";
+import { useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
-import { useDropdownManager } from "./useDropdownManager";
+import { useNotificationContext } from "../../contexts/NotificationContext";
+import { useDropdownManager } from "../../hooks/useDropdownManager";
 import CalendarDropdown from "./CalendarDropdown";
 import NotificationDropdown from "./NotificationDropdown";
 import UserMenu from "./UserMenu";
-import { useNotificationContext } from "../../contexts/NotificationContext";
-
 
 export default function Header() {
   const navigate = useNavigate();
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const userId = sessionStorage.getItem("userId");
   const { notifications } = useNotificationContext();
 
   const { activeDropdown, toggleDropdown, closeAll } = useDropdownManager();
+
+  // Get user info from sessionStorage
+  const userFirstName = sessionStorage.getItem("firstName") || "";
+  const userLastName = sessionStorage.getItem("lastName") || "";
+  const userId = sessionStorage.getItem("userId");
+
+  // Build initials (first letter of first + first letter of last)
+  const userInitials = `${userFirstName.charAt(0)}${userLastName.charAt(0)}` || "U";
+
   /* Outside Click */
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -46,7 +53,9 @@ export default function Header() {
         <div className="h-10 w-10 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold">
           SM
         </div>
-        <span className="ml-3 text-2xl font-serif italic font-semibold text-gray-800">StayMate</span>
+        <span className="ml-3 text-2xl font-serif italic font-semibold text-gray-800">
+          StayMate
+        </span>
       </button>
 
       {/* RIGHT SIDE */}
@@ -75,7 +84,6 @@ export default function Header() {
                 aria-expanded={activeDropdown === "notifications"}
               >
                 <Mail className="w-6 h-6 text-gray-700" />
-                {/* Modern unread badge */}
                 {notifications.length > 0 && (
                   <span className="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white bg-red-500 rounded-full shadow-lg">
                     {notifications.filter(n => !n.isread).length}
@@ -95,7 +103,11 @@ export default function Header() {
               aria-haspopup="true"
               aria-expanded={activeDropdown === "user"}
             >
-              <UserMenu isOpen={activeDropdown === "user"} initial="Z" onLogout={() => {}} />
+              <UserMenu
+                isOpen={activeDropdown === "user"}
+                initial={userInitials}
+                onLogout={() => {}}
+              />
             </div>
           </>
         ) : (

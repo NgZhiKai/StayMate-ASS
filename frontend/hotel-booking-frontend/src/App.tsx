@@ -24,7 +24,6 @@ import BookmarkedHotelsPage from "./Pages/BookmarkedHotels/BookmarkedHotelsPage"
 import HomePage from "./Pages/Home/HomePage";
 import CreateUpdateHotelPage from "./Pages/Hotel/CreateUpdateHotelPage";
 import HotelDetailsPage from "./Pages/Hotel/HotelDetailsPage";
-import SearchResultsPage from "./Pages/Hotel/SearchResultsPage";
 import PrivacyPolicyPage from "./Pages/Legal/PrivacyPolicyPage";
 import TermsOfServicePage from "./Pages/Legal/TermsOfServicePage";
 import ManageBookingsPage from "./Pages/ManageBookingsPage";
@@ -33,6 +32,7 @@ import NotifcationsPage from "./Pages/Notification/NotificationPage";
 import MyPaymentsPage from "./Pages/Payment/MyPaymentsPage";
 import PaymentPage from "./Pages/Payment/PaymentPage";
 import SelectPaymentPage from "./Pages/Payment/SelectPaymentPage";
+import SearchResultsPage from "./Pages/SearchResults/SearchResultsPage";
 import ManageUsersPage from "./Pages/User/ManageUsersPage";
 import UserAccountSettings from "./Pages/User/UserAccountSettings";
 

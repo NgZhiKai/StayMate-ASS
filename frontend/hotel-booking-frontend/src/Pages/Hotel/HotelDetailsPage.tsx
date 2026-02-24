@@ -1,11 +1,8 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { ClipLoader } from "react-spinners";
-
-import HotelDetails from "../../components/Hotel/HotelDetails";
-import ConfirmationModal from "../../components/Modal/ConfirmationModal";
-import MessageModal from "../../components/Modal/MessageModal";
-import ReviewModal from "../../components/Modal/ReviewModal";
-
+import { HotelDetails } from "../../components/Hotel";
+import { LoadingSpinner } from "../../components/Misc";
+import { ConfirmationModal, MessageModal, ReviewModal } from "../../components/Modal";
 import { useBookmark } from "../../hooks/useBookmark";
 import { useHotelActions } from "../../hooks/useHotelActions";
 import { useHotelData } from "../../hooks/useHotelData";
@@ -20,6 +17,7 @@ const HotelDetailsPage = () => {
 
   const { loading, hotel, reviews, userInfo, setReviews, setUserInfo } = useHotelData(hotelId);
   const { isBookmarked, canBookmark, toggleBookmark } = useBookmark(currentUserId, hotel?.id || null);
+
   const {
     isDeleteModalOpen,
     setIsDeleteModalOpen,
@@ -33,10 +31,13 @@ const HotelDetailsPage = () => {
     handleReviewSubmitted
   } = useHotelActions(hotel?.id || null, setReviews, setUserInfo);
 
+  // NEW: separate state for ReviewModal
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+
   if (loading)
     return (
-      <div className="flex justify-center items-center h-screen">
-        <ClipLoader size={50} color="#2563EB" />
+      <div className="flex justify-center items-center h-full">
+        <LoadingSpinner />
       </div>
     );
 
@@ -55,10 +56,11 @@ const HotelDetailsPage = () => {
         canBookmark={canBookmark}
         handleBookmarkToggle={toggleBookmark}
         handleDeleteHotel={() => setIsDeleteModalOpen(true)}
-        userId={currentUserId} // number | null
-        setIsReviewModalOpen={() => setIsMessageOpen(true)}
+        userId={currentUserId}
+        setIsReviewModalOpen={() => setIsReviewModalOpen(true)} // now opens only ReviewModal
       />
 
+      {/* Delete confirmation modal */}
       <ConfirmationModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
@@ -66,6 +68,7 @@ const HotelDetailsPage = () => {
         message="Are you sure you want to delete this hotel?"
       />
 
+      {/* General message modal */}
       <MessageModal
         isOpen={isMessageOpen}
         onClose={() => setIsMessageOpen(false)}
@@ -73,11 +76,12 @@ const HotelDetailsPage = () => {
         type={messageType}
       />
 
+      {/* Review modal */}
       <ReviewModal
-        isOpen={isMessageOpen} // consider using separate review modal state
-        onClose={() => setIsMessageOpen(false)}
+        isOpen={isReviewModalOpen}
+        onClose={() => setIsReviewModalOpen(false)}
         hotelId={hotel.id}
-        userId={currentUserId} // number | null
+        userId={currentUserId}
         onReviewSubmitted={handleReviewSubmitted}
       />
     </>

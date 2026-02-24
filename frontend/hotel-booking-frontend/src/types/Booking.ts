@@ -25,3 +25,12 @@ export interface DetailedBooking {
     hotelCheckInTime: string;
     hotelCheckOutTime: string;
 }
+
+export interface BookingCardData {
+  bookingId: number;
+  roomType: string;
+  status: "PENDING" | "CONFIRMED" | "CANCELLED";
+  hotelName: string;
+  checkInDate: string;
+  checkOutDate: string;
+}
