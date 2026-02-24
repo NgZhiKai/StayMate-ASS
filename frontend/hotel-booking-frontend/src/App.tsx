@@ -9,7 +9,6 @@ import HeaderOnlyLayout from "./layouts/HeaderOnlyLayout";
 import MainLayout from "./layouts/MainLayout";
 
 // Pages
-import AdminPaymentsPage from "./Pages/AdminPaymentsPage";
 import LoginPage from "./Pages/Auth/LoginPage";
 import LogOutPage from "./Pages/Auth/LogoutPage";
 import RegisterPage from "./Pages/Auth/RegisterPage";
@@ -28,6 +27,7 @@ import TermsOfServicePage from "./Pages/Legal/TermsOfServicePage";
 import ManageBookingsPage from "./Pages/ManageBookingsPage";
 import NearMePage from "./Pages/NearMe/NearMePage";
 import NotifcationsPage from "./Pages/Notification/NotificationPage";
+import AdminPaymentsPage from "./Pages/Payment/AdminPaymentsPage";
 import MyPaymentsPage from "./Pages/Payment/MyPaymentsPage";
 import PaymentPage from "./Pages/Payment/PaymentPage";
 import SelectPaymentPage from "./Pages/Payment/SelectPaymentPage";

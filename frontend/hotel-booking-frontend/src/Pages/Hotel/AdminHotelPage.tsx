@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom'; // Import Link for navigation
-import { fetchHotels } from '../../services/Hotel/hotelApi'; // Importing deleteHotelById
+import { hotelApi } from '../../services/Hotel'; // Importing deleteHotelById
 import { HotelData } from '../../types/Hotels'; // Import HotelManagement type
 
 const AdminHotelPage: React.FC = () => {
@@ -12,7 +12,7 @@ const AdminHotelPage: React.FC = () => {
   useEffect(() => {
     const loadHotels = async () => {
       try {
-        const hotelData = await fetchHotels();
+        const hotelData = await hotelApi.fetchHotels();
         setHotels(hotelData);
         setLoading(false);
       } catch (error: any) {

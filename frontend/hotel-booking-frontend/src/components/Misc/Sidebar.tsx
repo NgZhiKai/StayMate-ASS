@@ -96,13 +96,6 @@ const Sidebar: React.FC<{ isOpen: boolean; toggleSidebar: () => void }> = ({
                 </div>
               )}
             </div>
-
-            <Link
-              to="/user-account-settings"
-              className="flex items-center gap-3 px-4 py-3 rounded-xl hover:opacity-90 shadow-md transition-all duration-300"
-            >
-              <Settings size={20} /> Admin Settings
-            </Link>
           </div>
         )}
       </nav>

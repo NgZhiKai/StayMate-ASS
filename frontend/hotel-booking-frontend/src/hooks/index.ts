@@ -3,6 +3,7 @@ export { useBookmarkedHotels } from "./useBookmarkedHotels";
 export { useDestinations } from "./useDestinations";
 export { useDropdownManager } from "./useDropdownManager";
 export { useGeolocation } from "./useGeolocation";
+export { useGroupedPayments } from "./useGroupedPayments";
 export { useLoginHandlers } from "./useLoginHandlers";
 export { useMarkNotification } from "./useMarkNotification";
 export { useMyPayments } from "./useMyPayments";

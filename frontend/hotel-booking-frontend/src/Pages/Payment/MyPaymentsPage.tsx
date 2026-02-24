@@ -1,6 +1,7 @@
+import { CreditCard } from "lucide-react";
 import React from "react";
 import { LoadingSpinner } from "../../components/Misc";
-import { BookingPaymentCard, PaymentsPagination } from "../../components/Payment";
+import { BookingPaymentCard, HeroSection, PaymentsPagination } from "../../components/Payment";
 import { useMyPayments, useSmartPagination } from "../../hooks";
 
 const ITEMS_PER_PAGE = 3;
@@ -24,31 +25,35 @@ const MyPaymentsPage: React.FC = () => {
   const hasData = paginatedData.length > 0;
 
   return (
-    <div className="min-h-full py-10 px-6 bg-gradient-to-tr from-purple-900 via-indigo-900 to-blue-900 select-none">
-      <h2 className="text-white text-4xl font-bold text-center mb-10">
-        My Payment History
-      </h2>
+    <div className="min-h-full bg-gradient-to-tr from-purple-900 via-indigo-900 to-blue-900 select-none">
+      <HeroSection
+        title="My Payment History"
+        highlight="Payment"
+        description="View your complete booking payment history in one place."
+        icon={<CreditCard size={32} className="text-white" />}
+        gradientColors="from-yellow-300 via-pink-300 to-orange-300"
+      />
 
-      {!hasData ? (
-        <p className="text-gray-300 text-center text-lg">
-          No payments found.
-        </p>
-      ) : (
-        <>
-          <div className="grid gap-6">
-            {paginatedData.map((group) => (
-              <BookingPaymentCard key={group.bookingId} group={group} />
-            ))}
-          </div>
+      <div className="max-w-7xl mx-auto px-6 py-10">
+        {!hasData ? (
+          <p className="text-gray-300 text-center text-lg">No payments found.</p>
+        ) : (
+          <>
+            <div className="grid gap-6">
+              {paginatedData.map((group) => (
+                <BookingPaymentCard key={group.bookingId} group={group} />
+              ))}
+            </div>
 
-          <PaymentsPagination
-            currentPage={currentPage}
-            totalPages={totalPages}
-            pages={pages}
-            goToPage={goToPage}
-          />
-        </>
-      )}
+            <PaymentsPagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              pages={pages}
+              goToPage={goToPage}
+            />
+          </>
+        )}
+      </div>
     </div>
   );
 };

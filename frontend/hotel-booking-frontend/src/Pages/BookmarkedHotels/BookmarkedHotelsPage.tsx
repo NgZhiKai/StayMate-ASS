@@ -1,6 +1,6 @@
 import React from "react";
 import { useBookmarkedHotels } from "../../hooks/useBookmarkedHotels";
-import { BookmarkedHotelsList, BookmarkedHotelsEmpty, BookmarkedHotelsError } from "../../components/BookmarkedHotels";
+import { HeroSection, BookmarkedHotelsList, BookmarkedHotelsEmpty, BookmarkedHotelsError } from "../../components/BookmarkedHotels";
 import { LoadingSpinner } from "../../components/Misc";
 
 const BookmarkedHotelsPage: React.FC = () => {
@@ -8,15 +8,14 @@ const BookmarkedHotelsPage: React.FC = () => {
   const { hotels, loading, error } = useBookmarkedHotels(userId);
 
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold text-gray-900 mb-6 text-center select-none">
-        Your Bookmarked Hotels
-      </h1>
-
-      {loading && <LoadingSpinner />}
-      {error && <BookmarkedHotelsError message={error} />}
-      {!loading && !error && hotels.length === 0 && <BookmarkedHotelsEmpty />}
-      {!loading && !error && hotels.length > 0 && <BookmarkedHotelsList hotels={hotels} />}
+    <div>
+      <HeroSection />
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        {loading && <LoadingSpinner />}
+        {error && <BookmarkedHotelsError message={error} />}
+        {!loading && !error && hotels.length === 0 && <BookmarkedHotelsEmpty />}
+        {!loading && !error && hotels.length > 0 && <BookmarkedHotelsList hotels={hotels} />}
+      </div>
     </div>
   );
 };
