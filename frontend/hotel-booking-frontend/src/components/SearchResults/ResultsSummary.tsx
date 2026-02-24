@@ -23,24 +23,27 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
   const location = city || country;
 
   return (
-    <div className="w-full flex items-center mb-6">
-      <div>
-        <p className="text-xl font-semibold text-gray-900">
-          {location} : {hotelsCount} exact matches found
+    <div className="w-full flex flex-col sm:flex-row items-center justify-between bg-white/80 backdrop-blur-md rounded-2xl px-6 py-4 shadow-md">
+      {/* Left: location and count */}
+      <div className="mb-2 sm:mb-0">
+        <p className="text-lg sm:text-xl font-extrabold bg-gradient-to-r from-yellow-400 via-pink-400 to-orange-400 bg-clip-text text-transparent">
+          {location}
+        </p>
+        <p className="text-sm text-gray-700 mt-1">
+          {hotelsCount} exact matches found
         </p>
       </div>
 
-      {/* Right: Modern pill toggle */}
-        <div className="ml-auto">
-          <div className="flex items-center bg-gray-100 rounded-full p-1 shadow-inner">
-
+      {/* Right: modern pill toggle */}
+      <div>
+        <div className="flex items-center bg-gray-200 rounded-full p-1 shadow-inner">
           {/* Grid Button */}
           <button
             onClick={() => layout !== "grid" && toggleLayout()}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
               layout === "grid"
-                ? "bg-white shadow text-gray-900"
-                : "text-gray-500 hover:text-gray-800"
+                ? "bg-gradient-to-r from-yellow-400 via-pink-400 to-orange-400 text-white shadow-lg scale-105"
+                : "text-gray-600 hover:text-gray-800 hover:bg-white hover:shadow"
             }`}
           >
             <FaThLarge className="text-sm" />
@@ -50,16 +53,16 @@ const ResultsSummary: React.FC<ResultsSummaryProps> = ({
           {/* List Button */}
           <button
             onClick={() => layout !== "list" && toggleLayout()}
-            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200 ${
+            className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
               layout === "list"
-                ? "bg-white shadow text-gray-900"
-                : "text-gray-500 hover:text-gray-800"
+                ? "bg-gradient-to-r from-yellow-400 via-pink-400 to-orange-400 text-white shadow-lg scale-105"
+                : "text-gray-600 hover:text-gray-800 hover:bg-white hover:shadow"
             }`}
           >
             <FaBars className="text-sm" />
             List
           </button>
-          </div>
+        </div>
       </div>
     </div>
   );

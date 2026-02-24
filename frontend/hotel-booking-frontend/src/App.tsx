@@ -21,7 +21,7 @@ import BookedHotelsPage from "./Pages/BookedHotelsPage";
 import BookingPage from "./Pages/Booking/BookingPage";
 import CreateBookingPage from "./Pages/Booking/CreateBookingPage";
 import BookmarkedHotelsPage from "./Pages/BookmarkedHotels/BookmarkedHotelsPage";
-import HomePage from "./Pages/HomePage";
+import HomePage from "./Pages/Home/HomePage";
 import CreateUpdateHotelPage from "./Pages/Hotel/CreateUpdateHotelPage";
 import HotelDetailsPage from "./Pages/Hotel/HotelDetailsPage";
 import SearchResultsPage from "./Pages/Hotel/SearchResultsPage";

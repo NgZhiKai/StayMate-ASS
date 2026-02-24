@@ -1,14 +1,13 @@
 import React from "react";
-import { HotelData } from "../../types/Hotels";
 import { useNavigate } from "react-router-dom";
-import HotelCard from "../Hotel/HotelCard";
+import { HotelData } from "../../types/Hotels";
+import { HotelCard } from "../Hotel";
 
 interface HotelsGridProps {
   hotels: HotelData[];
   hoveredHotelId: number | null;
   setHoveredHotelId: (id: number | null) => void;
   layout: "grid" | "list";
-  className?: string;
 }
 
 const HotelsGrid: React.FC<HotelsGridProps> = ({
@@ -30,12 +29,12 @@ const HotelsGrid: React.FC<HotelsGridProps> = ({
       {hotels.map((hotel) => (
         <div
           key={hotel.id}
-          className="h-full transition-all duration-300"
+          className="h-full cursor-pointer group relative rounded-2xl overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-2xl hover:scale-105"
           onClick={() => navigate(`/hotel/${hotel.id}`)}
           onMouseEnter={() => setHoveredHotelId(hotel.id)}
           onMouseLeave={() => setHoveredHotelId(null)}
         >
-          <HotelCard hotel={hotel} layout={layout} />
+          <HotelCard hotel={hotel} layout={layout} hovered={hoveredHotelId === hotel.id} />
         </div>
       ))}
     </div>

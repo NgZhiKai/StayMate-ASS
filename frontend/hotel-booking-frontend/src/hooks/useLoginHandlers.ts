@@ -46,7 +46,7 @@ export const useLoginHandlers = (initialData: LoginData) => {
     try {
       setIsLoading(true);
       const { user, token } = await userApi.loginUser(data);
-      login(token, data.role, String(user.id));
+      login(token, String(user.id));
       navigate("/");
     } catch (err: any) {
       setModalType("error");

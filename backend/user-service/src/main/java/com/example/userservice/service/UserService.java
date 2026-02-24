@@ -186,12 +186,7 @@ public class UserService {
             throw new InvalidUserException("Invalid email or password.");
         if (!user.isVerified())
             throw new InvalidUserException("Email not verified.");
-
-        UserRole requestedRole = UserRole.valueOf(role.toUpperCase());
-        if (!requestedRole.equals(user.getRole()))
-            throw new InvalidUserException("Role mismatch.");
-
-        // Return verification token (replace with JWT in production)
+        
         return user.getVerificationToken();
     }
 

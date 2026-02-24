@@ -30,7 +30,6 @@ const userApi = {
     try {
       const response = await userApiClient.post(`${USER_BASE}/login`, loginData);
       const data = response.data?.data;
-
       if (!data?.user || !data?.token) {
         throw new Error(response.data?.message || "Invalid credentials or account not found.");
       }

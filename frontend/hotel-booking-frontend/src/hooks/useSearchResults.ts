@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
 import { hotelApi } from "../services/Hotel";
-import { HotelData } from "../types/Hotels";
-
-export interface Destination {
-  city: string;
-  country: string;
-  count: number;
-  imageUrl: string;
-}
+import { Destination, HotelData } from "../types/Hotels";
 
 export const useSearchResults = (city: string, country: string) => {
   const [hotels, setHotels] = useState<HotelData[]>([]);
