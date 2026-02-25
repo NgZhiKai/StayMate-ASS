@@ -93,6 +93,13 @@ const Sidebar: React.FC<{ isOpen: boolean; toggleSidebar: () => void }> = ({
                   >
                     <ClipboardList size={20} /> Bookings Summary
                   </Link>
+                  {/* ✅ Add Hotel Link */}
+                  <Link
+                    to="/create-hotel"
+                    className="flex items-center gap-3 px-4 py-2 rounded-xl hover:opacity-90 shadow-md transition-all duration-300"
+                  >
+                    <Hotel size={20} /> Add Hotel
+                  </Link>
                 </div>
               )}
             </div>

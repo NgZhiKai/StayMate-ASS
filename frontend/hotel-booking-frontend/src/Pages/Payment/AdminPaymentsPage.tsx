@@ -1,7 +1,6 @@
 import React, { useState } from "react";
-import { LoadingSpinner } from "../../components/Misc";
+import { HeroSection, LoadingSpinner } from "../../components/Misc";
 import { Pagination } from "../../components/Pagination";
-import { HeroSection } from "../../components/Payment";
 import { AdminPaymentCard } from "../../components/Payment/AdminPaymentCard";
 import { useGroupedPayments } from "../../hooks/useGroupedPayments";
 
@@ -43,12 +42,12 @@ const AdminPaymentsPage: React.FC = () => {
     );
 
   return (
-    <div className="min-h-full bg-gradient-to-tr from-purple-900 via-indigo-900 to-blue-900 select-none">
+    <div className="min-h-full bg-gradient-to-tr from-blue-50 via-purple-50 to-pink-50 select-none">
       <HeroSection
         title="All Payments Overview"
         highlight="Payments"
         description="View and monitor all booking payments made by users."
-        gradientColors="from-yellow-300 via-pink-300 to-orange-300"
+        align="left"
       />
 
       <div className="max-w-7xl mx-auto px-6 py-10 space-y-6">

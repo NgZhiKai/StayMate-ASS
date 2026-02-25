@@ -54,8 +54,8 @@ const CreateBookingForm: React.FC<Props> = ({
 
       {/* Dates */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {["checkInDate", "checkOutDate"].map((field, i) => (
-          <div key={i} className="relative">
+        {["checkInDate", "checkOutDate"].map((field) => (
+          <div key={field} className="relative">
             <input
               type="date"
               name={field}
@@ -113,6 +113,7 @@ const CreateBookingForm: React.FC<Props> = ({
                     <span className="mx-4 text-gray-800 font-medium">{selectedCount}</span>
                     <button
                       type="button"
+                      disabled={isSubmitting}
                       onClick={() => selectedCount < info.available && handleRoomSelect(type, selectedCount + 1)}
                       className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold hover:opacity-90"
                     >

@@ -1,7 +1,6 @@
 import { Shield, UserIcon } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import PhoneInput from 'react-phone-input-2';
-import 'react-phone-input-2/lib/style.css';
+import { InputField, PhoneField, SelectField } from "../../components/Form";
 import { User } from "../../types/User";
 import { GradientButton } from "../Button";
 
@@ -12,7 +11,12 @@ type UserModalProps = {
   currentUser: User | null;
 };
 
-const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSubmit, currentUser }) => {
+const UserModal: React.FC<UserModalProps> = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  currentUser,
+}) => {
   const [user, setUser] = useState<User>({
     firstName: "",
     lastName: "",
@@ -26,7 +30,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSubmit, curren
   const [passwordError, setPasswordError] = useState<string>("");
   const [nameError, setNameError] = useState<string>("");
 
-  // Reset form when the modal is closed or when `currentUser` changes
+  // Reset form when the modal is opened or currentUser changes
   useEffect(() => {
     if (isOpen) {
       if (currentUser) {
@@ -51,7 +55,9 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSubmit, curren
     }
   }, [isOpen, currentUser]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     setUser({ ...user, [e.target.name]: e.target.value });
   };
 
@@ -60,13 +66,15 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSubmit, curren
     name === "password" ? setPassword(value) : setConfirmPassword(value);
   };
 
-  // Prevent non-letter characters for first and last name and set error message
-  const handleNameInput = (e: React.FormEvent<HTMLInputElement>, name: 'firstName' | 'lastName') => {
+  const handleNameInput = (
+    e: React.FormEvent<HTMLInputElement>,
+    name: "firstName" | "lastName"
+  ) => {
     const value = e.currentTarget.value;
     const regex = /^[a-zA-Z ]*$/; // Allow letters and spaces only
     if (regex.test(value)) {
       setUser({ ...user, [name]: value });
-      setNameError(""); // Clear error if valid input
+      setNameError("");
     } else {
       setNameError("Names can only contain letters and spaces.");
     }
@@ -87,9 +95,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSubmit, curren
       }
     }
 
-    if (nameError) {
-      return;
-    }
+    if (nameError) return;
 
     setPasswordError("");
 
@@ -112,9 +118,6 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSubmit, curren
     ? "from-indigo-600 via-purple-600 to-pink-500"
     : "from-blue-500 via-indigo-500 to-purple-500";
 
-  const inputClass =
-    "w-full px-4 py-3 bg-white border border-gray-200 rounded-xl text-gray-700 placeholder-gray-400 focus:ring-2 focus:ring-indigo-400 focus:outline-none transition shadow-sm";
-
   return (
     <>
       {/* Backdrop */}
@@ -123,21 +126,17 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSubmit, curren
         onClick={onClose}
       />
 
-      {/* Modal Wrapper */}
+      {/* Modal */}
       <div className="fixed inset-0 flex justify-center items-center z-50 px-4 select-none">
         <div className="relative w-full max-w-xl bg-white rounded-3xl shadow-2xl overflow-hidden animate-modalEnter">
-
-          {/* Gradient Header */}
-          <div className={`bg-gradient-to-r ${headerGradient} px-8 py-6 text-white relative`}>
+          {/* Header */}
+          <div
+            className={`bg-gradient-to-r ${headerGradient} px-8 py-6 text-white relative`}
+          >
             <div className="flex items-center gap-3">
               <div className="bg-white/20 p-2 rounded-xl backdrop-blur-sm">
-                {isAdmin ? (
-                  <Shield size={22} />
-                ) : (
-                  <UserIcon size={22} />
-                )}
+                {isAdmin ? <Shield size={22} /> : <UserIcon size={22} />}
               </div>
-
               <div>
                 <h2 className="text-2xl font-bold">
                   {currentUser ? "Edit User" : "Create User"}
@@ -158,135 +157,78 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSubmit, curren
             </button>
           </div>
 
-          {/* Form Body */}
+          {/* Form */}
           <div className="px-8 py-8">
             <form onSubmit={handleSubmit} className="space-y-5">
-
               {/* Name Fields */}
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="text-sm font-medium text-gray-600">
-                    First Name
-                  </label>
-                  <input
-                    type="text"
-                    name="firstName"
-                    value={user.firstName}
-                    onInput={(e) => handleNameInput(e, "firstName")}
-                    className={inputClass}
-                    required
-                  />
-                </div>
-
-                <div>
-                  <label className="text-sm font-medium text-gray-600">
-                    Last Name
-                  </label>
-                  <input
-                    type="text"
-                    name="lastName"
-                    value={user.lastName}
-                    onInput={(e) => handleNameInput(e, "lastName")}
-                    className={inputClass}
-                    required
-                  />
-                </div>
-              </div>
-
-              {nameError && (
-                <div className="text-sm text-red-500">{nameError}</div>
-              )}
-
-              {/* Email */}
-              <div>
-                <label className="text-sm font-medium text-gray-600">
-                  Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  value={user.email}
-                  onChange={handleChange}
-                  className={inputClass}
+                <InputField
+                  label="First Name"
+                  type="text"
+                  name="firstName"
+                  value={user.firstName}
+                  onChange={(e) => handleNameInput(e, "firstName")}
+                  required
+                />
+                <InputField
+                  label="Last Name"
+                  type="text"
+                  name="lastName"
+                  value={user.lastName}
+                  onChange={(e) => handleNameInput(e, "lastName")}
                   required
                 />
               </div>
+              {nameError && <div className="text-sm text-red-500">{nameError}</div>}
+
+              {/* Email */}
+              <InputField
+                label="Email"
+                type="email"
+                name="email"
+                value={user.email}
+                onChange={handleChange}
+                required
+              />
 
               {/* Phone */}
-              <div>
-                <label className="text-sm font-medium text-gray-600">
-                  Phone Number
-                </label>
-
-                <div className="mt-1">
-                  <PhoneInput
-                    country="sg"
-                    value={user.phoneNumber}
-                    onChange={(value: string) =>
-                      handleChange({
-                        target: { name: "phoneNumber", value },
-                      } as React.ChangeEvent<HTMLInputElement>)
-                    }
-
-                    containerClass="!w-full"
-                    inputClass="!w-full !h-[48px] !pl-14 !pr-4 !rounded-xl !border !border-gray-200 !bg-white !text-gray-700 !shadow-sm focus:!ring-2 focus:!ring-indigo-400 focus:!border-indigo-400"
-                    buttonClass="!border-none !bg-transparent !rounded-l-xl"
-                    dropdownClass="!rounded-xl !shadow-xl"
-                  />
-                </div>
-              </div>
+              <PhoneField value={user.phoneNumber} onChange={(val) => setUser({...user, phoneNumber: val})} />
 
               {/* Role */}
               {!currentUser && (
-                <div>
-                  <label className="text-sm font-medium text-gray-600">
-                    Account Type
-                  </label>
-                  <select
-                    name="role"
-                    value={user.role}
-                    onChange={handleChange}
-                    className={inputClass}
-                  >
-                    <option value="USER">User</option>
-                    <option value="ADMIN">Admin</option>
-                  </select>
+                <SelectField
+                  label="Account Type"
+                  name="role"
+                  value={user.role}
+                  options={[
+                    { value: "USER", label: "User" },
+                    { value: "ADMIN", label: "Admin" },
+                  ]}
+                  onChange={handleChange}
+                />
+              )}
+
+              {/* Password */}
+              {!currentUser && (
+                <div className="space-y-4">
+                  <InputField
+                    label="Password"
+                    type="password"
+                    name="password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                    required
+                  />
+                  <InputField
+                    label="Confirm Password"
+                    type="password"
+                    name="confirmPassword"
+                    value={confirmPassword}
+                    onChange={handlePasswordChange}
+                    required
+                  />
                 </div>
               )}
-
-              {/* Passwords */}
-              {!currentUser && (
-                <>
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Password
-                    </label>
-                    <input
-                      type="password"
-                      name="password"
-                      value={password}
-                      onChange={handlePasswordChange}
-                      className={inputClass}
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="text-sm font-medium text-gray-600">
-                      Confirm Password
-                    </label>
-                    <input
-                      type="password"
-                      name="confirmPassword"
-                      value={confirmPassword}
-                      onChange={handlePasswordChange}
-                      className={inputClass}
-                      required
-                    />
-                  </div>
-                </>
-              )}
-
               {passwordError && (
                 <div className="text-sm text-red-500">{passwordError}</div>
               )}
@@ -296,11 +238,10 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSubmit, curren
                 <GradientButton
                   type="button"
                   onClick={onClose}
-                  className="px-5 py-3 rounded-xl  hover:scale-110"
+                  className="px-5 py-3 rounded-xl hover:scale-110"
                 >
                   Cancel
                 </GradientButton>
-
                 <GradientButton
                   type="submit"
                   gradient={headerGradient}
@@ -309,7 +250,6 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSubmit, curren
                   {currentUser ? "Update User" : "Create User"}
                 </GradientButton>
               </div>
-
             </form>
           </div>
         </div>

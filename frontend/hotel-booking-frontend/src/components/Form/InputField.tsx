@@ -1,18 +1,18 @@
 import React from "react";
 
 interface InputFieldProps {
-  label?: string;
+  label?: React.ReactNode;
   type: string;
   name: string;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   readOnly?: boolean;
   placeholder?: string;
   required?: boolean;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
-  label,
+  label, 
   type,
   name,
   value,

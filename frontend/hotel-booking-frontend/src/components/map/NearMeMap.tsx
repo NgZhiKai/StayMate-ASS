@@ -75,7 +75,8 @@ const NearMeMap = forwardRef<NearMeMapRef, NearMeMapProps>(({ location, hotels }
     <MapContainer
       center={(location || [51.505, -0.09]) as LatLngExpression}
       zoom={13}
-      className="h-full w-full"
+      className="h-full w-full rounded-3xl"
+      zoomControl={false}
     >
       <SetMapRef mapRef={mapRef} />
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />

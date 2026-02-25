@@ -1,4 +1,3 @@
-// src/services/Hotel/hotelApi.ts
 import { Destination, HotelData } from "../../types/Hotels";
 import { hotelApiClient } from "./hotelApiClient";
 import { handleApiError } from "../../utils/handleApiError";

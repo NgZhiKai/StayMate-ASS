@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.hotelservice.dto.custom.CustomResponse;
-import com.example.hotelservice.dto.hotel.HotelDestinationDTO;
 import com.example.hotelservice.dto.hotel.HotelRequestDTO;
 import com.example.hotelservice.dto.room.RoomRequestDTO;
 import com.example.hotelservice.entity.hotel.Hotel;
@@ -75,6 +74,8 @@ public class HotelController {
         hotel.setContact(hotelRequestDTO.getContact());
         hotel.setCheckIn(hotelRequestDTO.getCheckIn());
         hotel.setCheckOut(hotelRequestDTO.getCheckOut());
+        hotel.setCity(hotelRequestDTO.getCity());
+        hotel.setCountry(hotelRequestDTO.getCountry());
 
         if (image != null && !image.isEmpty()) {
             hotel.setImage(image.getBytes());

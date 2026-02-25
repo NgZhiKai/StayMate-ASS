@@ -21,9 +21,11 @@ public class HotelRequestDTO {
     private String address;
     private double latitude;
     private double longitude;
-    private List<RoomRequestDTO> rooms; // List of rooms to create
+    private List<RoomRequestDTO> rooms;
     private String description;
     private String contact;
+    private String city;
+    private String country;
 
     @JsonDeserialize(using = LocalTimeDeserializer.class)
     private LocalTime checkIn;

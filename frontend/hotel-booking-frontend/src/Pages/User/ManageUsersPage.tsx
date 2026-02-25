@@ -1,9 +1,10 @@
 import { Shield, User as UserIcon } from "lucide-react";
 import { useState } from "react";
 import { GradientButton } from "../../components/Button";
+import { HeroSection } from "../../components/Misc";
 import { MessageModal, UserModal } from "../../components/Modal";
 import { Pagination } from "../../components/Pagination";
-import { HeroSection, UsersTable } from "../../components/User";
+import { UsersTable } from "../../components/User";
 import { useUsers } from "../../hooks";
 
 const ITEMS_PER_PAGE = 5;
@@ -67,10 +68,15 @@ const ManageUsers: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-r from-pink-50 via-white to-blue-50">
-      <HeroSection />
+      <HeroSection
+        title="Manage Users"
+        highlight="Users"
+        description="Add, edit and manage admins and users efficiently."
+        align="left"
+      />
 
       {/* Admin Section */}
-      <section className="max-w-7xl mx-auto px-6 mb-12">
+      <section className="max-w-7xl mx-auto px-6 py-8 mb-12">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold text-indigo-600">Admins</h2>
           <GradientButton onClick={openCreateModal} className="px-6 py-3 rounded-full">

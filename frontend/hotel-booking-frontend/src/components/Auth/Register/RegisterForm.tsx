@@ -1,9 +1,7 @@
 import React from "react";
 import { RegisterData } from "../../../types/User";
-import GradientButton from "../../Button/GradientButton";
-import InputField from "../../Form/InputField";
-import PhoneInput from "react-phone-input-2";
-import "react-phone-input-2/lib/style.css";
+import { GradientButton } from "../../Button";
+import { InputField, PhoneField } from "../../Form";
 
 interface RegisterFormProps {
   registerData: RegisterData;
@@ -59,25 +57,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({
           readOnly={isEmailReadonly}
         />
 
-        {/* Phone Number with PhoneInput */}
-        <div>
-          <label className="text-sm font-medium text-gray-600">Phone Number</label>
-          <div className="mt-1">
-            <PhoneInput
-              country="sg"
-              value={registerData.phoneNumber}
-              onChange={(value: string) =>
-                handleChange({
-                  target: { name: "phoneNumber", value },
-                } as React.ChangeEvent<HTMLInputElement>)
-              }
-              containerClass="!w-full"
-              inputClass="!w-full !h-[48px] !pl-14 !pr-4 !rounded-xl !border !border-gray-200 !bg-white !text-gray-700 !shadow-sm focus:!ring-2 focus:!ring-indigo-400 focus:!border-indigo-400"
-              buttonClass="!border-none !bg-transparent !rounded-l-xl"
-              dropdownClass="!rounded-xl !shadow-xl"
-            />
-          </div>
-        </div>
+        {/* Phone Number */}
+        <PhoneField
+          value={registerData.phoneNumber}
+          onChange={(val: string) => handleChange({
+            target: { name: "phoneNumber", value: val }
+          } as React.ChangeEvent<HTMLInputElement>)}
+        />
 
         {/* Row 3 */}
         <InputField

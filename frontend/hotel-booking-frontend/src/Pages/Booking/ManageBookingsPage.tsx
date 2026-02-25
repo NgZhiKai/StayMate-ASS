@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { BookingAdminCard, HeroSection } from "../components/Booking";
-import { Pagination } from "../components/Pagination";
-import { useBookings } from "../hooks/useBookings";
+import { HeroSection } from "../../components/Misc";
+import { BookingAdminCard } from "../../components/Booking";
+import { Pagination } from "../../components/Pagination";
+import { useBookings } from "../../hooks/useBookings";
 
 const ITEMS_PER_PAGE = 8;
 
@@ -36,7 +37,12 @@ const ManageBookingsPage: React.FC = () => {
 
   return (
     <div className="bg-gradient-to-b from-blue-50 via-purple-50 to-pink-50 min-h-full text-gray-900">
-      <HeroSection />
+      <HeroSection
+        title="Manage All Bookings"
+        highlight="Bookings"
+        description="View all bookings made on your platform and manage them efficiently."
+        align="left"
+      />
       <div className="max-w-7xl mx-auto px-6 py-8">
         {error && <p className="text-red-600 text-center mb-4">{error}</p>}
         {bookings.length === 0 ? (

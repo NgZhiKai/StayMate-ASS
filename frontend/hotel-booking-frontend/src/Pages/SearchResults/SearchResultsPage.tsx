@@ -1,8 +1,8 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
+import { HeroSection } from "../../components/Misc";
 import { SearchResult } from "../../components/Search";
 import {
-  HeroSection,
   LoadingSkeleton,
   MapHotelsSection,
   ResultsSummary,
@@ -27,7 +27,13 @@ const SearchResultsPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-purple-50 via-pink-50 to-white select-none">
-      <HeroSection city={city} country={country} />
+      <HeroSection
+        title={`Hotels in ${city}`}
+        highlight={city}
+        description="Find the perfect stay for your trip."
+        align="left"
+      />
+
       <SearchResult
         destinations={destinations}
         searchInput={searchInput}

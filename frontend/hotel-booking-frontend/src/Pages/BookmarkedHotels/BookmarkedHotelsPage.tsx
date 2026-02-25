@@ -1,7 +1,7 @@
 import React from "react";
+import { BookmarkedHotelsEmpty, BookmarkedHotelsError, BookmarkedHotelsList } from "../../components/BookmarkedHotels";
+import { HeroSection, LoadingSpinner } from "../../components/Misc";
 import { useBookmarkedHotels } from "../../hooks/useBookmarkedHotels";
-import { HeroSection, BookmarkedHotelsList, BookmarkedHotelsEmpty, BookmarkedHotelsError } from "../../components/BookmarkedHotels";
-import { LoadingSpinner } from "../../components/Misc";
 
 const BookmarkedHotelsPage: React.FC = () => {
   const userId = Number(sessionStorage.getItem("userId"));
@@ -9,7 +9,12 @@ const BookmarkedHotelsPage: React.FC = () => {
 
   return (
     <div>
-      <HeroSection />
+      <HeroSection
+        title="Your favorite stays"
+        highlight="favorite stays"
+        description="All your bookmarked hotels and cozy escapes in one place."
+        align="left"
+      />
       <div className="max-w-7xl mx-auto px-6 py-12">
         {loading && <LoadingSpinner />}
         {error && <BookmarkedHotelsError message={error} />}

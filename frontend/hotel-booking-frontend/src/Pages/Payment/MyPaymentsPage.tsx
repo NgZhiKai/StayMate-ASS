@@ -1,8 +1,7 @@
-import { CreditCard } from "lucide-react";
 import React from "react";
-import { LoadingSpinner } from "../../components/Misc";
+import { HeroSection, LoadingSpinner } from "../../components/Misc";
 import { Pagination } from "../../components/Pagination";
-import { BookingPaymentCard, HeroSection } from "../../components/Payment";
+import { BookingPaymentCard } from "../../components/Payment";
 import { useMyPayments, useSmartPagination } from "../../hooks";
 
 const ITEMS_PER_PAGE = 3;
@@ -27,12 +26,12 @@ const MyPaymentsPage: React.FC = () => {
 
   return (
     <div className="min-h-full bg-gradient-to-tr from-purple-900 via-indigo-900 to-blue-900 select-none">
+
       <HeroSection
         title="My Payment History"
         highlight="Payment"
         description="View your complete booking payment history in one place."
-        icon={<CreditCard size={32} className="text-white" />}
-        gradientColors="from-yellow-300 via-pink-300 to-orange-300"
+        align="left"
       />
 
       <div className="max-w-7xl mx-auto px-6 py-10">

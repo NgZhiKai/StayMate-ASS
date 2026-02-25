@@ -4,7 +4,6 @@ export { default as BookingsByStatus } from "./BookingsByStatus";
 export { default as BookingSection } from "./BookingSection";
 export { default as BookingSummary } from "./BookingSummary";
 export { default as CreateBookingForm } from "./CreateBookingForm";
-export { default as HeroSection } from "./HeroSection";
 export { default as HotelHeader } from "./HotelHeader";
 export { default as LoginPrompt } from "./LoginPrompt";
 export { default as NoBookings } from "./NoBookings";
