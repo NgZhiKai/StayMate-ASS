@@ -1,23 +1,17 @@
 package com.example.hotelservice.service;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
 
+import com.example.hotelservice.dto.hotel.HotelSearchDTO;
 import com.example.hotelservice.entity.hotel.Hotel;
+import com.example.hotelservice.entity.review.Review;
 import com.example.hotelservice.entity.room.Room;
 import com.example.hotelservice.exception.ResourceNotFoundException;
 import com.example.hotelservice.repository.HotelRepository;
@@ -26,21 +20,97 @@ import com.example.hotelservice.repository.HotelRepository;
 public class HotelService {
 
     private final HotelRepository hotelRepository;
-    private final String PIXABAY_API_KEY;
+    private final ImageService imageService;
+    private final RoomService roomService;
+    private final ReviewService reviewService;
 
-    public HotelService(@NonNull HotelRepository hotelRepository, @Value("${pixabay.api.key}") String apiKey) {
+    public HotelService(@NonNull HotelRepository hotelRepository, ImageService imageService, RoomService roomService,
+            ReviewService reviewService) {
         this.hotelRepository = Objects.requireNonNull(hotelRepository, "HotelRepository must not be null");
-        this.PIXABAY_API_KEY = apiKey;
+        this.imageService = imageService;
+        this.roomService = roomService;
+        this.reviewService = reviewService;
     }
 
-    public List<Hotel> getAllHotels() {
-        return hotelRepository.findAll();
+    public List<HotelSearchDTO> getHotelsByIds(List<Long> ids) {
+        List<Hotel> hotels = hotelRepository.findAllById(ids);
+
+        return hotels.stream().map(hotel -> {
+
+            List<Room> rooms = roomService.getHotelRooms(hotel.getId());
+
+            double minPrice = rooms.stream()
+                    .mapToDouble(Room::getPricePerNight)
+                    .min()
+                    .orElse(0);
+
+            double maxPrice = rooms.stream()
+                    .mapToDouble(Room::getPricePerNight)
+                    .max()
+                    .orElse(0);
+
+            List<Review> reviews = reviewService.findReviewsByHotelId(hotel.getId());
+
+            double avgRating = reviews.isEmpty()
+                    ? 0
+                    : reviews.stream().mapToInt(Review::getRating).average().orElse(0);
+
+            return new HotelSearchDTO(hotel, avgRating, minPrice, maxPrice);
+
+        }).toList();
     }
 
-    public Hotel getHotelById(@NonNull Long id) {
-        Objects.requireNonNull(id, "Hotel ID must not be null");
+    public List<HotelSearchDTO> getAllHotels() {
+        List<Hotel> hotels = hotelRepository.findAll();
+
+        return hotels.stream().map(hotel -> {
+
+            List<Room> rooms = roomService.getHotelRooms(hotel.getId());
+
+            double minPrice = rooms.stream()
+                    .mapToDouble(Room::getPricePerNight)
+                    .min()
+                    .orElse(0);
+
+            double maxPrice = rooms.stream()
+                    .mapToDouble(Room::getPricePerNight)
+                    .max()
+                    .orElse(0);
+
+            List<Review> reviews = reviewService.findReviewsByHotelId(hotel.getId());
+
+            double avgRating = reviews.isEmpty()
+                    ? 0
+                    : reviews.stream().mapToInt(Review::getRating).average().orElse(0);
+
+            return new HotelSearchDTO(hotel, avgRating, minPrice, maxPrice);
+
+        }).toList();
+    }
+
+    public Hotel getHotelEntityById(Long id) {
         return hotelRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with ID " + id));
+    }
+
+    public HotelSearchDTO getHotelById(@NonNull Long id) {
+        Objects.requireNonNull(id, "Hotel ID must not be null");
+
+        // Fetch hotel
+        Hotel hotel = hotelRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with ID " + id));
+
+        // Get rooms
+        List<Room> rooms = roomService.getHotelRooms(hotel.getId());
+        double minPrice = rooms.stream().mapToDouble(Room::getPricePerNight).min().orElse(0);
+        double maxPrice = rooms.stream().mapToDouble(Room::getPricePerNight).max().orElse(0);
+
+        // Get reviews
+        List<Review> reviews = reviewService.findReviewsByHotelId(hotel.getId());
+        double avgRating = reviews.isEmpty() ? 0 : reviews.stream().mapToInt(Review::getRating).average().orElse(0);
+
+        // Return DTO
+        return new HotelSearchDTO(hotel, avgRating, minPrice, maxPrice);
     }
 
     public Hotel saveHotel(@NonNull Hotel hotel) {
@@ -55,13 +125,33 @@ public class HotelService {
         hotelRepository.delete(hotel);
     }
 
-    public List<Hotel> findHotelsByName(@NonNull String name) {
+    public List<HotelSearchDTO> findHotelsByName(@NonNull String name) {
         Objects.requireNonNull(name, "Name must not be null");
-        return hotelRepository.findByNameContaining(name);
-    }
+        List<Hotel> hotels = hotelRepository.findByNameContaining(name);
 
-    public List<Hotel> searchHotelsByName(@NonNull String name) {
-        return findHotelsByName(name);
+        return hotels.stream().map(hotel -> {
+
+            List<Room> rooms = roomService.getHotelRooms(hotel.getId());
+
+            double minPrice = rooms.stream()
+                    .mapToDouble(Room::getPricePerNight)
+                    .min()
+                    .orElse(0);
+
+            double maxPrice = rooms.stream()
+                    .mapToDouble(Room::getPricePerNight)
+                    .max()
+                    .orElse(0);
+
+            List<Review> reviews = reviewService.findReviewsByHotelId(hotel.getId());
+
+            double avgRating = reviews.isEmpty()
+                    ? 0
+                    : reviews.stream().mapToInt(Review::getRating).average().orElse(0);
+
+            return new HotelSearchDTO(hotel, avgRating, minPrice, maxPrice);
+
+        }).toList();
     }
 
     public List<Room> getRoomsByHotel(@NonNull Long hotelId) {
@@ -105,88 +195,59 @@ public class HotelService {
                 .toList();
     }
 
-    public List<Hotel> findHotelsByCityAndCountry(String city, String country) {
+    public List<HotelSearchDTO> findHotelsByCityAndCountry(String city, String country) {
         if (city == null)
             city = "";
         if (country == null)
             country = "";
-        return hotelRepository.findByCityIgnoreCaseContainingAndCountryIgnoreCaseContaining(city, country);
+        List<Hotel> hotels = hotelRepository.findByCityIgnoreCaseContainingAndCountryIgnoreCaseContaining(city,
+                country);
+
+        return hotels.stream().map(hotel -> {
+
+            List<Room> rooms = roomService.getHotelRooms(hotel.getId());
+
+            double minPrice = rooms.stream()
+                    .mapToDouble(Room::getPricePerNight)
+                    .min()
+                    .orElse(0);
+
+            double maxPrice = rooms.stream()
+                    .mapToDouble(Room::getPricePerNight)
+                    .max()
+                    .orElse(0);
+
+            List<Review> reviews = reviewService.findReviewsByHotelId(hotel.getId());
+
+            double avgRating = reviews.isEmpty()
+                    ? 0
+                    : reviews.stream().mapToInt(Review::getRating).average().orElse(0);
+
+            return new HotelSearchDTO(hotel, avgRating, minPrice, maxPrice);
+
+        }).toList();
     }
 
     public List<Map<String, Object>> getHotelCountsByCityCountry() {
         List<Object[]> results = hotelRepository.countHotelsByCityAndCountry();
-
         List<Map<String, Object>> destinations = new ArrayList<>();
+
         for (Object[] row : results) {
             String city = (String) row[0];
             String country = (String) row[1];
             Long count = (Long) row[2];
 
-            // Map city/country to an image URL
-            String imageUrl = getDestinationImageUrl(city, country);
+            // 🔹 Use ImageService to get cached/fallback Base64 image
+            String imageBase64 = imageService.getDestinationImageBase64(city, country);
 
             Map<String, Object> dest = Map.of(
                     "city", city,
                     "country", country,
                     "count", count,
-                    "imageUrl", imageUrl);
+                    "imageBase64", imageBase64);
             destinations.add(dest);
         }
 
         return destinations;
     }
-
-    /**
-     * Returns a HTTPS URL for the city/country image
-     */
-    private String getDestinationImageUrl(String city, String country) {
-        try {
-            // 1️⃣ Try Pixabay API
-            String query = city + " " + country;
-            String apiUrl = "https://pixabay.com/api/?key=" + PIXABAY_API_KEY
-                    + "&q=" + URLEncoder.encode(query, "UTF-8")
-                    + "&image_type=photo&per_page=1";
-
-            HttpURLConnection conn = (HttpURLConnection) new URL(apiUrl).openConnection();
-            conn.setRequestMethod("GET");
-
-            int responseCode = conn.getResponseCode();
-            if (responseCode == 200) {
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder response = new StringBuilder();
-                String line;
-                while ((line = in.readLine()) != null)
-                    response.append(line);
-                in.close();
-
-                JSONObject json = new JSONObject(response.toString());
-                JSONArray hits = json.getJSONArray("hits");
-                if (hits.length() > 0) {
-                    return hits.getJSONObject(0).getString("largeImageURL");
-                }
-            }
-        } catch (Exception e) {
-            System.out.println("Pixabay API failed: " + e.getMessage());
-        }
-
-        // 2️⃣ Fallback to hardcoded URLs
-        return switch (city.toLowerCase()) {
-            case "seoul" ->
-                "https://images.unsplash.com/photo-1582076856765-7f9b1dbb88e0?auto=format&fit=crop&w=800&q=60";
-            case "taipei" ->
-                "https://images.unsplash.com/photo-1605902711622-cfb43c4437f2?auto=format&fit=crop&w=800&q=60";
-            case "hong kong" ->
-                "https://images.unsplash.com/photo-1579338553723-9642f109b8de?auto=format&fit=crop&w=800&q=60";
-            case "miami" ->
-                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=60";
-            case "malibu" ->
-                "https://images.unsplash.com/photo-1493558103817-58b2924bce98?auto=format&fit=crop&w=800&q=60";
-            case "singapore" ->
-                "https://images.unsplash.com/photo-1501621965065-c6e1cf6b53e2?auto=format&fit=crop&w=800&q=60";
-            case "bali" ->
-                "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=60";
-            default -> "https://images.unsplash.com/photo-1493558103817-58b2924bce98?auto=format&fit=crop&w=800&q=60";
-        };
-    }
-
 }

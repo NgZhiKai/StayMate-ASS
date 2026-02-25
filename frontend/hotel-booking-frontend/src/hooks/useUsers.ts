@@ -39,7 +39,9 @@ export const useUsers = () => {
   const submitUser = async (userData: User | RegisterData) => {
     if (userData.id === 0) {
       const response = await userApi.registerUser(userData as RegisterData);
-      setUsers(prev => [...prev, response.user]);
+      setUsers(prev =>
+        prev.map(u => (u.id === userData.id ? response.user : u))
+      );
       showMessage("success", "User created successfully!");
     } else {
       const response = await userApi.updateUser(String(userData.id), userData);

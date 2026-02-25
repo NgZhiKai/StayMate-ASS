@@ -42,7 +42,6 @@ export const useMyPayments = () => {
           grouped[p.bookingId].payments.push(p);
         }
 
-        // fetch booking totals
         const bookingIds = Object.keys(grouped).map(Number);
         await Promise.all(
           bookingIds.map(async (bookingId) => {

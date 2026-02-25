@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.example.hotelservice.entity.hotel.Hotel;
 import com.example.hotelservice.entity.room.Room;
 import com.example.hotelservice.entity.room.RoomId;
-import com.example.hotelservice.entity.room.RoomStatus;
 import com.example.hotelservice.entity.room.RoomType;
 import com.example.hotelservice.exception.HotelNotFoundException;
 import com.example.hotelservice.exception.RoomNotFoundException;

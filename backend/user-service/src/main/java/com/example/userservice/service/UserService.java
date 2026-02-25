@@ -61,7 +61,7 @@ public class UserService {
     }
 
     public User completeRegistration(Long userId, String firstName, String lastName, String phone, String password,
-            String email) {
+            String email, UserRole role) {
 
         User user;
 
@@ -73,8 +73,10 @@ public class UserService {
             user.setPassword(password);
             user.setEmail(email);
             user.setVerified(true);
+            user.setRole(role != null ? role : UserRole.CUSTOMER);
 
             return userRepository.save(user);
+
         } else {
             user = userRepository.findById(userId)
                     .orElseThrow(() -> new InvalidUserException("User not found"));
@@ -87,6 +89,11 @@ public class UserService {
             user.setLastName(lastName);
             user.setPhoneNumber(phone);
             user.setPassword(password);
+
+            // Keep existing role if present, or use provided role
+            if (user.getRole() == null) {
+                user.setRole(role != null ? role : UserRole.CUSTOMER);
+            }
 
             return userRepository.save(user);
         }

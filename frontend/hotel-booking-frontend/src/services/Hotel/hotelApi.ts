@@ -51,6 +51,18 @@ const hotelApi = {
   },
 
   /**
+   * Fetch multiple hotels by IDs
+   */
+  fetchHotelsByIds: async (ids: number[]): Promise<HotelData[]> => {
+    try {
+      const response = await hotelApiClient.post(`${HOTEL_BASE}/batch`, ids);
+      return response.data?.data ?? [];
+    } catch (err: any) {
+      throw new Error(handleApiError(err));
+    }
+  },
+
+  /**
    * Update hotel
    */
   updateHotel: async (id: number, formData: FormData): Promise<{ message: string }> => {
@@ -104,18 +116,6 @@ const hotelApi = {
         params: { latitude, longitude },
       });
       return response.data?.data ?? response.data ?? [];
-    } catch (err: any) {
-      throw new Error(handleApiError(err));
-    }
-  },
-
-  /**
-   * Fetch multiple hotels by IDs
-   */
-  fetchHotelsByIds: async (hotelIds: number[]): Promise<HotelData[]> => {
-    try {
-      const response = await hotelApiClient.post(`${HOTEL_BASE}/bulk`, { hotelIds });
-      return response.data?.data ?? [];
     } catch (err: any) {
       throw new Error(handleApiError(err));
     }

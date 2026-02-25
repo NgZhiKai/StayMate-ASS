@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -22,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.example.hotelservice.dto.custom.CustomResponse;
 import com.example.hotelservice.dto.hotel.HotelRequestDTO;
+import com.example.hotelservice.dto.hotel.HotelSearchDTO;
 import com.example.hotelservice.dto.room.RoomRequestDTO;
 import com.example.hotelservice.entity.hotel.Hotel;
 import com.example.hotelservice.entity.room.Room;
@@ -117,8 +119,8 @@ public class HotelController {
     // ---------------- Get All Hotels ----------------
     @Operation(summary = "Get all hotels", description = "Retrieve a list of all hotels")
     @GetMapping
-    public ResponseEntity<CustomResponse<List<Hotel>>> getAllHotels() {
-        List<Hotel> hotels = hotelService.getAllHotels();
+    public ResponseEntity<CustomResponse<List<HotelSearchDTO>>> getAllHotels() {
+        List<HotelSearchDTO> hotels = hotelService.getAllHotels();
 
         if (hotels.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -132,12 +134,24 @@ public class HotelController {
     // ---------------- Get Hotel by ID ----------------
     @Operation(summary = "Get hotel by ID", description = "Retrieve a hotel by its ID")
     @GetMapping("/{id}")
-    public ResponseEntity<CustomResponse<Hotel>> getHotelById(
+    public ResponseEntity<CustomResponse<HotelSearchDTO>> getHotelById(
             @Parameter(description = "ID of the hotel to retrieve") @PathVariable @NonNull Long id) {
 
-        Hotel hotel = hotelService.getHotelById(id);
+        HotelSearchDTO hotel = hotelService.getHotelById(id);
         return ResponseEntity.ok(
                 new CustomResponse<>("Hotel retrieved successfully", hotel));
+    }
+
+    // ---------------- Get Hotel by IDs Batch ----------------
+    @Operation(summary = "Get hotels by IDs", description = "Retrieve multiple hotels by a list of IDs")
+    @PostMapping("/batch")
+    public ResponseEntity<CustomResponse<List<HotelSearchDTO>>> getHotelsByIds(
+            @RequestBody List<Long> ids) {
+
+        List<HotelSearchDTO> hotels = hotelService.getHotelsByIds(ids);
+
+        return ResponseEntity.ok(
+                new CustomResponse<>("Hotels retrieved successfully", hotels));
     }
 
     // ---------------- Update Hotel ----------------
@@ -148,7 +162,7 @@ public class HotelController {
             @RequestPart("hotelDetails") String hotelDetailsJson,
             @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
 
-        Hotel existingHotel = hotelService.getHotelById(id);
+        Hotel existingHotel = hotelService.getHotelEntityById(id);
 
         HotelRequestDTO hotelRequestDTO = objectMapper.readValue(hotelDetailsJson, HotelRequestDTO.class);
 
@@ -196,13 +210,13 @@ public class HotelController {
     // ---------------- Search Hotels by Name ----------------
     @Operation(summary = "Search hotels by name", description = "Search for hotels by their name")
     @GetMapping("/search")
-    public ResponseEntity<CustomResponse<List<Hotel>>> searchHotelsByName(@RequestParam String name) {
+    public ResponseEntity<CustomResponse<List<HotelSearchDTO>>> searchHotelsByName(@RequestParam String name) {
 
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("Search query cannot be empty");
         }
 
-        List<Hotel> hotels = hotelService.findHotelsByName(name);
+        List<HotelSearchDTO> hotels = hotelService.findHotelsByName(name);
 
         if (hotels.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -216,11 +230,11 @@ public class HotelController {
     // ---------------- Search Hotels by City and Country ----------------
     @Operation(summary = "Search hotels by city and country", description = "Search hotels by city and/or country")
     @GetMapping("/search/location")
-    public ResponseEntity<CustomResponse<List<Hotel>>> searchHotelsByLocation(
+    public ResponseEntity<CustomResponse<List<HotelSearchDTO>>> searchHotelsByLocation(
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String country) {
 
-        List<Hotel> hotels = hotelService.findHotelsByCityAndCountry(city, country);
+        List<HotelSearchDTO> hotels = hotelService.findHotelsByCityAndCountry(city, country);
 
         if (hotels.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

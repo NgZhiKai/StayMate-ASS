@@ -36,7 +36,7 @@ const ManageBookingsPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-blue-50 via-purple-50 to-pink-50 min-h-full text-gray-900">
+    <div className="bg-gradient-to-b from-blue-50 via-purple-50 to-pink-50 min-h-full text-gray-900 select-none">
       <HeroSection
         title="Manage All Bookings"
         highlight="Bookings"

@@ -25,6 +25,7 @@ import com.example.userservice.dto.UserRequestUpdateDto;
 import com.example.userservice.dto.UserResponseDTO;
 import com.example.userservice.dto.VerificationResult;
 import com.example.userservice.entity.user.User;
+import com.example.userservice.entity.user.UserRole;
 import com.example.userservice.exception.InvalidUserException;
 import com.example.userservice.exception.ResourceNotFoundException;
 import com.example.userservice.service.UserService;
@@ -77,21 +78,34 @@ public class UserController {
     public ResponseEntity<CustomResponse<UserResponseDTO>> completeRegistration(
             @RequestBody Map<String, String> body) {
         try {
-            Long userId = Long.parseLong(body.get("id"));
+            Long userId = Long.parseLong(body.getOrDefault("id", "0"));
             String firstName = body.get("firstName");
             String lastName = body.get("lastName");
             String phone = body.get("phoneNumber");
             String password = body.get("password");
             String email = body.get("email");
 
-            User completedUser = userService.completeRegistration(userId, firstName, lastName, phone, password, email);
+            // Safe role parsing with default
+            UserRole role;
+            try {
+                role = UserRole.valueOf(body.getOrDefault("role", "CUSTOMER"));
+            } catch (IllegalArgumentException | NullPointerException e) {
+                role = UserRole.CUSTOMER;
+            }
+
+            User completedUser = userService.completeRegistration(userId, firstName, lastName, phone, password, email, role);
             UserResponseDTO dto = UserResponseDTO.fromEntity(completedUser);
 
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(new CustomResponse<>("Registration completed successfully", dto));
+
         } catch (InvalidUserException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(new CustomResponse<>(ex.getMessage(), null));
+        } catch (Exception ex) {
+            ex.printStackTrace(); // Log unexpected errors
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new CustomResponse<>("An unexpected error occurred.", null));
         }
     }
 

@@ -12,17 +12,38 @@ export const useBookings = () => {
     try {
       const result: DetailedBooking[] = await bookingApi.fetchBookings();
 
-      const detailedBookings = await Promise.all(
+      const settledResults = await Promise.allSettled(
         result.map(async (booking) => {
-          const [userInfo, hotelInfo] = await Promise.all([
+          const [userResult, hotelResult] = await Promise.allSettled([
             userApi.getUserInfo(String(booking.userId)),
             hotelApi.fetchHotelById(booking.hotelId),
           ]);
 
+          // If hotel is deleted → ignore this booking completely
+          if (hotelResult.status === "rejected") {
+            console.warn(
+              `Hotel ${booking.hotelId} not found. Skipping booking ${booking.bookingId}`
+            );
+            return null;
+          }
+
+          // If user is deleted → show fallback instead of crashing
+          const userFirstName =
+            userResult.status === "fulfilled"
+              ? userResult.value.user.firstName
+              : "Deleted";
+
+          const userLastName =
+            userResult.status === "fulfilled"
+              ? userResult.value.user.lastName
+              : "User";
+
+          const hotelInfo = hotelResult.value;
+
           return {
             ...booking,
-            userFirstName: userInfo.user.firstName,
-            userLastName: userInfo.user.lastName,
+            userFirstName,
+            userLastName,
             hotelName: hotelInfo.name,
             hotelCheckInTime: hotelInfo.checkIn || "N/A",
             hotelCheckOutTime: hotelInfo.checkOut || "N/A",
@@ -30,7 +51,15 @@ export const useBookings = () => {
         })
       );
 
-      setBookings(detailedBookings);
+      // Keep only valid bookings
+      const validBookings = settledResults
+        .filter(
+          (r): r is PromiseFulfilledResult<any> =>
+            r.status === "fulfilled" && r.value !== null
+        )
+        .map((r) => r.value);
+
+      setBookings(validBookings);
       setError("");
     } catch (err: any) {
       console.error(err);

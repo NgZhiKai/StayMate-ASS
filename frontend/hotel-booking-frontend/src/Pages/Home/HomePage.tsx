@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FeaturedHotels, TrendingDestinations, WhyStaymate } from "../../components/Home";
 import { HeroSection } from "../../components/Misc";
-import { SearchHome } from "../../components/Search";
+import { SearchLayout } from "../../components/Search";
 import { useDestinations, useScrollReveal } from "../../hooks";
 
 const HomePage: React.FC = () => {
@@ -29,14 +29,14 @@ const HomePage: React.FC = () => {
         padding="lg"
         align="left"
       />
-      <SearchHome
+      <SearchLayout
         destinations={destinations}
         selectedDestination={selectedDestination}
         setSelectedDestination={setSelectedDestination}
         onSearch={handleSearch}
       />
       <TrendingDestinations destinations={destinations} loading={loading} />
-      <FeaturedHotels destinations={destinations} />
+      <FeaturedHotels />
       <WhyStaymate />
     </div>
   );

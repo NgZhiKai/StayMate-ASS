@@ -34,6 +34,8 @@ public class Hotel {
     @Column(columnDefinition = "LONGBLOB")
     private byte[] image;
 
+    @Lob
+    @Column(columnDefinition = "TEXT")
     private String description;
     private String contact;
 

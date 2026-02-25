@@ -8,9 +8,19 @@ interface SelectFieldProps {
   onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
   disabled?: boolean;
   disabledPlaceholder?: string;
+  className?: string;
 }
 
-const SelectField: React.FC<SelectFieldProps> = ({ label, name, value, options, onChange, disabled, disabledPlaceholder }) => (
+const SelectField: React.FC<SelectFieldProps> = ({
+  label,
+  name,
+  value,
+  options,
+  onChange,
+  disabled,
+  disabledPlaceholder,
+  className = "",
+}) => (
   <div className="flex flex-col">
     <label className="mb-1 font-medium text-gray-700">{label}</label>
     <select
@@ -18,7 +28,7 @@ const SelectField: React.FC<SelectFieldProps> = ({ label, name, value, options, 
       value={value}
       onChange={onChange}
       disabled={disabled}
-      className="px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+      className={`px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition ${className}`}
     >
       {disabledPlaceholder && (
         <option value="" disabled hidden>

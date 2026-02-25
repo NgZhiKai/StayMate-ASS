@@ -17,7 +17,7 @@ const NearMePage = () => {
   }
 
   return (
-    <div className="bg-gray-50 min-h-screen space-y-14">
+    <div className="bg-gray-50 min-h-screen space-y-14 select-none">
       <HeroSection
         title="Stays near you"
         highlight="Stays"

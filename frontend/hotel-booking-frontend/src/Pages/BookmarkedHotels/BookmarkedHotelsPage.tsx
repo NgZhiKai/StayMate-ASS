@@ -8,7 +8,7 @@ const BookmarkedHotelsPage: React.FC = () => {
   const { hotels, loading, error } = useBookmarkedHotels(userId);
 
   return (
-    <div>
+    <div className="select-none">
       <HeroSection
         title="Your favorite stays"
         highlight="favorite stays"

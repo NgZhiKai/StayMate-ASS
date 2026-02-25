@@ -9,6 +9,7 @@ interface InputFieldProps {
   readOnly?: boolean;
   placeholder?: string;
   required?: boolean;
+  className?: string;
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -20,6 +21,7 @@ const InputField: React.FC<InputFieldProps> = ({
   readOnly = false,
   placeholder,
   required = false,
+  className = "",
 }) => {
   return (
     <div className="flex flex-col">
@@ -32,7 +34,7 @@ const InputField: React.FC<InputFieldProps> = ({
         readOnly={readOnly}
         placeholder={placeholder}
         required={required}
-        className="px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition"
+        className={`px-4 py-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition ${className}`}
       />
     </div>
   );

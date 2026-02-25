@@ -1,7 +1,7 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { HeroSection } from "../../components/Misc";
-import { SearchResult } from "../../components/Search";
+import { SearchLayout } from "../../components/Search";
 import {
   LoadingSkeleton,
   MapHotelsSection,
@@ -31,13 +31,14 @@ const SearchResultsPage: React.FC = () => {
         title={`Hotels in ${city}`}
         highlight={city}
         description="Find the perfect stay for your trip."
+        padding="lg"
         align="left"
       />
 
-      <SearchResult
+      <SearchLayout
         destinations={destinations}
-        searchInput={searchInput}
-        setSearchInput={setSearchInput}
+        selectedDestination={searchInput}
+        setSelectedDestination={setSearchInput}
         onSearch={handleSearch}
       />
 

@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import HotelCard from "../Hotel/HotelCard";
+import { HotelCard } from "../Hotel";
 import { HotelData } from "../../types/Hotels";
 
 interface Props {

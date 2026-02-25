@@ -34,11 +34,7 @@ const TrendingDestinations: React.FC<TrendingProps> = ({ destinations, loading }
                 onClick={() => handleDestinationClick(dest.city, dest.country)}
                 className="group relative rounded-3xl overflow-hidden cursor-pointer shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
               >
-                <img
-                  src={dest.imageUrl}
-                  alt={dest.city}
-                  className="w-full h-72 object-cover transition-transform duration-700 group-hover:scale-110"
-                />
+                <img src={dest.imageBase64} alt={dest.city} className="w-full h-72 object-cover transition-transform duration-700 group-hover:scale-110"/>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
                 <div className="absolute bottom-6 left-6 text-white">
                   <span className="inline-block bg-white/20 backdrop-blur-md text-xs px-3 py-1 rounded-full mb-2">

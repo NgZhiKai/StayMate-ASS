@@ -1,4 +1,3 @@
-export { default as HeroSection } from "./HeroSection";
 export { default as HotelsGrid } from "./HotelsGrid";
 export { default as MapHotelsSection } from "./MapHotelsSection";
 export { default as MapSection } from "./MapSection";

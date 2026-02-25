@@ -34,7 +34,7 @@ const HotelsGrid: React.FC<HotelsGridProps> = ({
           onMouseEnter={() => setHoveredHotelId(hotel.id)}
           onMouseLeave={() => setHoveredHotelId(null)}
         >
-          <HotelCard hotel={hotel} layout={layout} hovered={hoveredHotelId === hotel.id} />
+          <HotelCard key={hotel.id} hotel={hotel} layout={layout} hovered={hoveredHotelId === hotel.id} />
         </div>
       ))}
     </div>

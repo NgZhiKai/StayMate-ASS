@@ -3,10 +3,8 @@ import { useParams } from "react-router-dom";
 import { HotelDetails } from "../../components/Hotel";
 import { LoadingSpinner } from "../../components/Misc";
 import { ConfirmationModal, MessageModal, ReviewModal } from "../../components/Modal";
-import { useBookmark } from "../../hooks/useBookmark";
-import { useHotelActions } from "../../hooks/useHotelActions";
-import { useHotelData } from "../../hooks/useHotelData";
-import { formatToAMPM, getPricingRange, renderStars } from "../../utils/hotelUtils";
+import { useHotelActions, useHotelData, useBookmark } from "../../hooks";
+import { formatToAMPM, renderStars } from "../../utils/hotelUtils";
 
 const HotelDetailsPage = () => {
   const { id } = useParams();
@@ -49,7 +47,6 @@ const HotelDetailsPage = () => {
         hotel={hotel}
         reviews={reviews}
         userInfo={userInfo}
-        getPricingRange={() => getPricingRange(hotel.rooms)}
         formatToAMPM={formatToAMPM}
         renderStars={renderStars}
         isBookmarked={isBookmarked}

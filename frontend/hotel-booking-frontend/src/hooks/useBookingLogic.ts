@@ -27,7 +27,6 @@ export const useBookingLogic = (
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
-  // Fetch rooms
   useEffect(() => {
     if (!hotelId) return;
 

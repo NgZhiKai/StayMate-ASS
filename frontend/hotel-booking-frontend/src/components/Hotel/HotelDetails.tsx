@@ -9,7 +9,6 @@ type HotelDetailsProps = {
   hotel: HotelData | null;
   reviews: Review[];
   userInfo: { [key: string]: { firstName: string; lastName: string } };
-  getPricingRange: () => string;
   formatToAMPM: (timeString: string) => string;
   renderStars: (rating: number) => React.ReactNode;
   isBookmarked: boolean;
@@ -24,7 +23,6 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({
   hotel,
   reviews,
   userInfo,
-  getPricingRange,
   formatToAMPM,
   renderStars,
   isBookmarked,
@@ -103,7 +101,7 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({
             <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition">
               <h3 className="text-xl font-semibold mb-4">Pricing & Timing</h3>
               <p className="text-gray-700">
-                <strong>Price Range:</strong> {getPricingRange()}
+                <strong>Price Range:</strong> ${hotel.minPrice} - ${hotel.maxPrice}
               </p>
               <p className="text-gray-700 mt-2">
                 <strong>Check-In:</strong>{" "}
@@ -173,7 +171,7 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({
           {/* Booking Section */}
           <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition space-y-4">
             <h3 className="text-lg font-semibold">Your Stay</h3>
-            <p className="text-gray-700">{getPricingRange()}</p>
+            <p className="text-gray-700">${hotel.minPrice} - ${hotel.maxPrice}</p>
 
             {userId && (
               <GradientButton

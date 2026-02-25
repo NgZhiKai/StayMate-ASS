@@ -13,9 +13,10 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel, layout = "grid", hovered =
   const defaultImage =
     "https://archive.org/download/placeholder-image/placeholder-image.jpg";
 
-  const minPrice = Math.min(...hotel.rooms.map((r) => r.pricePerNight));
-  const maxPrice = Math.max(...hotel.rooms.map((r) => r.pricePerNight));
+  const minPrice = hotel.minPrice ?? 0;
+  const maxPrice = hotel.maxPrice ?? 0;
   const description = hotel.description || "No description available.";
+  const avgRating = hotel.averageRating ?? 0;
 
   return (
     <div
@@ -45,9 +46,9 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel, layout = "grid", hovered =
         </div>
 
         {/* Rating Badge */}
-        {hotel.averageRating != null && (
+        {avgRating != null && (
           <div className="absolute top-3 right-3 z-10 bg-white/70 backdrop-blur px-3 py-1 rounded-full text-xs font-semibold shadow">
-            ⭐ {hotel.averageRating.toFixed(1)}
+            ⭐ {avgRating.toFixed(1)}
           </div>
         )}
       </div>

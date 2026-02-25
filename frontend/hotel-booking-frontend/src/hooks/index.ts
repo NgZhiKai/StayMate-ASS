@@ -1,10 +1,15 @@
 export { useBookingLogic } from "./useBookingLogic";
 export { useBookings } from "./useBookings";
+export { useBookmark } from "./useBookmark";
 export { useBookmarkedHotels } from "./useBookmarkedHotels";
 export { useDestinations } from "./useDestinations";
 export { useDropdownManager } from "./useDropdownManager";
+export { useFeaturedHotels } from "./useFeaturedHotels";
 export { useGeolocation } from "./useGeolocation";
 export { useGroupedPayments } from "./useGroupedPayments";
+export { useHotelActions } from "./useHotelActions";
+export { useHotelData } from "./useHotelData";
+export { useHotelFilters } from "./useHotelFilters";
 export { useHotelForm } from "./useHotelForm";
 export { useHotelValidation } from "./useHotelValidation";
 export { useLoginHandlers } from "./useLoginHandlers";

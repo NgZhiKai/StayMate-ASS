@@ -6,12 +6,6 @@ export const formatToAMPM = (time: string) => {
   return `${h % 12 || 12}:${m.toString().padStart(2, "0")} ${period}`;
 };
 
-export const getPricingRange = (rooms: { pricePerNight: number }[] | undefined) => {
-  if (!rooms?.length) return "$0 - $0";
-  const prices = rooms.map(r => r.pricePerNight);
-  return `$${Math.min(...prices)} - $${Math.max(...prices)}`;
-};
-
 export const renderStars = (rating: number) => (
   <div className="flex">
     {[1, 2, 3, 4, 5].map(i => (
