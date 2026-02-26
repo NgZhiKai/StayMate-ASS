@@ -1,12 +1,14 @@
 import React from "react";
 import { Star } from "lucide-react";
 import { Range, getTrackBackground } from "react-range";
+import { roomTypes } from "../../types/Room";
 
 interface HotelFiltersProps {
   filters: {
     minPrice: number;
     maxPrice: number;
     minRating: number;
+    roomTypes: string[]; // multi-select array
   };
   setFilters: (filters: any) => void;
   minHotelPrice: number;
@@ -25,11 +27,24 @@ const HotelFilters: React.FC<HotelFiltersProps> = ({
   const handleRatingClick = (rating: number) =>
     setFilters({ ...filters, minRating: rating });
 
+  const handleRoomTypeClick = (roomType: string) => {
+    const isSelected = filters.roomTypes.includes(roomType);
+    if (isSelected) {
+      setFilters({
+        ...filters,
+        roomTypes: filters.roomTypes.filter((t) => t !== roomType),
+      });
+    } else {
+      setFilters({ ...filters, roomTypes: [...filters.roomTypes, roomType] });
+    }
+  };
+
   const clearFilters = () =>
     setFilters({
       minPrice: minHotelPrice,
       maxPrice: maxHotelPrice,
       minRating: 0,
+      roomTypes: [],
     });
 
   const minPrice = Math.max(
@@ -41,6 +56,9 @@ const HotelFilters: React.FC<HotelFiltersProps> = ({
     maxHotelPrice
   );
 
+  // For slider: ensure max > min
+  const sliderMaxPrice = maxPrice <= minPrice ? minPrice + PRICE_STEP : maxPrice;
+
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col h-full border border-gray-100">
       {/* Header */}
@@ -50,75 +68,72 @@ const HotelFilters: React.FC<HotelFiltersProps> = ({
           onClick={clearFilters}
           className="text-sm text-indigo-500 hover:underline"
         >
-          Clear Filters
+          Clear
         </button>
       </div>
 
-      {/* Filters Body */}
       <div className="flex-1 overflow-y-auto space-y-6">
         {/* Price Range */}
-        <div>
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">
-            Price Range
-          </h3>
-          <div className="flex items-center gap-3">
-            <span className="text-gray-500 font-medium">${minPrice}</span>
-            <div className="flex-1">
-              <Range
-                step={PRICE_STEP}
-                min={minHotelPrice}
-                max={maxHotelPrice}
-                values={[minPrice, maxPrice]}
-                onChange={(values) =>
-                  setFilters({
-                    ...filters,
-                    minPrice: values[0],
-                    maxPrice: values[1],
-                  })
-                }
-                renderTrack={({ props, children }) => (
-                  <div
-                    {...(props as any)} // TS-safe fix
-                    style={{
-                      ...props.style,
-                      height: "8px",
-                      borderRadius: "8px",
-                      background: getTrackBackground({
-                        values: [minPrice, maxPrice],
-                        colors: ["#F87171", "#FBBF24", "#34D399"],
-                        min: minHotelPrice,
-                        max: maxHotelPrice,
-                      }),
-                    }}
-                  >
-                    {children}
-                  </div>
-                )}
-                renderThumb={({ props }) => (
-                  <div
-                    {...(props as any)} // TS-safe fix
-                    style={{
-                      ...props.style,
-                      height: "24px",
-                      width: "24px",
-                      borderRadius: "50%",
-                      backgroundColor: "#6366F1",
-                      boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
-                      border: "2px solid white",
-                    }}
-                  />
-                )}
-              />
-            </div>
-            <span className="text-gray-500 font-medium">${maxPrice}</span>
-          </div>
-        </div>
+<div>
+  <h3 className="text-sm font-semibold text-gray-700 mb-3">Price Range</h3>
+  <div className="flex items-center gap-3">
+    <span className="text-gray-500 font-medium">${minPrice}</span>
 
-        {/* Rating Section */}
+    <div className="flex-1">
+      {minHotelPrice < maxHotelPrice ? (
+        <Range
+          step={PRICE_STEP}
+          min={minHotelPrice}
+          max={maxHotelPrice}
+          values={[minPrice, maxPrice]}
+          onChange={(values) =>
+            setFilters({ ...filters, minPrice: values[0], maxPrice: values[1] })
+          }
+          renderTrack={({ props, children }) => (
+            <div
+              {...(props as any)}
+              style={{
+                ...props.style,
+                height: "8px",
+                borderRadius: "8px",
+                background: getTrackBackground({
+                  values: [minPrice, maxPrice],
+                  colors: ["#F87171", "#FBBF24", "#34D399"],
+                  min: minHotelPrice,
+                  max: maxHotelPrice,
+                }),
+              }}
+            >
+              {children}
+            </div>
+          )}
+          renderThumb={({ props }) => (
+            <div
+              {...(props as any)}
+              style={{
+                ...props.style,
+                height: "24px",
+                width: "24px",
+                borderRadius: "50%",
+                backgroundColor: "#6366F1",
+                boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+                border: "2px solid white",
+              }}
+            />
+          )}
+        />
+      ) : (
+        <div className="h-2 bg-gray-200 rounded-full" />
+      )}
+    </div>
+
+    <span className="text-gray-500 font-medium">${maxPrice}</span>
+  </div>
+</div>
+
+        {/* Rating */}
         <div>
-          <h3 className="text-sm font-semibold text-gray-700 mb-3">
-            Minimum Rating
-          </h3>
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">Minimum Rating</h3>
           <div className="flex flex-wrap gap-2">
             {ratingValues.map((rating) => (
               <button
@@ -132,6 +147,27 @@ const HotelFilters: React.FC<HotelFiltersProps> = ({
                   }`}
               >
                 {rating} <Star size={14} />
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Room Type Multi-Select */}
+        <div>
+          <h3 className="text-sm font-semibold text-gray-700 mb-3">Room Types</h3>
+          <div className="flex flex-wrap gap-2">
+            {roomTypes.map((type) => (
+              <button
+                key={type}
+                onClick={() => handleRoomTypeClick(type)}
+                className={`px-3 py-1 rounded-full text-sm font-medium transition
+                  ${
+                    filters.roomTypes.includes(type)
+                      ? "bg-indigo-500 text-white border-transparent"
+                      : "border border-gray-300 hover:border-gray-500 text-gray-700"
+                  }`}
+              >
+                {type}
               </button>
             ))}
           </div>

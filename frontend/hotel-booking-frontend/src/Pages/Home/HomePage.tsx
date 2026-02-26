@@ -3,12 +3,14 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FeaturedHotels, TrendingDestinations, WhyStaymate } from "../../components/Home";
 import { HeroSection } from "../../components/Misc";
-import { SearchLayout } from "../../components/Search";
+import SearchLayout from "../../components/Search/SearchLayout";
 import { useDestinations, useScrollReveal } from "../../hooks";
 
 const HomePage: React.FC = () => {
   const { destinations, loading } = useDestinations();
   const [selectedDestination, setSelectedDestination] = useState("");
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
   const navigate = useNavigate();
 
   useScrollReveal();
@@ -16,8 +18,9 @@ const HomePage: React.FC = () => {
   const handleSearch = () => {
     if (!selectedDestination) return;
     const [city, country] = selectedDestination.split("|");
-
-    navigate(`search?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}`);
+    navigate(
+      `search?city=${encodeURIComponent(city)}&country=${encodeURIComponent(country)}&checkIn=${checkIn}&checkOut=${checkOut}`
+    );
   };
 
   return (
@@ -33,6 +36,10 @@ const HomePage: React.FC = () => {
         destinations={destinations}
         selectedDestination={selectedDestination}
         setSelectedDestination={setSelectedDestination}
+        checkIn={checkIn}
+        setCheckIn={setCheckIn}
+        checkOut={checkOut}
+        setCheckOut={setCheckOut}
         onSearch={handleSearch}
       />
       <TrendingDestinations destinations={destinations} loading={loading} />

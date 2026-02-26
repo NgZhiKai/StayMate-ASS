@@ -34,3 +34,12 @@ export interface BookingCardData {
   checkInDate: string;
   checkOutDate: string;
 }
+
+export interface BookingContextData {
+  bookingId: number;
+  hotelId: number;
+  roomType: string;
+  checkInDate: string;
+  checkOutDate: string;
+  status: "CONFIRMED" | "PENDING" | "CANCELLED";
+}

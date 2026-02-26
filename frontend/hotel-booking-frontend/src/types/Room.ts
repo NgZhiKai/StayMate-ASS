@@ -28,3 +28,5 @@ export interface RoomData {
   description?: string; // Optional room description
   imageUrl?: string;    // Optional image URL
 }
+
+export const roomTypes = ['SINGLE', 'DOUBLE', 'SUITE', 'DELUXE'];

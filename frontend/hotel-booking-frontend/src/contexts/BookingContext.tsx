@@ -1,18 +1,10 @@
 import React, { createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { bookingApi } from "../services/Booking";
-
-export interface Booking {
-  bookingId: number;
-  hotelId: number;
-  roomType: string;
-  checkInDate: string;
-  checkOutDate: string;
-  status: "CONFIRMED" | "PENDING" | "CANCELLED";
-}
+import { BookingContextData } from "../types/Booking";
 
 interface BookingContextType {
-  bookings: Booking[];
-  updateBookingStatus: (id: number, status: Booking["status"]) => void;
+  bookings: BookingContextData[];
+  updateBookingStatus: (id: number, status: BookingContextData["status"]) => void;
   refreshBookings: () => Promise<void>;
   userId?: number | null; // optional
 }
@@ -25,7 +17,7 @@ interface BookingProviderProps {
 }
 
 export const BookingProvider: React.FC<BookingProviderProps> = ({ userId, children }) => {
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [bookings, setBookings] = useState<BookingContextData[]>([]);
 
   const loadBookings = useCallback(async () => {
     if (!userId) return; // no user, skip fetching
@@ -37,7 +29,7 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ userId, childr
     }
   }, [userId]);
 
-  const updateBookingStatus = useCallback((id: number, status: Booking["status"]) => {
+  const updateBookingStatus = useCallback((id: number, status: BookingContextData["status"]) => {
     setBookings(prev => prev.map(b => (b.bookingId === id ? { ...b, status } : b)));
   }, []);
 

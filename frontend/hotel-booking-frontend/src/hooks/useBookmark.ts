@@ -20,8 +20,6 @@ export const useBookmark = (
 
   useEffect(() => {
     if (!userId || !hotelId) {
-      console.log(userId);
-      console.log(hotelId);
       setIsBookmarked(false);
       setCanBookmark(false);
       setLoading(false);

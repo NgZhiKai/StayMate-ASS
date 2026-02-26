@@ -1,8 +1,7 @@
 package com.example.bookingservice.entity;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
-
-import com.example.bookingservice.entity.BookingStatus;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,7 +34,7 @@ public class Booking {
     private LocalDate checkOutDate;
 
     @Column(name = "total_amount")
-    private double totalAmount;
+    private BigDecimal totalAmount;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status")
@@ -93,11 +92,11 @@ public class Booking {
         this.checkOutDate = checkOutDate;
     }
 
-    public double getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(double totalAmount) {
+    public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
 

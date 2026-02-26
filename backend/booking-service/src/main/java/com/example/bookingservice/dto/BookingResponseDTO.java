@@ -1,5 +1,6 @@
 package com.example.bookingservice.dto;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public class BookingResponseDTO {
@@ -14,7 +15,7 @@ public class BookingResponseDTO {
     private LocalDate checkOutDate;
     private String roomType;
     private String status;
-    private double totalAmount;
+    private BigDecimal totalAmount;
 
     // Default constructor
     public BookingResponseDTO() {
@@ -109,11 +110,11 @@ public class BookingResponseDTO {
         this.status = status;
     }
 
-    public double getTotalAmount() {
+    public BigDecimal getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(double totalAmount) {
+    public void setTotalAmount(BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
 }

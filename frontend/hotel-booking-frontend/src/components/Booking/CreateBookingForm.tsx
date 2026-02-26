@@ -9,7 +9,6 @@ interface Props {
   errors: { [key: string]: string };
   handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   handleRoomSelect: (roomType: string, selectedCount: number) => void;
-  handleSubmit: (e: React.FormEvent) => void;
 }
 
 const CreateBookingForm: React.FC<Props> = ({
@@ -19,7 +18,6 @@ const CreateBookingForm: React.FC<Props> = ({
   errors,
   handleInputChange,
   handleRoomSelect,
-  handleSubmit,
 }) => {
   const groupedRooms = rooms.reduce<Record<string, { available: number; price: number }>>(
     (acc, room) => {
@@ -34,18 +32,14 @@ const CreateBookingForm: React.FC<Props> = ({
   const validDates =
     hasDates &&
     new Date(bookingData.checkInDate) < new Date(bookingData.checkOutDate);
-  const today = new Date().toISOString().split("T")[0]; // YYYY-MM-DD
+  const today = new Date().toISOString().split("T")[0];
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="bg-white rounded-3xl shadow-2xl p-6 md:p-10 space-y-8"
-    >
+    <div className="bg-white rounded-3xl shadow-2xl p-6 md:p-10 space-y-8">
       <h2 className="text-4xl font-extrabold text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
         Reserve Your Stay
       </h2>
 
-      {/* Date Validation */}
       {hasDates && !validDates && (
         <div className="w-full bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded-md font-medium text-sm">
           ⚠️ Check-in date must be before check-out date.
@@ -68,9 +62,7 @@ const CreateBookingForm: React.FC<Props> = ({
               {field === "checkInDate" ? "Check-in" : "Check-out"}
             </label>
             {errors[field] && (
-              <p className="text-red-500 text-xs mt-1 absolute -bottom-5">
-                {errors[field]}
-              </p>
+              <p className="text-red-500 text-xs mt-1 absolute -bottom-5">{errors[field]}</p>
             )}
           </div>
         ))}
@@ -132,7 +124,7 @@ const CreateBookingForm: React.FC<Props> = ({
           })}
         </div>
       </div>
-    </form>
+    </div>
   );
 };
 

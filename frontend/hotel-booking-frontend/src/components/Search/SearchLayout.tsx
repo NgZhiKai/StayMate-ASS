@@ -1,18 +1,27 @@
+// components/Search/SearchLayout.tsx
 import React from "react";
 import { Destination } from "../../types/Hotels";
 import SearchBar from "./SearchBar";
 
-interface SearchSectionProps {
+interface SearchLayoutProps {
   destinations: Destination[];
   selectedDestination: string;
   setSelectedDestination: (val: string) => void;
+  checkIn: string;
+  setCheckIn: (val: string) => void;
+  checkOut: string;
+  setCheckOut: (val: string) => void;
   onSearch: () => void;
 }
 
-const SearchHome: React.FC<SearchSectionProps> = ({
+const SearchLayout: React.FC<SearchLayoutProps> = ({
   destinations,
   selectedDestination,
   setSelectedDestination,
+  checkIn,
+  setCheckIn,
+  checkOut,
+  setCheckOut,
   onSearch,
 }) => (
   <div className="max-w-5xl mx-auto px-6 relative -translate-y-28 z-50">
@@ -21,6 +30,10 @@ const SearchHome: React.FC<SearchSectionProps> = ({
         destinations={destinations}
         value={selectedDestination}
         onChange={setSelectedDestination}
+        checkIn={checkIn}
+        setCheckIn={setCheckIn}
+        checkOut={checkOut}
+        setCheckOut={setCheckOut}
         onSearch={onSearch}
         placeholder="Where are you going?"
         buttonLabel="Search"
@@ -29,4 +42,4 @@ const SearchHome: React.FC<SearchSectionProps> = ({
   </div>
 );
 
-export default SearchHome;
+export default SearchLayout;

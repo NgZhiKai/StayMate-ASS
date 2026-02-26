@@ -1,6 +1,6 @@
 import React from 'react';
 import { FaBed, FaDollarSign, FaUser } from "react-icons/fa";
-import { RoomRequestDTO } from '../../types/Room';
+import { RoomRequestDTO, roomTypes } from '../../types/Room';
 import { GradientButton } from '../Button';
 import { InputField, SelectField } from '../Form';
 
@@ -9,8 +9,6 @@ interface Props {
   setRooms: React.Dispatch<React.SetStateAction<RoomRequestDTO[]>>;
   hotelId?: number;
 }
-
-const roomTypes = ['SINGLE', 'DOUBLE', 'SUITE', 'DELUXE'];
 
 export const RoomTypeList: React.FC<Props> = ({ rooms, setRooms, hotelId }) => (
   <div className="space-y-6">

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { bookingApi } from "../services/Booking";
 import { roomApi } from "../services/Hotel";
@@ -27,6 +27,26 @@ export const useBookingLogic = (
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
 
+  // Helper: calculate total amount based on roomIds and dates
+  const calculateTotalAmount = useCallback(
+    (roomIds: number[], checkInDate: string, checkOutDate: string) => {
+      if (!checkInDate || !checkOutDate) return 0;
+
+      const nights = Math.max(
+        1,
+        (new Date(checkOutDate).getTime() - new Date(checkInDate).getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
+
+      return roomIds.reduce((sum, id) => {
+        const room = availableRooms.find((r) => r.id.roomId === id);
+        return room ? sum + room.pricePerNight * nights : sum;
+      }, 0);
+    },
+    [availableRooms]
+  );
+
+  // Fetch hotel rooms
   useEffect(() => {
     if (!hotelId) return;
 
@@ -40,7 +60,6 @@ export const useBookingLogic = (
           maxOccupancy: r.maxOccupancy ?? r.capacity ?? 2,
           status: r.status ?? "AVAILABLE",
         }));
-
         setAllRooms(mappedRooms);
         setAvailableRooms(mappedRooms);
       } catch (err) {
@@ -51,7 +70,7 @@ export const useBookingLogic = (
     fetchRooms();
   }, [hotelId]);
 
-  // Update available rooms when date changes
+  // Filter available rooms based on selected dates
   useEffect(() => {
     const fetchAvailableRooms = async () => {
       const { checkInDate, checkOutDate } = bookingData;
@@ -73,6 +92,14 @@ export const useBookingLogic = (
     fetchAvailableRooms();
   }, [bookingData.checkInDate, bookingData.checkOutDate, allRooms, hotelId]);
 
+  // Recalculate totalAmount whenever dates or room selection changes
+  useEffect(() => {
+    setBookingData((prev) => ({
+      ...prev,
+      totalAmount: calculateTotalAmount(prev.roomIds, prev.checkInDate, prev.checkOutDate),
+    }));
+  }, [bookingData.checkInDate, bookingData.checkOutDate, bookingData.roomIds, calculateTotalAmount]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setBookingData((prev) => ({ ...prev, [name]: value }));
@@ -88,23 +115,7 @@ export const useBookingLogic = (
       const roomsOfType = availableRooms.filter((r) => r.room_type === roomType);
       const selectedIds = roomsOfType.slice(0, selectedCount).map((r) => r.id.roomId);
 
-      const updatedRoomIds = [...remainingRoomIds, ...selectedIds];
-
-      const nights =
-        prev.checkInDate && prev.checkOutDate
-          ? Math.max(
-              1,
-              (new Date(prev.checkOutDate).getTime() - new Date(prev.checkInDate).getTime()) /
-                (1000 * 60 * 60 * 24)
-            )
-          : 1;
-
-      const total = updatedRoomIds.reduce((sum, id) => {
-        const room = availableRooms.find((r) => r.id.roomId === id);
-        return room ? sum + room.pricePerNight * nights : sum;
-      }, 0);
-
-      return { ...prev, roomIds: updatedRoomIds, totalAmount: total };
+      return { ...prev, roomIds: [...remainingRoomIds, ...selectedIds] };
     });
   };
 
@@ -121,8 +132,7 @@ export const useBookingLogic = (
     return errors;
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const submitBooking = async () => {
     const errors = validateForm();
     if (Object.keys(errors).length) return setValidationErrors(errors);
 
@@ -150,7 +160,7 @@ export const useBookingLogic = (
     validationErrors,
     handleInputChange,
     handleRoomSelect,
-    handleSubmit,
+    submitBooking,
     showModal,
     modalMessage,
     handleModalClose,

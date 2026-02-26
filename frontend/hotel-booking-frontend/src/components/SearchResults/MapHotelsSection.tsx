@@ -15,39 +15,40 @@ const MapHotelsSection: React.FC<MapHotelsSectionProps> = ({
   hoveredHotelId,
   setHoveredHotelId,
 }) => {
-  // Compute min & max hotel prices
   const hotelPriceRange = useMemo(() => {
     if (!hotels.length) return null;
     const prices = hotels.flatMap((hotel) => [hotel.minPrice, hotel.maxPrice]);
     return { min: Math.min(...prices), max: Math.max(...prices) };
   }, [hotels]);
 
-  // Initialize filters **only if hotelPriceRange is available**
   const [filters, setFilters] = useState(() => ({
     minPrice: hotelPriceRange?.min ?? 0,
     maxPrice: hotelPriceRange?.max ?? 0,
     minRating: 0,
+    roomTypes: [] as string[],
   }));
 
-  // Update filters when hotelPriceRange changes
   useEffect(() => {
     if (!hotelPriceRange) return;
-    setFilters({
+    setFilters((prev) => ({
+      ...prev,
       minPrice: hotelPriceRange.min,
       maxPrice: hotelPriceRange.max,
-      minRating: filters.minRating,
-    });
+    }));
   }, [hotelPriceRange]);
 
-  // Only render if we have hotels with valid prices
   if (!hotelPriceRange) return null;
 
-  const filteredHotels = hotels.filter(
-    (hotel) =>
-      hotel.minPrice >= filters.minPrice &&
-      hotel.maxPrice <= filters.maxPrice &&
-      hotel.averageRating >= filters.minRating
-  );
+  const filteredHotels = hotels.filter((hotel) => {
+    const matchesPrice =
+      hotel.minPrice >= filters.minPrice && hotel.maxPrice <= filters.maxPrice;
+    const matchesRating = hotel.averageRating >= filters.minRating;
+    const matchesRoomType =
+      filters.roomTypes.length === 0 ||
+      hotel.rooms.some((room: any) => filters.roomTypes.includes(room.room_type));
+
+    return matchesPrice && matchesRating && matchesRoomType;
+  });
 
   return (
     <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row mt-6 gap-8">

@@ -1,8 +1,10 @@
 package com.example.hotelservice.dto.hotel;
 
 import java.time.LocalTime;
+import java.util.List;
 
 import com.example.hotelservice.entity.hotel.Hotel;
+import com.example.hotelservice.entity.room.Room;
 
 public class HotelSearchDTO {
 
@@ -18,6 +20,7 @@ public class HotelSearchDTO {
     private String contact;
     private LocalTime checkIn;
     private LocalTime checkOut;
+    private List<Room> rooms;
 
     private double averageRating;
     private double minPrice;
@@ -38,6 +41,7 @@ public class HotelSearchDTO {
         this.contact = hotel.getContact();
         this.checkIn = hotel.getCheckIn();
         this.checkOut = hotel.getCheckOut();
+        this.rooms = hotel.getRooms();
 
         // Extra calculated fields
         this.averageRating = averageRating;
@@ -145,7 +149,7 @@ public class HotelSearchDTO {
         return averageRating;
     }
 
-    public void setAvgRating(double averageRating) {
+    public void setAverageRating(double averageRating) {
         this.averageRating = averageRating;
     }
 
@@ -165,4 +169,11 @@ public class HotelSearchDTO {
         this.maxPrice = maxPrice;
     }
 
+    public List<Room> getRooms() {
+        return rooms;
+    }
+
+    public void setRooms(List<Room> rooms) {
+        this.rooms = rooms;
+    }
 }

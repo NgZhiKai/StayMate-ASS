@@ -21,14 +21,14 @@ const CreateBookingPage: React.FC = () => {
     validationErrors,
     handleInputChange,
     handleRoomSelect,
-    handleSubmit,
+    submitBooking,
     showModal,
     modalMessage,
     handleModalClose,
     showLoginPrompt,
   } = useBookingLogic(userId, Number(hotelId), refreshNotifications, async () => {
     await refreshBookings();
-    navigate("/"); // return home after booking
+    navigate("/");
   });
 
   if (showLoginPrompt) return <LoginPrompt />;
@@ -52,7 +52,6 @@ const CreateBookingPage: React.FC = () => {
             errors={validationErrors}
             handleInputChange={handleInputChange}
             handleRoomSelect={handleRoomSelect}
-            handleSubmit={handleSubmit}
           />
         </div>
         <div className="hidden lg:block">
@@ -60,7 +59,7 @@ const CreateBookingPage: React.FC = () => {
             bookingData={bookingData}
             selectedRooms={selectedRooms}
             isSubmitting={isSubmitting}
-            onSubmit={() => handleSubmit({} as any)}
+            onSubmit={submitBooking}
           />
         </div>
       </div>

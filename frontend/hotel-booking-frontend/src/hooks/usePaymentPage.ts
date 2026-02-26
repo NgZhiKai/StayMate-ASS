@@ -5,6 +5,7 @@ import { useNotificationContext } from "../contexts/NotificationContext";
 import { paymentApi } from "../services/Payment";
 import { PaymentType } from "../types/Payment";
 import { useBookingPayment } from "./useBookingPayment";
+import { useBookingContext } from "../contexts/BookingContext";
 
 interface LocationState {
   bookingId?: number;
@@ -19,6 +20,7 @@ export const usePaymentPage = () => {
   const location = useLocation();
   const state = location.state as LocationState | null;
   const { refreshNotifications } = useNotificationContext();
+  const { refreshBookings } = useBookingContext();
 
   // ---- Guard invalid state ----
   const bookingId = state?.bookingId;
@@ -40,13 +42,15 @@ export const usePaymentPage = () => {
     loading,
   } = useBookingPayment(bookingId);
 
-  // ---- Safe Numeric Values (NO undefined) ----
-  const totalAmount: number = booking?.totalAmount ?? 0;
-  const amountAlreadyPaid: number = rawAmountAlreadyPaid ?? 0;
-  const remainingAmount: number = Math.max(
-    totalAmount - amountAlreadyPaid,
-    0
-  );
+  // ---- Safe Numeric Values ----
+  const totalAmount = booking?.totalAmount ?? 0;
+  const amountAlreadyPaid = rawAmountAlreadyPaid ?? 0;
+  const remainingAmount = Math.max(totalAmount - amountAlreadyPaid, 0);
+
+  // ---- Convert to cents (IMPORTANT) ----
+  const totalCents = Math.round(totalAmount * 100);
+  const paidCents = Math.round(amountAlreadyPaid * 100);
+  const remainingCents = Math.max(totalCents - paidCents, 0);
 
   // ---- Local State ----
   const [amountPaidNow, setAmountPaidNow] = useState<number>(0);
@@ -57,7 +61,9 @@ export const usePaymentPage = () => {
 
   // ---- Payment Logic ----
   const handleConfirmPayment = async () => {
-    if (amountPaidNow <= 0 || amountPaidNow > remainingAmount) {
+    const payNowCents = Math.round(amountPaidNow * 100);
+
+    if (payNowCents <= 0 || payNowCents > remainingCents) {
       setModalType("error");
       setModalMessage("Invalid payment amount.");
       return;
@@ -74,7 +80,7 @@ export const usePaymentPage = () => {
       setModalType("success");
       setModalMessage("Payment successful!");
       refreshNotifications();
-
+      refreshBookings();
       setTimeout(() => navigate("/"), 1500);
     } catch (error: any) {
       setModalType("error");

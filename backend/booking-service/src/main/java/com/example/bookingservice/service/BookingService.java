@@ -1,13 +1,15 @@
 package com.example.bookingservice.service;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
+import java.math.BigDecimal;
+import java.time.temporal.ChronoUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -53,6 +55,11 @@ public class BookingService {
             throw new IllegalArgumentException("At least one room must be selected");
         }
 
+        long days = ChronoUnit.DAYS.between(dto.getCheckInDate(), dto.getCheckOutDate());
+        if (days <= 0) {
+            throw new IllegalArgumentException("Check-out date must be after check-in date");
+        }
+
         List<Booking> createdBookings = new ArrayList<>();
 
         for (Long roomId : dto.getRoomIds()) {
@@ -64,13 +71,21 @@ public class BookingService {
                         "Room " + roomId + " is not available");
             }
 
+            Map<String, Object> room = roomClient.getRoomById(dto.getHotelId(), roomId);
+            if (room.isEmpty() || !room.containsKey("pricePerNight")) {
+                throw new IllegalStateException("Cannot fetch price for room " + roomId);
+            }
+
+            BigDecimal roomPrice = new BigDecimal(room.get("pricePerNight").toString());
+            BigDecimal totalRoomAmount = roomPrice.multiply(BigDecimal.valueOf(days));
+
             Booking booking = new Booking();
             booking.setHotelId(dto.getHotelId());
             booking.setRoomId(roomId);
             booking.setUserId(dto.getUserId());
             booking.setCheckInDate(dto.getCheckInDate());
             booking.setCheckOutDate(dto.getCheckOutDate());
-            booking.setTotalAmount(dto.getTotalAmount() / dto.getRoomIds().size());
+            booking.setTotalAmount(totalRoomAmount);
             booking.setBookingDate(LocalDate.now());
             booking.setStatus(BookingStatus.PENDING);
 

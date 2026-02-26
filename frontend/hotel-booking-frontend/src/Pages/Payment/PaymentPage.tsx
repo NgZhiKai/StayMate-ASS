@@ -70,7 +70,10 @@ const PaymentPage: React.FC = () => {
         amountPaidNow={amountPaidNow}
         onConfirm={handleConfirmPayment}
         isLoading={isLoading}
-        disabled={amountPaidNow <= 0 || amountPaidNow > remainingAmount}
+        disabled={
+          Math.round(amountPaidNow * 100) <= 0 ||
+          Math.round(amountPaidNow * 100) > Math.round(remainingAmount * 100)
+        }
       />
 
       <MessageModal
