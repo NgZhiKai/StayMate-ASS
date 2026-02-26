@@ -24,11 +24,17 @@ interface Props {
 
 export default function CalendarDropdown({ isOpen }: Props) {
   const navigate = useNavigate();
-  const { bookings, updateBookingStatus } = useBookingContext();
+  const { bookings, refreshBookings } = useBookingContext();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<"upcoming" | "past">("upcoming");
   const [hotelNames, setHotelNames] = useState<Record<number, string>>({});
 
+  /** Refresh bookings when viewMode changes */
+  useEffect(() => {
+    refreshBookings();
+  }, [viewMode, refreshBookings]);
+
+  /** Collect all booked dates for highlighting on calendar */
   const bookedDates = useMemo(() => {
     const dates = new Set<string>();
     bookings.forEach((b) => {
@@ -43,15 +49,17 @@ export default function CalendarDropdown({ isOpen }: Props) {
     return dates;
   }, [bookings]);
 
+  /** Filter bookings based on selected date and view mode */
   const filteredBookings = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
     return bookings.filter((b) => {
       const checkIn = new Date(`${b.checkInDate}T00:00:00+08:00`);
       const checkOut = new Date(`${b.checkOutDate}T23:59:59+08:00`);
       const selected = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
       const isActive = selected >= checkIn && selected <= checkOut;
 
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
       const isUpcoming = checkIn >= today;
       const isPast = checkOut < today;
 
@@ -59,8 +67,10 @@ export default function CalendarDropdown({ isOpen }: Props) {
     });
   }, [bookings, selectedDate, viewMode]);
 
+  /** Group bookings by hotel */
   const groupedBookings: HotelGrouped[] = useMemo(() => {
     const map: Record<number, HotelGrouped> = {};
+
     filteredBookings.forEach((b) => {
       if (!map[b.hotelId]) {
         map[b.hotelId] = {
@@ -72,6 +82,7 @@ export default function CalendarDropdown({ isOpen }: Props) {
           checkOutDate: b.checkOutDate,
         };
       }
+
       const hotel = map[b.hotelId];
       hotel.bookingIds.push(b.bookingId);
 
@@ -85,9 +96,11 @@ export default function CalendarDropdown({ isOpen }: Props) {
       if (b.checkInDate < hotel.checkInDate) hotel.checkInDate = b.checkInDate;
       if (b.checkOutDate > hotel.checkOutDate) hotel.checkOutDate = b.checkOutDate;
     });
+
     return Object.values(map);
   }, [filteredBookings, hotelNames]);
 
+  /** Fetch hotel names for display */
   useEffect(() => {
     const idsToFetch = Array.from(new Set(filteredBookings.map((b) => b.hotelId))).filter(
       (id) => !hotelNames[id]
@@ -106,10 +119,12 @@ export default function CalendarDropdown({ isOpen }: Props) {
       }
       setHotelNames((prev) => ({ ...prev, ...newNames }));
     };
+
     fetchNames();
   }, [filteredBookings, hotelNames]);
 
-  const handleKeyPress = (e: KeyboardEvent<HTMLButtonElement>, hotelId: number, hotel: HotelGrouped) => {
+  /** Keyboard navigation for accessibility */
+  const handleKeyPress = (e: KeyboardEvent<HTMLButtonElement>, hotel: HotelGrouped) => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       navigate("/bookings", {
@@ -173,7 +188,7 @@ export default function CalendarDropdown({ isOpen }: Props) {
                     },
                   })
                 }
-                onKeyDown={(e) => handleKeyPress(e, hotel.hotelId, hotel)}
+                onKeyDown={(e) => handleKeyPress(e, hotel)}
                 className="w-full text-left p-3 bg-gradient-to-r from-white via-purple-50 to-white rounded-xl hover:shadow-lg transition focus:outline-none focus:ring-2 focus:ring-purple-300"
               >
                 <p className="font-semibold text-sm text-purple-700">{hotel.hotelName}</p>
