@@ -37,7 +37,6 @@ export const useHotelForm = (hotelId?: number, hotelData?: any) => {
         `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(addr)}&key=${OPEN_CAGE_API_KEY}`,
         { signal: controller.signal }
       );
-      console.log(res);
       const data = await res.json();
       const valid = data.results?.[0];
 
