@@ -38,6 +38,7 @@
     "react-leaflet": "^5.0.0",
     "react-leaflet-cluster": "^4.0.0",
     "react-phone-input-2": "^2.15.1",
+    "react-range": "^1.10.0",
     "react-router-dom": "^7.3.0",
     "react-spinners": "^0.15.0"
   },

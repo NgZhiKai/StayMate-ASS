@@ -28,13 +28,18 @@ const FeaturedHotels: React.FC = () => {
 
       <div className="flex gap-6 overflow-x-auto pb-4 scrollbar-none">
         {hotels.map((hotel) => (
-          <button
+          <div
             key={hotel.id}
-            className="w-[260px] sm:w-[280px] flex-shrink-0 text-left"
+            className="w-[260px] sm:w-[280px] flex-shrink-0 text-left cursor-pointer"
             onClick={() => navigate(`/hotel/${hotel.id}`)}
+            tabIndex={0}
+            role="button"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") navigate(`/hotel/${hotel.id}`);
+            }}
           >
             <HotelCard hotel={hotel} />
-          </button>
+          </div>
         ))}
       </div>
     </section>

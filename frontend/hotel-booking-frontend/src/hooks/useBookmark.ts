@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { bookmarkApi } from "../services/User";
 
 interface UseBookmarkReturn {
@@ -20,6 +20,8 @@ export const useBookmark = (
 
   useEffect(() => {
     if (!userId || !hotelId) {
+      console.log(userId);
+      console.log(hotelId);
       setIsBookmarked(false);
       setCanBookmark(false);
       setLoading(false);

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
+import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { HotelData } from "../../types/Hotels";
+import { useBookmark } from "../../hooks";
 
 interface HotelCardProps {
   hotel: HotelData;
@@ -18,11 +20,19 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel, layout = "grid", hovered =
   const description = hotel.description || "No description available.";
   const avgRating = hotel.averageRating ?? 0;
 
+  // Get userId from sessionStorage
+  const currentUserId = sessionStorage.getItem("userId")
+    ? Number(sessionStorage.getItem("userId"))
+    : null;
+
+  // Bookmark hook
+  const { isBookmarked, canBookmark, toggleBookmark } = useBookmark(currentUserId, hotel?.id || null);
+
   return (
     <div
       className={`group cursor-pointer h-full rounded-2xl overflow-hidden bg-gradient-to-br from-white to-pink-50 select-none
         flex ${layout === "list" ? "flex-row gap-6 p-4" : "flex-col"} 
-        shadow-lg transition-all duration-300 hover:shadow-2xl hover:scale-105`}
+        shadow-lg transition-all duration-300 hover:shadow-2xl hover:scale-105 relative`}
     >
       {/* Image */}
       <div
@@ -51,12 +61,27 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel, layout = "grid", hovered =
             ⭐ {avgRating.toFixed(1)}
           </div>
         )}
+
+        {/* Heart / Bookmark Button */}
+        {currentUserId && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleBookmark();
+            }}
+            className="absolute top-3 left-3 z-10 p-2 rounded-full bg-white/80 text-pink-600 hover:bg-pink-100 hover:scale-110 shadow-md transition"
+            title={canBookmark ? "Bookmark" : "Login to bookmark"}
+            disabled={!canBookmark}
+          >
+            {isBookmarked ? <FaBookmark /> : <FaRegBookmark />}
+          </button>
+        )}
       </div>
 
       {/* Content */}
       <div className={`flex flex-col flex-1 ${layout === "grid" ? "p-4" : ""}`}>
         <div>
-          {/* Animated Gradient Hotel Name */}
+          {/* Hotel Name */}
           <h3 className="font-extrabold text-lg sm:text-xl leading-snug bg-gradient-to-r from-yellow-300 via-pink-300 to-orange-300 bg-clip-text text-transparent animate-gradient">
             {hotel.name}
           </h3>
