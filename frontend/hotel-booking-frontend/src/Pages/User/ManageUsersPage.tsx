@@ -9,7 +9,7 @@ import { useUsers } from "../../hooks";
 
 const ITEMS_PER_PAGE = 5;
 
-const ManageUsers: React.FC = () => {
+const ManageUsersPage: React.FC = () => {
   const {
     users,
     currentUser,
@@ -25,10 +25,7 @@ const ManageUsers: React.FC = () => {
     submitUser,
   } = useUsers();
 
-  // Filter valid users
   const validUsers = users.filter((u): u is NonNullable<typeof u> => u !== null);
-
-  // Separate admins and normal users
   const admins = validUsers.filter((u) => u.role === "ADMIN");
   const normalUsers = validUsers.filter((u) => u.role !== "ADMIN");
 
@@ -67,7 +64,7 @@ const ManageUsers: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-r from-pink-50 via-white to-blue-50">
+    <div className="min-h-screen bg-gradient-to-r from-pink-50 via-white to-blue-50 select-none">
       <HeroSection
         title="Manage Users"
         highlight="Users"
@@ -76,10 +73,13 @@ const ManageUsers: React.FC = () => {
       />
 
       {/* Admin Section */}
-      <section className="max-w-7xl mx-auto px-6 py-8 mb-12">
+      <section className="max-w-7xl mx-auto px-6 py-8 mt-12 mb-12 bg-white rounded-2xl shadow-lg">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-semibold text-indigo-600">Admins</h2>
-          <GradientButton onClick={openCreateModal} className="px-6 py-3 rounded-full">
+          <GradientButton
+            onClick={openCreateModal}
+            className="px-6 py-3 rounded-full shadow hover:scale-105 transition-transform duration-200"
+          >
             + Create User
           </GradientButton>
         </div>
@@ -100,8 +100,8 @@ const ManageUsers: React.FC = () => {
       </section>
 
       {/* Normal Users Section */}
-      <section className="max-w-7xl mx-auto px-6 mb-12">
-        <h2 className="text-2xl font-semibold text-green-500 mb-4">Users</h2>
+      <section className="max-w-7xl mx-auto px-6 py-8 mb-12 bg-white rounded-2xl shadow-lg">
+        <h2 className="text-2xl font-semibold text-green-500 mb-6">Users</h2>
 
         <UsersTable
           users={userPaginated}
@@ -137,4 +137,4 @@ const ManageUsers: React.FC = () => {
   );
 };
 
-export default ManageUsers;
+export default ManageUsersPage;

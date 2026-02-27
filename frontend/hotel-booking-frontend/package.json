@@ -30,6 +30,7 @@
     "framer-motion": "^12.34.3",
     "gh-pages": "^6.3.0",
     "leaflet": "^1.9.4",
+    "libphonenumber-js": "^1.12.38",
     "lucide-react": "^0.487.0",
     "react": "^19.2.4",
     "react-calendar": "^6.0.0",

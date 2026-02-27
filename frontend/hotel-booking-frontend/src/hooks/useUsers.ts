@@ -11,13 +11,26 @@ export const useUsers = () => {
   const [messageContent, setMessageContent] = useState("");
   const [messageModalOpen, setMessageModalOpen] = useState(false);
 
+  // Fetch users on mount
   useEffect(() => {
     fetchUsers();
   }, []);
 
+  // Refetch users only after a success message modal closes
+  useEffect(() => {
+    if (!messageModalOpen && messageType === "success") {
+      fetchUsers();
+    }
+  }, [messageModalOpen, messageType]);
+
   const fetchUsers = async () => {
-    const result = await userApi.getAllUsers();
-    setUsers(result.users);
+    try {
+      const result = await userApi.getAllUsers();
+      setUsers(result.users);
+    } catch (error) {
+      console.error("Failed to fetch users:", error);
+      showMessage("error", "Failed to fetch users");
+    }
   };
 
   const openCreateModal = () => {
@@ -31,27 +44,27 @@ export const useUsers = () => {
   };
 
   const deleteUser = async (userId: number) => {
-    await userApi.deleteUser(String(userId));
-    setUsers(prev => prev.filter(u => u.id !== userId));
-    showMessage("success", "User deleted successfully!");
+    try {
+      await userApi.deleteUser(String(userId));
+      showMessage("success", "User deleted successfully!");
+    } catch (error) {
+      showMessage("error", "Failed to delete user");
+    }
   };
 
   const submitUser = async (userData: User | RegisterData) => {
-    if (userData.id === 0) {
-      const response = await userApi.registerUser(userData as RegisterData);
-      setUsers(prev =>
-        prev.map(u => (u.id === userData.id ? response.user : u))
-      );
-      showMessage("success", "User created successfully!");
-    } else {
-      const response = await userApi.updateUser(String(userData.id), userData);
-      setUsers(prev =>
-        prev.map(u => (u.id === userData.id ? response.user : u))
-      );
-      showMessage("success", "User updated successfully!");
+    try {
+      if (userData.id === 0) {
+        await userApi.registerUser(userData as RegisterData);
+        showMessage("success", "User created successfully!");
+      } else {
+        await userApi.updateUser(String(userData.id), userData);
+        showMessage("success", "User updated successfully!");
+      }
+      setIsModalOpen(false); // close modal after submit
+    } catch (error) {
+      showMessage("error", "Failed to submit user");
     }
-
-    setIsModalOpen(false);
   };
 
   const showMessage = (type: "success" | "error", message: string) => {
@@ -73,5 +86,6 @@ export const useUsers = () => {
     openEditModal,
     deleteUser,
     submitUser,
+    fetchUsers,
   };
 };

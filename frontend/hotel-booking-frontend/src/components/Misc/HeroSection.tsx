@@ -19,7 +19,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   description,
   icon,
   align = "center",
-  gradient = "from-[#667eea] via-[#764ba2] to-[#f093fb]",
+  gradient = "from-[#667eea] via-[#770265] to-[#f093fb]",
   highlightGradient = "from-yellow-300 via-pink-300 to-orange-300",
   padding = "md",
   children,

@@ -19,30 +19,27 @@ const MapHotelsSection: React.FC<MapHotelsSectionProps> = ({
   setHoveredHotelId,
 }) => {
   const hotelPriceRange = useMemo(() => {
-    if (!hotels.length) return null;
+    if (!hotels.length) return { min: 0, max: 0 };
     const prices = hotels.flatMap((hotel) => [hotel.minPrice, hotel.maxPrice]);
     return { min: Math.min(...prices), max: Math.max(...prices) };
   }, [hotels]);
 
-  const [filters, setFilters] = useState(() => ({
-    minPrice: hotelPriceRange?.min ?? 0,
-    maxPrice: hotelPriceRange?.max ?? 0,
+  const [filters, setFilters] = useState({
+    minPrice: hotelPriceRange.min,
+    maxPrice: hotelPriceRange.max,
     minRating: 0,
     roomTypes: [] as string[],
-  }));
+  });
 
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
 
   useEffect(() => {
-    if (!hotelPriceRange) return;
     setFilters((prev) => ({
       ...prev,
       minPrice: hotelPriceRange.min,
       maxPrice: hotelPriceRange.max,
     }));
   }, [hotelPriceRange]);
-
-  if (!hotelPriceRange) return null;
 
   const filteredHotels = hotels.filter((hotel) => {
     const matchesPrice =
@@ -57,16 +54,17 @@ const MapHotelsSection: React.FC<MapHotelsSectionProps> = ({
 
   return (
     <div className="max-w-7xl mx-auto px-6 flex flex-col lg:flex-row mt-6 gap-8">
+      {/* Filters + Map Modal Button */}
       <div className="lg:w-1/3 sticky top-6 h-fit space-y-6">
         <div className="h-[400px] rounded-2xl overflow-hidden shadow-lg relative">
           <MapSection hotels={filteredHotels} hoveredHotelId={hoveredHotelId} />
-            <GradientButton
-              onClick={() => setIsMapModalOpen(true)}
-              className="absolute bottom-4 right-4 bg-white/90 px-4 py-2 rounded-full shadow hover:bg-white flex items-center gap-2 transition"
-            >
-              <MapPin className="w-5 h-5 text-white" />
-              Show on Map
-            </GradientButton>
+          <GradientButton
+            onClick={() => setIsMapModalOpen(true)}
+            className="absolute bottom-4 right-4 bg-white/90 px-4 py-2 rounded-full shadow hover:bg-white flex items-center gap-2 transition"
+          >
+            <MapPin className="w-5 h-5 text-white" />
+            Show on Map
+          </GradientButton>
         </div>
 
         <HotelFilters
@@ -77,13 +75,23 @@ const MapHotelsSection: React.FC<MapHotelsSectionProps> = ({
         />
       </div>
 
+      {/* Hotels Grid */}
       <div className="lg:w-2/3 h-[80vh] overflow-y-auto scrollbar-none">
-        <HotelsGrid
-          hotels={filteredHotels}
-          hoveredHotelId={hoveredHotelId}
-          setHoveredHotelId={setHoveredHotelId}
-          layout={layout}
-        />
+        {filteredHotels.length > 0 ? (
+          <HotelsGrid
+            hotels={filteredHotels}
+            hoveredHotelId={hoveredHotelId}
+            setHoveredHotelId={setHoveredHotelId}
+            layout={layout}
+          />
+        ) : (
+          <div className="flex flex-col items-center justify-center h-full text-center text-gray-600">
+            <h2 className="text-2xl font-semibold">No hotels match your filters</h2>
+            <p className="mt-2">
+              Try adjusting the price, rating, or room type filters to see more options.
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Modal Map */}

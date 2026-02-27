@@ -1,6 +1,7 @@
 import { Edit, Trash } from "lucide-react";
 import { useState } from "react";
 import { User } from "../../types/User";
+import { formatPhoneNumber } from "../../utils/formatPhoneNumber";
 import { GradientButton } from "../Button";
 import { ConfirmationModal } from "../Modal";
 
@@ -21,51 +22,62 @@ const UsersTable: React.FC<Props> = ({ users, onEdit, onDelete, icon }) => {
   };
 
   const confirmDelete = () => {
-    if (userToDelete) {
-      onDelete(userToDelete.id);
-      setUserToDelete(null);
-    }
+    if (userToDelete) onDelete(userToDelete.id);
+    setUserToDelete(null);
     setConfirmationOpen(false);
   };
 
   return (
     <>
-      <div className="overflow-x-auto bg-white rounded-xl shadow mb-4">
+      <div className="overflow-x-auto bg-white rounded-2xl shadow-lg mb-6">
         <table className="min-w-full divide-y divide-gray-200">
-          <thead className="bg-gray-50">
+          <thead className="bg-indigo-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Name</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Email</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Phone</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-indigo-700 uppercase tracking-wider">
+                Name
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-indigo-700 uppercase tracking-wider">
+                Email
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-indigo-700 uppercase tracking-wider">
+                Phone
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-semibold text-indigo-700 uppercase tracking-wider">
+                Actions
+              </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
-            {users.map(user => (
-              <tr key={user.id} className="hover:bg-gray-50 transition">
-                <td className="px-6 py-4 flex items-center gap-2">
+          <tbody className="divide-y divide-gray-100">
+            {users.map((user) => (
+              <tr
+                key={user.id}
+                className="hover:bg-indigo-50 transition duration-200 ease-in-out cursor-pointer rounded-lg"
+              >
+                <td className="px-6 py-4 flex items-center gap-3">
                   {icon}
-                  <span className="font-medium text-gray-800">
-                    {user.firstName} {user.lastName}
-                  </span>
+                  <div>
+                    <span className="font-medium text-gray-800">
+                      {user.firstName} {user.lastName}
+                    </span>
+                  </div>
                 </td>
                 <td className="px-6 py-4 text-gray-600">{user.email}</td>
-                <td className="px-6 py-4 text-gray-600">{user.phoneNumber}</td>
+                <td className="px-6 py-4 text-gray-600">{formatPhoneNumber(user.phoneNumber)}</td>
                 <td className="px-6 py-4 flex gap-2">
                   <GradientButton
                     onClick={() => onEdit(user)}
                     gradient="from-green-400 to-green-500"
-                    className="px-3 py-1 text-sm"
+                    className="px-3 py-1 text-sm rounded-full shadow hover:scale-105 transition-transform duration-200"
                   >
-                    <Edit size={16} />
+                    <Edit size={20} />
                   </GradientButton>
 
                   <GradientButton
                     onClick={() => handleDeleteClick(user)}
                     gradient="from-red-400 to-red-500"
-                    className="px-3 py-1 text-sm"
+                    className="px-3 py-1 text-sm rounded-full shadow hover:scale-105 transition-transform duration-200"
                   >
-                    <Trash size={16} />
+                    <Trash size={20} />
                   </GradientButton>
                 </td>
               </tr>
@@ -74,7 +86,6 @@ const UsersTable: React.FC<Props> = ({ users, onEdit, onDelete, icon }) => {
         </table>
       </div>
 
-      {/* Confirmation Modal */}
       {userToDelete && (
         <ConfirmationModal
           isOpen={confirmationOpen}

@@ -3,6 +3,7 @@ import { FaBookmark, FaRegBookmark } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { HotelData } from "../../types/Hotels";
 import { Review } from "../../types/Review";
+import { formatPhoneNumber } from "../../utils/formatPhoneNumber";
 import { GradientButton } from "../Button";
 
 type HotelDetailsProps = {
@@ -38,9 +39,6 @@ const HotelDetails: React.FC<HotelDetailsProps> = ({
   const defaultImage =
     "https://archive.org/download/placeholder-image/placeholder-image.jpg";
   const isAdmin = sessionStorage.getItem("role") === "admin";
-
-  const formatPhoneNumber = (raw: string) =>
-    raw && raw.length > 4 ? `(+${raw.slice(0, 2)}) ${raw.slice(2)}` : raw;
 
   const handleBookClick = () => navigate(`/create-bookings/${hotel.id}`);
   const handleUpdateHotel = () => navigate(`/create-hotel/${hotel.id}`);
