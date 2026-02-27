@@ -1,5 +1,4 @@
-import { Payment } from "../../types/Payment";
-import { GroupedPayments } from "../../hooks/useMyPayments";
+import { GroupedPayments, Payment } from "../../types/Payment";
 import { PaymentRow } from "./PaymentRow";
 
 interface Props {
@@ -7,7 +6,6 @@ interface Props {
 }
 
 export const BookingPaymentCard: React.FC<Props> = ({ group }) => {
-  // Group payments by paymentMethod
   const paymentsByMethod = Object.values(
     group.payments.reduce<Record<string, Payment>>((acc, p) => {
       const key = p.paymentMethod || "UNKNOWN";
@@ -22,22 +20,20 @@ export const BookingPaymentCard: React.FC<Props> = ({ group }) => {
   );
 
   return (
-    <div className="p-6 rounded-2xl bg-white/10 backdrop-blur-md shadow-xl hover:scale-105 transition-transform duration-300">
-      <div className="flex justify-between mb-4 items-center">
+    <div className="p-4 rounded-3xl bg-gradient-to-br from-white/20 via-white/10 to-white/5 backdrop-blur-lg shadow-lg hover:shadow-2xl hover:scale-105 transition-transform duration-300">
+      {/* Header */}
+      <div className="flex justify-between items-start mb-3">
         <div>
-          <div className="text-lg font-semibold text-white">
-            Booking #{group.bookingId}
-          </div>
-          <div className="text-sm text-gray-300">
-            Total Paid: ${group.totalPaid.toFixed(2)} / ${group.totalAmount.toFixed(2)}
+          <div className="text-base sm:text-lg font-semibold text-gray-900">{`Booking #${group.bookingId}`}</div>
+          <div className="text-xs text-gray-500 mt-0.5">
+            Total Paid: <span className="font-medium text-gray-800">${group.totalPaid.toFixed(2)}</span> / ${group.totalAmount.toFixed(2)}
           </div>
         </div>
-
         <div
-          className={`text-xs font-bold px-3 py-1 rounded-full ${
+          className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
             group.isFullyPaid
-              ? "bg-green-300/30 text-green-300"
-              : "bg-yellow-300/30 text-yellow-300"
+              ? "bg-green-100 text-green-700"
+              : "bg-yellow-100 text-yellow-700"
           }`}
         >
           {group.isFullyPaid
@@ -46,12 +42,19 @@ export const BookingPaymentCard: React.FC<Props> = ({ group }) => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-2">
-        {paymentsByMethod.map((payment) => (
-          <PaymentRow
-            key={payment.paymentMethod ?? payment.id}
-            payment={payment}
-          />
+      {/* Divider */}
+      <div className="border-t border-gray-300/40 mb-3" />
+
+      {/* Payment timeline */}
+      <div className="flex flex-col gap-2 relative">
+        {paymentsByMethod.map((payment, idx) => (
+          <div key={payment.paymentMethod ?? payment.id} className="relative pl-5">
+            {/* Vertical timeline line */}
+            {idx !== paymentsByMethod.length - 1 && (
+              <span className="absolute left-1.5 top-5 h-full w-0.5 bg-gray-400/50"></span>
+            )}
+            <PaymentRow payment={payment} />
+          </div>
         ))}
       </div>
     </div>

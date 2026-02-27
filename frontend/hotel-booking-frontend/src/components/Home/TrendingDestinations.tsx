@@ -17,7 +17,7 @@ const TrendingDestinations: React.FC<TrendingProps> = ({ destinations, loading }
   };
 
   return (
-    <section className="max-w-7xl mx-auto px-6 py-16 reveal">
+    <section className="max-w-7xl mx-auto px-6 reveal">
       <h2 className="text-3xl sm:text-4xl font-bold text-gray-900">
         Trending destinations
       </h2>

@@ -22,7 +22,7 @@ const BookingPage: React.FC = () => {
   useEffect(() => {
     if (!state?.bookingIds) return;
 
-    const filtered: BookingCardData[] = bookings
+    const filtered = bookings
       .filter((b) => state.bookingIds.includes(b.bookingId))
       .map((b) => ({
         bookingId: b.bookingId,
@@ -53,7 +53,7 @@ const BookingPage: React.FC = () => {
   return (
     <div className="p-6 bg-gray-50 min-h-full select-none">
       <HotelHeader
-        hotelName={state?.hotelName}
+        hotelName={state.hotelName}
         checkInDate={state.checkInDate}
         checkOutDate={state.checkOutDate}
       />

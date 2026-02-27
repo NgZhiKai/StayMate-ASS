@@ -36,7 +36,7 @@ const ManageBookingsPage: React.FC = () => {
   };
 
   return (
-    <div className="bg-gradient-to-b from-blue-50 via-purple-50 to-pink-50 min-h-full text-gray-900 select-none">
+    <div className="bg-gradient-to-b from-purple-50 via-pink-50 to-white min-h-full text-gray-900 select-none">
       <HeroSection
         title="Manage All Bookings"
         highlight="Bookings"
@@ -46,21 +46,27 @@ const ManageBookingsPage: React.FC = () => {
       <div className="max-w-7xl mx-auto px-6 py-8">
         {error && <p className="text-red-600 text-center mb-4">{error}</p>}
         {bookings.length === 0 ? (
-          <p className="text-center text-gray-600">No bookings found.</p>
+          <p className="text-center text-gray-500 text-lg">No bookings found.</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {currentBookings.map((booking) => (
-              <BookingAdminCard key={booking.id} booking={booking} onCancel={cancelBooking} />
+              <BookingAdminCard
+                key={booking.id}
+                booking={booking}
+                onCancel={cancelBooking}
+              />
             ))}
           </div>
         )}
 
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          pages={generatePages()}
-          goToPage={goToPage}
-        />
+        <div className="mt-6">
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            pages={generatePages()}
+            goToPage={goToPage}
+          />
+        </div>
       </div>
     </div>
   );

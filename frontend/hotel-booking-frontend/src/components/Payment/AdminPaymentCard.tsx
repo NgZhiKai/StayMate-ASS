@@ -1,6 +1,6 @@
-import { CreditCard } from "lucide-react";
+import { CreditCard, User, Hotel, CalendarCheck, CalendarX } from "lucide-react";
 import React from "react";
-import { GroupedPayment } from "../../hooks/useGroupedPayments";
+import { GroupedPayment } from "../../types/Payment";
 
 interface Props {
   group: GroupedPayment;
@@ -10,57 +10,60 @@ interface Props {
 export const AdminPaymentCard: React.FC<Props> = ({ group, formatDate }) => {
   const booking = group.bookingDetails;
 
+  const statusColor =
+    group.status === "SUCCESS"
+      ? "bg-green-200 text-green-900"
+      : group.status === "FAILURE"
+      ? "bg-red-200 text-red-900"
+      : "bg-yellow-200 text-yellow-900";
+
   return (
-    <div className="bg-gradient-to-r from-indigo-700 via-purple-700 to-pink-700 p-6 rounded-3xl shadow-2xl flex flex-col md:flex-row justify-between gap-6 hover:scale-[1.02] transition-transform duration-300">
-      {/* Left Section */}
-      <div className="flex flex-col md:flex-row md:items-center gap-4">
-        <div className="bg-white/20 p-4 rounded-full shadow-md flex items-center justify-center">
-          <CreditCard size={28} className="text-white" />
-        </div>
-        <div className="flex flex-col gap-1">
-          <span className="font-semibold text-white/90 text-lg">
+    <div className="flex flex-col p-3 bg-white/30 backdrop-blur-sm rounded-2xl shadow hover:shadow-lg hover:scale-[1.02] transition-transform duration-200 gap-2">
+      
+      {/* Top Row: Icon, Booking ID & Status */}
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <div className="bg-gradient-to-r from-indigo-500 to-purple-500 p-2 rounded-full shadow flex items-center justify-center">
+            <CreditCard size={20} className="text-white drop-shadow" />
+          </div>
+          <span className="font-semibold text-gray-900 text-sm truncate">
             Booking #{group.bookingId}
           </span>
-          <span className="text-white/80">
-            Total: <strong>${group.totalAmount.toFixed(2)}</strong>
-          </span>
-          <span className="flex items-center gap-2 text-sm">
-            Status:
-            <span
-              className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                group.status === "SUCCESS"
-                  ? "bg-green-200 text-green-900"
-                  : group.status === "FAILURE"
-                  ? "bg-red-200 text-red-900"
-                  : "bg-yellow-200 text-yellow-900"
-              }`}
-            >
-              {group.status}
-            </span>
-          </span>
         </div>
+        <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${statusColor}`}>
+          {group.status}
+        </span>
       </div>
 
-      {/* Right Section */}
-      <div className="flex flex-col md:items-end gap-1 text-white/80 text-sm md:text-base">
-        <span className="text-white/90 font-medium">
-          {formatDate(group.latestTransactionDate)}
-        </span>
-        {booking && (
-          <div className="mt-2 md:text-right text-xs md:text-sm space-y-1">
-            <p>
-              <strong>Check-In:</strong> {formatDate(booking.checkInDate)}
-            </p>
-            <p>
-              <strong>Check-Out:</strong> {formatDate(booking.checkOutDate)}
-            </p>
-            <p>
-              <strong>User:</strong>{" "}
-              {group.user?.firstName || "Unknown"} {group.user?.lastName || ""}
-            </p>
-          </div>
-        )}
+      {/* Amount & Latest Transaction */}
+      <div className="flex justify-between items-center text-sm text-gray-800">
+        <span>Total: ${group.totalAmount.toFixed(2)}</span>
+        <span className="text-gray-600">{formatDate(group.latestTransactionDate)}</span>
       </div>
+
+      {/* Booking Info */}
+      {booking && (
+        <ul className="flex flex-col gap-1 text-gray-700 text-xs">
+          <li className="flex items-center gap-1">
+            <CalendarCheck size={14} className="text-gray-500" />
+            <span><strong>Check-In:</strong> {formatDate(booking.checkInDate)}</span>
+          </li>
+          <li className="flex items-center gap-1">
+            <CalendarX size={14} className="text-gray-500" />
+            <span><strong>Check-Out:</strong> {formatDate(booking.checkOutDate)}</span>
+          </li>
+          <li className="flex items-center gap-1">
+            <User size={14} className="text-gray-500" />
+            <span><strong>User:</strong> {group.user?.firstName || "Unknown"} {group.user?.lastName || ""}</span>
+          </li>
+          <li className="flex items-center gap-1">
+            <Hotel size={14} className="text-gray-500" />
+            <span><strong>Hotel:</strong> {group.hotelName || "Unknown"}</span>
+          </li>
+        </ul>
+      )}
     </div>
   );
 };
+
+export default AdminPaymentCard;

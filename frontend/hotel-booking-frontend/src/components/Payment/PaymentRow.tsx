@@ -1,4 +1,4 @@
-import { CreditCard } from "lucide-react";
+import { CreditCard, Zap, Wallet } from "lucide-react";
 import { Payment } from "../../types/Payment";
 
 interface Props {
@@ -7,13 +7,17 @@ interface Props {
 
 export const PaymentRow: React.FC<Props> = ({ payment }) => {
   const getStatusColor = (status: string) => {
-    if (status === "SUCCESS") return "bg-green-200/30 text-green-600";
-    if (status === "FAILURE") return "bg-red-200/30 text-red-600";
-    return "bg-yellow-200/30 text-yellow-600";
+    switch (status) {
+      case "SUCCESS":
+        return "bg-green-100 text-green-700";
+      case "FAILURE":
+        return "bg-red-100 text-red-700";
+      default:
+        return "bg-yellow-100 text-yellow-700";
+    }
   };
 
   const getPaymentLabel = (method: string | null) => {
-    if (!method) return "Unknown";
     switch (method) {
       case "CREDIT_CARD":
         return "Credit Card";
@@ -22,41 +26,34 @@ export const PaymentRow: React.FC<Props> = ({ payment }) => {
       case "STRIPE":
         return "Stripe";
       default:
-        return method;
+        return method || "Unknown";
     }
   };
 
   const getPaymentIcon = (method: string | null) => {
     switch (method) {
       case "CREDIT_CARD":
-        return <CreditCard size={16} className="text-pink-400 mr-1" />;
+        return <CreditCard size={18} className="text-pink-400 mr-2" />;
       case "PAYPAL":
-        return <span className="mr-1">💰</span>;
+        return <Wallet size={18} className="text-blue-500 mr-2" />;
       case "STRIPE":
-        return <span className="mr-1">💳</span>;
+        return <Zap size={18} className="text-purple-400 mr-2" />;
       default:
-        return null;
+        return <Wallet size={18} className="text-gray-400 mr-2" />;
     }
   };
 
   return (
-    <div className="grid grid-cols-[1fr_auto_auto] items-center px-4 py-2 rounded-lg bg-white/10 hover:bg-white/20 transition">
-      {/* Payment Method */}
-      <div className="flex items-center text-sm gap-2">
+    <div className="grid grid-cols-[1fr_auto_auto] items-center px-4 py-2 rounded-xl bg-white/10 hover:bg-white/30 transition duration-200">
+      <div className="flex items-center text-sm gap-2 font-medium text-gray-800">
         {getPaymentIcon(payment.paymentMethod)}
         {getPaymentLabel(payment.paymentMethod)}
       </div>
-
-      {/* Amount with extra padding */}
-      <span className="text-sm text-pink-300 text-right px-3 py-1 rounded-lg">
+      <span className="text-sm font-semibold text-gray-900 text-right px-3 py-1 rounded-lg">
         ${payment.amount.toFixed(2)}
       </span>
-
-      {/* Status badge with more padding */}
       <span
-        className={`text-xs font-bold px-4 py-2 rounded-full justify-self-end ${getStatusColor(
-          payment.status
-        )}`}
+        className={`text-xs sm:text-sm font-semibold px-3 py-1 rounded-full justify-self-end ${getStatusColor(payment.status)}`}
       >
         {payment.status}
       </span>

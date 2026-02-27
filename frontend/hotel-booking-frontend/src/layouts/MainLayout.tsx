@@ -6,15 +6,15 @@ import Sidebar from "../components/Misc/Sidebar";
 const MainLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);
 
-  const toggleSidebar = () => setIsOpen(!isOpen);
+  const toggleSidebar = () => setIsOpen((prev) => !prev);
 
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
-      <Sidebar isOpen={isOpen} toggleSidebar={toggleSidebar} />
+      <Sidebar isOpen={isOpen} />
 
       {/* Main content */}
-      <div className={`flex-1 transition-all ${isOpen ? "md:ml-64" : "md:ml-0"}`}>
+      <div className={`flex-1 transition-all duration-300 ${isOpen ? "md:ml-64" : "md:ml-0"}`}>
         {/* Header */}
         <Header toggleSidebar={toggleSidebar} />
 

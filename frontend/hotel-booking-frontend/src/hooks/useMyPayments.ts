@@ -1,17 +1,8 @@
 import { useEffect, useState } from "react";
-import { paymentApi } from "../services/Payment";
 import { bookingApi } from "../services/Booking";
-import { Payment } from "../types/Payment";
+import { paymentApi } from "../services/Payment";
 import { DetailedBooking } from "../types/Booking";
-
-export interface GroupedPayments {
-  bookingId: number;
-  payments: Payment[];
-  totalAmount: number;
-  totalPaid: number;
-  remainingAmount: number;
-  isFullyPaid: boolean;
-}
+import { GroupedPayments, Payment } from "../types/Payment";
 
 export const useMyPayments = () => {
   const [loading, setLoading] = useState(true);

@@ -4,7 +4,7 @@ import { Pagination } from "../../components/Pagination";
 import { BookingPaymentCard } from "../../components/Payment";
 import { useMyPayments, useSmartPagination } from "../../hooks";
 
-const ITEMS_PER_PAGE = 3;
+const ITEMS_PER_PAGE = 6;
 
 const MyPaymentsPage: React.FC = () => {
   const { loading, payments } = useMyPayments();
@@ -17,7 +17,7 @@ const MyPaymentsPage: React.FC = () => {
 
   if (loading)
     return (
-      <div className="flex justify-center items-center h-full">
+      <div className="flex justify-center items-center h-screen bg-gradient-to-tr from-purple-50 via-pink-50 to-white">
         <LoadingSpinner />
       </div>
     );
@@ -25,8 +25,7 @@ const MyPaymentsPage: React.FC = () => {
   const hasData = paginatedData.length > 0;
 
   return (
-    <div className="min-h-full bg-gradient-to-tr from-purple-900 via-indigo-900 to-blue-900 select-none">
-
+    <div className="select-none min-h-full bg-gradient-to-tr from-purple-50 via-pink-50 to-white">
       <HeroSection
         title="My Payment History"
         highlight="Payment"
@@ -36,21 +35,23 @@ const MyPaymentsPage: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-6 py-10">
         {!hasData ? (
-          <p className="text-gray-300 text-center text-lg">No payments found.</p>
+          <p className="text-gray-400 text-center text-lg">No payments found.</p>
         ) : (
           <>
-            <div className="grid gap-6">
+            <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
               {paginatedData.map((group) => (
                 <BookingPaymentCard key={group.bookingId} group={group} />
               ))}
             </div>
 
-            <Pagination
-              currentPage={currentPage}
-              totalPages={totalPages}
-              pages={pages}
-              goToPage={goToPage}
-            />
+            <div className="mt-10">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                pages={pages}
+                goToPage={goToPage}
+              />
+            </div>
           </>
         )}
       </div>

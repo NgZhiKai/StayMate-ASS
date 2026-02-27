@@ -2,13 +2,14 @@ import React from "react";
 import { LoadingSpinner } from "../../components/Misc";
 import {
   NotificationHeader,
-  NotificationLayout,
   NotificationList
 } from "../../components/Notification";
 import { useNotificationContext } from "../../contexts/NotificationContext";
 import { useMarkNotification, useSmartPagination } from "../../hooks";
 import { Notification } from "../../types/Notification";
 import { Pagination } from "../../components/Pagination";
+import HeroSection from "../../components/Misc/HeroSection";
+import { Bell } from "lucide-react";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -49,22 +50,39 @@ const NotificationsPage: React.FC = () => {
     );
 
   return (
-    <NotificationLayout>
-      <NotificationHeader onMarkAll={markAllAsRead} />
-      <NotificationList
-        key={currentPage} // triggers animation
-        notifications={paginatedData}
-        onMarkAsRead={handleMarkAsRead}
-        markingId={markingId}
-        className="animate-fadeIn"
+    <div className="space-y-8">
+      {/* Hero Section */}
+      <HeroSection
+        title="Your Notifications"
+        highlight="Notifications"
+        description="Stay updated with all the latest alerts and messages for your account."
+        align="left"
       />
-      <Pagination
-        currentPage={currentPage}
-        totalPages={totalPages}
-        pages={pages}
-        goToPage={goToPage}
-      />
-    </NotificationLayout>
+
+      {/* Notification header with button aligned right */}
+      <div className="max-w-4xl mx-auto px-4">
+        <NotificationHeader onMarkAll={markAllAsRead} />
+
+        <NotificationList
+          key={currentPage} // triggers animation
+          notifications={paginatedData}
+          onMarkAsRead={handleMarkAsRead}
+          markingId={markingId}
+          className="animate-fadeIn"
+        />
+
+        {totalPages > 1 && (
+          <div className="mt-8 flex justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              pages={pages}
+              goToPage={goToPage}
+            />
+          </div>
+        )}
+      </div>
+    </div>
   );
 };
 

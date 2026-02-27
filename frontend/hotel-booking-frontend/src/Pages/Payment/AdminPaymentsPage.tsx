@@ -4,7 +4,7 @@ import { Pagination } from "../../components/Pagination";
 import { AdminPaymentCard } from "../../components/Payment/AdminPaymentCard";
 import { useGroupedPayments } from "../../hooks/useGroupedPayments";
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 6;
 
 const AdminPaymentsPage: React.FC = () => {
   const { groupedPayments, loading, error } = useGroupedPayments();
@@ -42,7 +42,7 @@ const AdminPaymentsPage: React.FC = () => {
     );
 
   return (
-    <div className="min-h-full bg-gradient-to-tr from-blue-50 via-purple-50 to-pink-50 select-none">
+    <div className="bg-gradient-to-b from-purple-50 via-pink-50 to-white min-h-full text-gray-900 select-none">
       <HeroSection
         title="All Payments Overview"
         highlight="Payments"
@@ -52,11 +52,13 @@ const AdminPaymentsPage: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-6 py-10 space-y-6">
         {currentPayments.length === 0 ? (
-          <p className="text-gray-300 text-center text-lg">No payments found.</p>
+          <p className="text-gray-400 text-center text-lg">No payments found.</p>
         ) : (
-          currentPayments.map((g) => (
-            <AdminPaymentCard key={g.bookingId} group={g} formatDate={formatDate} />
-          ))
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {currentPayments.map((g) => (
+              <AdminPaymentCard key={g.bookingId} group={g} formatDate={formatDate} />
+            ))}
+          </div>
         )}
 
         {totalPages > 1 && (

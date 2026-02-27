@@ -1,21 +1,12 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { GradientButton } from "../../components/Button";
 import { BookingCardData } from "../../types/Booking";
 
-// Status styles
 export const statusStyles = {
-  PENDING: {
-    bg: "bg-gradient-to-r from-yellow-100 via-yellow-200 to-yellow-100",
-    text: "text-yellow-700",
-  },
-  CONFIRMED: {
-    bg: "bg-gradient-to-r from-green-100 via-green-200 to-green-100",
-    text: "text-green-700",
-  },
-  CANCELLED: {
-    bg: "bg-gradient-to-r from-red-100 via-red-200 to-red-100 line-through",
-    text: "text-red-700",
-  },
+  PENDING: { bg: "bg-yellow-50", text: "text-yellow-700" },
+  CONFIRMED: { bg: "bg-green-50", text: "text-green-700" },
+  CANCELLED: { bg: "bg-red-50 line-through", text: "text-red-700" },
 };
 
 interface Props {
@@ -27,51 +18,60 @@ interface Props {
 const BookingCard: React.FC<Props> = ({ booking, loadingIds, onCancel }) => {
   const navigate = useNavigate();
 
-  // Determine if the booking is underway
-  const today = new Date();
+  // Singapore timezone
+  const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore" }));
   today.setHours(0, 0, 0, 0);
 
-  const checkIn = new Date(booking.checkInDate);
-  const checkOut = new Date(booking.checkOutDate);
+  const checkIn = new Date(new Date(booking.checkInDate).toLocaleString("en-US", { timeZone: "Asia/Singapore" }));
+  const checkOut = new Date(new Date(booking.checkOutDate).toLocaleString("en-US", { timeZone: "Asia/Singapore" }));
 
   const isUnderway = today >= checkIn && today <= checkOut;
-  const canCancel = booking.status !== "CANCELLED" && !isUnderway;
+
+  // Only allow cancellation if booking is PENDING or future CONFIRMED
+  const canCancel = booking.status !== "CANCELLED" && booking.status === "PENDING";
+
+  const isLoading = loadingIds.includes(booking.bookingId);
 
   return (
     <div
-      className={`p-4 rounded-xl shadow-md hover:shadow-lg transition flex justify-between items-center ${statusStyles[booking.status].bg}`}
+      className={`p-4 rounded-xl shadow-sm hover:shadow-md transition flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 ${statusStyles[booking.status].bg}`}
     >
-      <div>
-        <p className="font-semibold text-gray-800">{booking.roomType}</p>
-        <p className="text-xs text-gray-500">
-          {checkIn.toLocaleDateString("en-GB", { day: "2-digit", month: "short" })} →{" "}
-          {checkOut.toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
-        </p>
-        <p className={`mt-1 text-sm font-semibold ${statusStyles[booking.status].text}`}>
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+        <div>
+          <p className="font-semibold text-gray-800">{booking.roomType}</p>
+          <p className="text-xs text-gray-500">
+            {checkIn.toLocaleDateString("en-GB", { day: "2-digit", month: "short" })} →{" "}
+            {checkOut.toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
+          </p>
+        </div>
+        <span className={`mt-1 text-sm font-semibold ${statusStyles[booking.status].text}`}>
           {booking.status}
-        </p>
+        </span>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-2 mt-2 sm:mt-0">
         {canCancel && (
-          <button
+          <GradientButton
+            loading={isLoading}
             onClick={() => onCancel(booking.bookingId)}
-            disabled={loadingIds.includes(booking.bookingId)}
-            className="px-3 py-1 bg-gradient-to-r from-red-500 via-pink-500 to-purple-500 text-white rounded-md hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            gradient="from-red-500 via-pink-500 to-purple-500"
+            className="text-sm px-3 py-1"
           >
-            {loadingIds.includes(booking.bookingId) ? "Cancelling..." : "Cancel"}
-          </button>
+            Cancel
+          </GradientButton>
         )}
 
         {booking.status === "PENDING" && (
-          <button
+          <GradientButton
             onClick={() =>
-              navigate("/select-payment", { state: { bookingId: booking.bookingId, hotelName: booking.hotelName } })
+              navigate("/select-payment", {
+                state: { bookingId: booking.bookingId, hotelName: booking.hotelName },
+              })
             }
-            className="px-3 py-1 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white rounded-md hover:opacity-90 transition"
+            className="text-sm px-3 py-1"
           >
             Pay Now
-          </button>
+          </GradientButton>
         )}
       </div>
     </div>

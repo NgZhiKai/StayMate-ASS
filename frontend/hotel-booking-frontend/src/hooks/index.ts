@@ -16,6 +16,7 @@ export { useLoginHandlers } from "./useLoginHandlers";
 export { useMarkNotification } from "./useMarkNotification";
 export { useMyPayments } from "./useMyPayments";
 export { useNotificationsPagination } from "./useNotificationsPagination";
+export { useOutsideClick } from "./useOutsideClick";
 export { usePagination } from "./usePagination";
 export { usePaymentPage } from "./usePaymentPage";
 export { useRegister } from "./useRegister";
@@ -28,3 +29,4 @@ export { useSignIn } from "./useSignIn";
 export { useSmartPagination } from "./useSmartPagination";
 export { useUserAccount } from "./useUserAccount";
 export { useUsers } from "./useUsers";
+

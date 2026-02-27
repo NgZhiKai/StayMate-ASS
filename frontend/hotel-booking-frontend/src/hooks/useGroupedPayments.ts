@@ -1,18 +1,9 @@
 import { useEffect, useState } from "react";
 import { bookingApi } from "../services/Booking";
+import { hotelApi } from "../services/Hotel";
 import { paymentApi } from "../services/Payment";
-import { userApi } from "../services/User"; // <-- import user API
-import { Payment } from "../types/Payment";
-
-export interface GroupedPayment {
-  bookingId: number;
-  totalAmount: number;
-  status: string;
-  latestTransactionDate: string;
-  payments: Payment[];
-  bookingDetails?: any; // DetailedBooking type
-  user?: { firstName: string; lastName: string }; // added user info
-}
+import { userApi } from "../services/User";
+import { GroupedPayment } from "../types/Payment";
 
 export const useGroupedPayments = () => {
   const [groupedPayments, setGroupedPayments] = useState<GroupedPayment[]>([]);
@@ -47,10 +38,11 @@ export const useGroupedPayments = () => {
 
         const groupedArray = Object.values(groupsMap);
 
-        // Fetch booking details AND user info
+        // Fetch booking details, user info, and hotel name
         const bookingPromises = groupedArray.map(async (g) => {
           const bookingDetails = await bookingApi.fetchBookingById(g.bookingId);
 
+          // Fetch user info
           let user;
           try {
             const userData = await userApi.getUserInfo(bookingDetails.userId.toString());
@@ -59,7 +51,16 @@ export const useGroupedPayments = () => {
             user = { firstName: "Unknown", lastName: "" };
           }
 
-          return { ...g, bookingDetails, user };
+          // Fetch hotel name
+          let hotelName = "Unknown";
+          try {
+            const hotelData = await hotelApi.fetchHotelById(bookingDetails.hotelId);
+            hotelName = hotelData.name;
+          } catch {
+            hotelName = "Unknown";
+          }
+
+          return { ...g, bookingDetails, user, hotelName };
         });
 
         const results = await Promise.all(bookingPromises);
