@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Booking } from "../../types/Booking";
 import { Room } from "../../types/Room";
 
@@ -7,11 +7,8 @@ interface Props {
   rooms: Room[];
   isSubmitting: boolean;
   errors: { [key: string]: string };
-  handleInputChange: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => void;
-  handleRoomSelect: (roomId: number) => void;
-  handleSubmit: (e: React.FormEvent) => void;
+  handleInputChange: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
+  handleRoomSelect: (roomType: string, selectedCount: number) => void;
 }
 
 const CreateBookingForm: React.FC<Props> = ({
@@ -21,170 +18,112 @@ const CreateBookingForm: React.FC<Props> = ({
   errors,
   handleInputChange,
   handleRoomSelect,
-  handleSubmit,
 }) => {
-  const [selectedRoom, setSelectedRoom] = useState<Room | null>(null);
-  const hasSelectedDates = bookingData.checkInDate && bookingData.checkOutDate;
-  const today = new Date().toISOString().split("T")[0];
-
-  const uniqueRoomTypes = Array.from(
-    new Map(rooms.map((room) => [room.room_type, room])).values()
+  const groupedRooms = rooms.reduce<Record<string, { available: number; price: number }>>(
+    (acc, room) => {
+      if (!acc[room.room_type]) acc[room.room_type] = { available: 1, price: room.pricePerNight };
+      else acc[room.room_type].available += 1;
+      return acc;
+    },
+    {}
   );
 
-  const calculateTotalAmount = () => {
-    if (hasSelectedDates && selectedRoom) {
-      const checkIn = new Date(bookingData.checkInDate);
-      const checkOut = new Date(bookingData.checkOutDate);
-      const days = (checkOut.getTime() - checkIn.getTime()) / (1000 * 3600 * 24);
-      return days > 0 ? days * selectedRoom.pricePerNight : 0;
-    }
-    return 0;
-  };
-
-  bookingData.totalAmount = calculateTotalAmount();
-
-  const handleRoomSelectWrapper = (roomType: string) => {
-    const availableRoom = rooms.find((r) => r.room_type === roomType);
-    if (availableRoom) {
-      setSelectedRoom(availableRoom);
-      handleRoomSelect(availableRoom.id.roomId);
-    } else {
-      alert(`No available rooms of type ${roomType}`);
-    }
-  };
-
-  const displayErrors = {
-    ...errors,
-    ...(hasSelectedDates && rooms.length === 0 && {
-      room: "Sorry, there are no available rooms for the selected dates.",
-    }),
-  };
+  const hasDates = Boolean(bookingData.checkInDate && bookingData.checkOutDate);
+  const validDates =
+    hasDates &&
+    new Date(bookingData.checkInDate) < new Date(bookingData.checkOutDate);
+  const today = new Date().toISOString().split("T")[0];
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-8 w-full max-w-2xl mx-auto">
-      <h2 className="text-4xl font-bold text-center mb-8 text-gray-800">
-        Create Booking
+    <div className="bg-white rounded-3xl shadow-2xl p-6 md:p-10 space-y-8">
+      <h2 className="text-4xl font-extrabold text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500">
+        Reserve Your Stay
       </h2>
 
-      {Object.keys(displayErrors).length > 0 && (
-        <div className="p-4 mb-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
-          <ul className="list-disc list-inside text-sm space-y-1">
-            {Object.values(displayErrors).map((msg, idx) => (
-              <li key={idx}>{msg}</li>
-            ))}
-          </ul>
+      {hasDates && !validDates && (
+        <div className="w-full bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded-md font-medium text-sm">
+          ⚠️ Check-in date must be before check-out date.
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <label className="block text-lg font-semibold mb-2 text-gray-700">
-          Select a Room Type
-        </label>
-
-        <div className="mb-4">
-          {uniqueRoomTypes.length === 0 ? (
-            <div className="text-center text-gray-600 py-4">
-              No rooms available for the selected dates.
-            </div>
-          ) : (
-            <div className="flex justify-center gap-4">
-              {uniqueRoomTypes.map((room) => {
-                const isAvailable = rooms.some(
-                  (r) => r.room_type === room.room_type
-                );
-                const isSelected = selectedRoom?.room_type === room.room_type;
-
-                return (
-                  <button
-                    key={room.id.roomId}
-                    type="button"
-                    disabled={!hasSelectedDates || !isAvailable}
-                    onClick={() => handleRoomSelectWrapper(room.room_type)}
-                    className={`relative group p-4 rounded-xl border transition duration-300 text-center
-                      ${
-                        isSelected
-                          ? "bg-blue-500 text-white border-blue-600"
-                          : isAvailable
-                          ? "bg-gray-50 hover:bg-blue-50 text-gray-800"
-                          : "bg-gray-200 text-gray-400 border-gray-300 cursor-not-allowed"
-                      }
-                    `}
-                  >
-                    <div className="text-sm font-semibold mb-1">
-                      {room.room_type} ROOM
-                    </div>
-                    <div className="text-xs">
-                      ${room.pricePerNight}/night
-                    </div>
-
-                    {/* Tooltip */}
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-44 p-2 text-xs text-gray-700 bg-white border border-gray-300 rounded shadow-md opacity-0 group-hover:opacity-100 pointer-events-none transition">
-                      {isAvailable ? (
-                        <>
-                          <div>{room.room_type} ROOM</div>
-                          <div>${room.pricePerNight} per night</div>
-                        </>
-                      ) : (
-                        <div className="text-red-500">Fully booked</div>
-                      )}
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        <div className="grid grid-cols-2 gap-6">
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">
-              Check-in Date
-            </label>
+      {/* Dates */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {["checkInDate", "checkOutDate"].map((field) => (
+          <div key={field} className="relative">
             <input
               type="date"
-              name="checkInDate"
-              value={bookingData.checkInDate}
-              onChange={handleInputChange}
+              name={field}
               min={today}
-              className="w-full p-2 border rounded-md border-gray-300 focus:ring-blue-500 focus:ring-2"
+              value={bookingData[field as keyof Booking] as string}
+              onChange={handleInputChange}
+              className="peer w-full p-4 rounded-xl border border-gray-300 bg-gray-50 focus:ring-2 focus:ring-indigo-400 outline-none transition"
             />
-          </div>
-          <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">
-              Check-out Date
+            <label className="absolute left-4 top-2 text-gray-500 text-sm peer-focus:-top-3 peer-focus:text-indigo-500 peer-focus:text-xs transition-all">
+              {field === "checkInDate" ? "Check-in" : "Check-out"}
             </label>
-            <input
-              type="date"
-              name="checkOutDate"
-              value={bookingData.checkOutDate}
-              onChange={handleInputChange}
-              min={today}
-              className="w-full p-2 border rounded-md border-gray-300 focus:ring-blue-500 focus:ring-2"
-            />
+            {errors[field] && (
+              <p className="text-red-500 text-xs mt-1 absolute -bottom-5">{errors[field]}</p>
+            )}
           </div>
-        </div>
+        ))}
+      </div>
 
-        <div>
-          <label className="block mb-1 text-sm font-medium text-gray-700">
-            Total Amount
-          </label>
-          <input
-            type="number"
-            name="totalAmount"
-            value={bookingData.totalAmount}
-            disabled
-            className="w-full p-2 border rounded-md border-gray-300 bg-gray-100 text-gray-600"
-          />
-        </div>
+      {/* Rooms */}
+      <div>
+        <p className="mb-3 font-semibold text-gray-700 text-lg">Select Rooms</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {Object.entries(groupedRooms).map(([type, info]) => {
+            const selectedCount = bookingData.roomIds.filter((id) =>
+              rooms.filter((r) => r.room_type === type).map((r) => r.id.roomId).includes(id)
+            ).length;
 
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="w-full py-3 rounded-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition disabled:opacity-50"
-        >
-          {isSubmitting ? "Submitting..." : "Create Booking"}
-        </button>
-      </form>
+            return (
+              <div
+                key={type}
+                className={`relative p-5 rounded-2xl border transition-all duration-300 flex flex-col justify-between ${
+                  validDates
+                    ? "bg-white shadow hover:shadow-lg border-gray-200"
+                    : "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                }`}
+              >
+                <div className="flex justify-between items-center mb-3">
+                  <p className="font-medium text-gray-800">{type}</p>
+                  <p className="text-sm text-gray-500">
+                    ${info.price}/night — {info.available} available
+                  </p>
+                </div>
+
+                {validDates ? (
+                  <div className="flex items-center justify-between mt-2">
+                    <button
+                      type="button"
+                      onClick={() => selectedCount > 0 && handleRoomSelect(type, selectedCount - 1)}
+                      className="w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 text-lg font-bold text-gray-700"
+                    >
+                      -
+                    </button>
+                    <span className="mx-4 text-gray-800 font-medium">{selectedCount}</span>
+                    <button
+                      type="button"
+                      disabled={isSubmitting}
+                      onClick={() => selectedCount < info.available && handleRoomSelect(type, selectedCount + 1)}
+                      className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-bold hover:opacity-90"
+                    >
+                      +
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-gray-400 text-sm mt-2">Select valid dates first</p>
+                )}
+
+                {errors.roomIds && selectedCount === 0 && (
+                  <p className="text-red-500 text-xs mt-2">{errors.roomIds}</p>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
 };

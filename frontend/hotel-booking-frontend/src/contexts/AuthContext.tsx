@@ -1,10 +1,11 @@
-import React, { createContext, useState, useEffect, ReactNode } from "react";
+import React, { createContext, ReactNode, useEffect, useState } from "react";
+import { userApi } from "../services/User";
 
 interface AuthContextType {
   isLoggedIn: boolean;
   role: string | null;
   userId: string | null;
-  login: (token: string, role: string, userId: string) => void;
+  login: (token: string, userId: string) => void;
   logout: () => void;
 }
 
@@ -17,38 +18,56 @@ export const AuthContext = createContext<AuthContextType>({
 });
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [role, setRole] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
 
+  // Fetch role from API if userId exists
+  const fetchUserRole = async (id: string) => {
+    try {
+      const { user } = await userApi.getUserInfo(id);
+      setRole(user.role.toLowerCase());
+      sessionStorage.setItem("role", user.role.toLowerCase());
+      if (user.firstName) sessionStorage.setItem("firstName", user.firstName);
+      if (user.lastName) sessionStorage.setItem("lastName", user.lastName);
+    } catch (err) {
+      console.error("Failed to fetch user role:", err);
+      setRole(null);
+    }
+  };
+
   useEffect(() => {
     const token = sessionStorage.getItem("token");
-    const savedRole = sessionStorage.getItem("role");
     const savedUserId = sessionStorage.getItem("userId");
 
-    setIsLoggedIn(!!token); // Check if token exists
-    setRole(savedRole ? savedRole.toLowerCase() : null); // Set role from sessionStorage if available
-    setUserId(savedUserId); // Set userId from sessionStorage if available
+    setIsLoggedIn(!!token);
+    setUserId(savedUserId);
+
+    if (savedUserId) {
+      fetchUserRole(savedUserId);
+    }
   }, []);
 
-  const login = (token: string, role: string, userId: string) => {
+  const login = (token: string, id: string) => {
     sessionStorage.setItem("token", token);
-    sessionStorage.setItem("role", role.toLowerCase());
-    sessionStorage.setItem("userId", userId);
-
+    sessionStorage.setItem("userId", id);
     setIsLoggedIn(true);
-    setRole(role.toLowerCase());
-    setUserId(userId);
+    setUserId(id);
+
+    fetchUserRole(id); // fetch role after login
   };
 
   const logout = () => {
     sessionStorage.removeItem("token");
-    sessionStorage.removeItem("role");
     sessionStorage.removeItem("userId");
-    
+    sessionStorage.removeItem("role");
+    sessionStorage.removeItem("firstName");
+    sessionStorage.removeItem("lastName");
+
+
     setIsLoggedIn(false);
-    setRole(null);
     setUserId(null);
+    setRole(null);
   };
 
   return (

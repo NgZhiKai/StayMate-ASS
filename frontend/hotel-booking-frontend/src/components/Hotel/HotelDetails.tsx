@@ -1,175 +1,210 @@
 import React from "react";
-import { FaBookmark, FaRegBookmark } from "react-icons/fa"; // Import missing icons
-import { useNavigate } from "react-router-dom"; // Import useNavigate
+import { FaBookmark, FaRegBookmark } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import { HotelData } from "../../types/Hotels";
 import { Review } from "../../types/Review";
+import { formatPhoneNumber } from "../../utils/formatPhoneNumber";
+import { GradientButton } from "../Button";
 
 type HotelDetailsProps = {
   hotel: HotelData | null;
   reviews: Review[];
   userInfo: { [key: string]: { firstName: string; lastName: string } };
-  getPricingRange: () => string;
   formatToAMPM: (timeString: string) => string;
   renderStars: (rating: number) => React.ReactNode;
   isBookmarked: boolean;
-  setIsBookmarked: (value: boolean) => void;
+  canBookmark: boolean;
   handleBookmarkToggle: () => void;
-  handleDeleteHotel: (hotelId: number) => void;
+  handleDeleteHotel: () => void;
   setIsReviewModalOpen: (open: boolean) => void;
-  userId: Number;
+  userId: number | null;
 };
 
 const HotelDetails: React.FC<HotelDetailsProps> = ({
   hotel,
   reviews,
   userInfo,
-  getPricingRange,
   formatToAMPM,
   renderStars,
   isBookmarked,
+  canBookmark,
   handleBookmarkToggle,
   handleDeleteHotel,
   setIsReviewModalOpen,
   userId,
 }) => {
   const navigate = useNavigate();
-  const defaultImage = 'https://archive.org/download/placeholder-image/placeholder-image.jpg';
-  const userRole = sessionStorage.getItem('role');
-  const isAdmin = userRole === 'admin';
+  if (!hotel) return null;
 
-  const formatPhoneNumber = (rawPhone: string) => {
-    if (!rawPhone || rawPhone.length < 5) return rawPhone;
-    const countryCode = rawPhone.slice(0, 2);
-    const localNumber = rawPhone.slice(2);
-    return `(+${countryCode}) ${localNumber}`;
-  };
+  const defaultImage =
+    "https://archive.org/download/placeholder-image/placeholder-image.jpg";
+  const isAdmin = sessionStorage.getItem("role") === "admin";
 
-  const handleBookClick = () => {
-    navigate(`/create-bookings/${hotel?.id}`);
-  };
+  const handleBookClick = () => navigate(`/create-bookings/${hotel.id}`);
+  const handleUpdateHotel = () => navigate(`/create-hotel/${hotel.id}`);
 
-  const handleUpdateHotel = () => {
-    navigate(`/create-hotel/${hotel?.id}`);
-  };
-
-  const ContactInfo = ({ hotel }: { hotel: HotelData | null }) => (
-    <div>
-      <h3 className="text-xl font-semibold mb-2">Contact Info</h3>
-      <p><strong>Address:</strong> {hotel?.address || 'N/A'}</p>
-      <p><strong>Contact:</strong> {hotel?.contact ? formatPhoneNumber(hotel.contact) : 'N/A'}</p>
-    </div>
-  );
-
-  const PricingTiming = ({ hotel }: { hotel: HotelData | null }) => (
-    <div>
-      <h3 className="text-xl font-semibold mb-2">Pricing & Timing</h3>
-      <p><strong>Price Range:</strong> {getPricingRange()}</p>
-      <p><strong>Check-In:</strong> {hotel?.checkIn ? formatToAMPM(hotel.checkIn) : 'N/A'}</p>
-      <p><strong>Check-Out:</strong> {hotel?.checkOut ? formatToAMPM(hotel.checkOut) : 'N/A'}</p>
-    </div>
-  );
-
-  const Reviews = ({ reviews, userInfo }: { reviews: Review[], userInfo: { [key: string]: { firstName: string; lastName: string } } }) => (
-    <div>
-      <h3 className="text-xl font-semibold mb-2">Reviews</h3>
-      <div
-        className="space-y-4 max-h-96 overflow-y-auto pr-2"
-        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-      >
-        {reviews.length === 0 ? (
-          <p>No reviews available for this hotel.</p>
-        ) : (
-          reviews.map((review, index) => (
-            <div key={index} className="bg-gray-100 p-4 rounded shadow">
-              <p className="font-semibold">
-                {userInfo[review.userId]?.firstName} {userInfo[review.userId]?.lastName}
-              </p>
-              <p className="flex">{renderStars(review.rating)}</p>
-              <p className="text-gray-800">{review.comment}</p>
-            </div>
-          ))
-        )}
-      </div>
-    </div>
-  );
-  
   return (
-    <div className="max-w-7xl mx-auto p-8 space-y-8">
-      {/* Hotel Image */}
-      <img
-        src={hotel?.image ? `data:image/jpeg;base64,${hotel.image}` : defaultImage}
-        alt={hotel?.name}
-        className="w-full h-96 object-cover rounded-2xl shadow-xl transition-transform transform hover:scale-105 mb-8"
-      />
-  
-      {/* Hotel Name and Action Buttons */}
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-4xl font-semibold text-gray-800">{hotel?.name}</h1>
-        <div className="flex items-center space-x-4">
-          {/* Bookmark Button */}
+    <div className="bg-gray-50 min-h-screen select-none">
+      {/* Hero */}
+      <div className="relative h-[450px] w-full rounded-b-2xl overflow-hidden">
+        <img
+          src={hotel.image ? `data:image/jpeg;base64,${hotel.image}` : defaultImage}
+          alt={hotel.name}
+          className="w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-black/20"></div>
+        <div className="absolute bottom-6 left-6 text-white flex items-center justify-between w-[calc(100%-3rem)]">
+          <div>
+            <h1 className="text-4xl md:text-5xl font-bold drop-shadow-lg bg-gradient-to-r from-yellow-300 via-pink-300 to-orange-300 bg-[length:300%_300%] bg-clip-text text-transparent animate-gradient">
+              {hotel.name}
+            </h1>
+            <p className="mt-1 text-lg sm:text-2xl font-light opacity-90 max-w-2xl">
+              {hotel.address}
+            </p>
+          </div>
           <button
-            onClick={handleBookmarkToggle}
-            className="text-gray-700 hover:text-blue-500 transition-all transform hover:scale-110 text-2xl"
+            onClick={canBookmark ? handleBookmarkToggle : undefined}
+            className={`text-2xl hover:scale-110 transition ${
+              canBookmark ? "text-white" : "text-gray-400 cursor-not-allowed"
+            }`}
+            title={canBookmark ? "Bookmark" : "Login to bookmark"}
           >
             {isBookmarked ? <FaBookmark /> : <FaRegBookmark />}
           </button>
-  
-          {/* Book Button (only for non-admins) */}
-          {userId && (
-            <button
-              onClick={handleBookClick}
-              className="bg-blue-600 text-white text-sm px-4 py-2 rounded-full shadow-md hover:bg-blue-700 transition-all transform hover:scale-105"            >
-              Book Now
-            </button>
-          )}
-  
-          {/* Admin Action Buttons */}
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-6 mt-12 grid md:grid-cols-3 gap-8">
+        {/* Left: Info + Reviews */}
+        <div className="md:col-span-2 space-y-8">
+          {/* About */}
+          <div className="bg-white rounded-2xl shadow-sm p-8 hover:shadow-md transition">
+            <h2 className="text-2xl font-semibold mb-4">About This Hotel</h2>
+            <p className="text-gray-700 leading-relaxed">{hotel.description}</p>
+          </div>
+
+          {/* Contact & Timing */}
+          <div className="grid md:grid-cols-2 gap-6">
+            <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition">
+              <h3 className="text-xl font-semibold mb-4">Contact Info</h3>
+              <p className="text-gray-700">
+                <strong>Address:</strong> {hotel.address}
+              </p>
+              <p className="text-gray-700 mt-2">
+                <strong>Phone:</strong>{" "}
+                {hotel.contact ? formatPhoneNumber(hotel.contact) : "N/A"}
+              </p>
+            </div>
+            <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition">
+              <h3 className="text-xl font-semibold mb-4">Pricing & Timing</h3>
+              <p className="text-gray-700">
+                <strong>Price Range:</strong> ${hotel.minPrice} - ${hotel.maxPrice}
+              </p>
+              <p className="text-gray-700 mt-2">
+                <strong>Check-In:</strong>{" "}
+                {hotel.checkIn ? formatToAMPM(hotel.checkIn) : "N/A"}
+              </p>
+              <p className="text-gray-700 mt-2">
+                <strong>Check-Out:</strong>{" "}
+                {hotel.checkOut ? formatToAMPM(hotel.checkOut) : "N/A"}
+              </p>
+            </div>
+          </div>
+
+          {/* Reviews */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-semibold">Reviews</h2>
+              {userId && (
+                <GradientButton
+                  onClick={() => setIsReviewModalOpen(true)}
+                  className="px-4 py-2 text-sm font-semibold text-white rounded-lg bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 hover:from-pink-500 hover:to-yellow-500 transition-all hover:scale-105"
+                >
+                  Write a Review
+                </GradientButton>
+              )}
+            </div>
+
+            {reviews.length === 0 ? (
+              <p className="text-gray-600 text-sm">No reviews yet. Be the first!</p>
+            ) : (
+              <div
+                className="max-h-[8rem] overflow-y-auto divide-y divide-gray-200 pr-2"
+                style={{
+                  scrollbarWidth: "none", // Firefox
+                }}
+              >
+                {/* Hide scrollbar for Webkit browsers */}
+                <style>
+                  {`
+                    .scroll-hide::-webkit-scrollbar {
+                      display: none;
+                    }
+                  `}
+                </style>
+                <div className="scroll-hide">
+                  {reviews.map((review, index) => (
+                    <div key={review.id ?? index} className="py-3">
+                      <div className="flex items-center justify-between">
+                        <p className="font-medium text-gray-900 text-sm">
+                          {userInfo[review.userId]?.firstName}{" "}
+                          {userInfo[review.userId]?.lastName}
+                        </p>
+                        <div className="text-yellow-400 text-sm">
+                          {renderStars(review.rating)}
+                        </div>
+                      </div>
+                      <p className="mt-1 text-gray-700 text-sm">{review.comment}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right: Sticky Booking Panel */}
+        <div className="space-y-6 sticky top-20">
+          {/* Booking Section */}
+          <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition space-y-4">
+            <h3 className="text-lg font-semibold">Your Stay</h3>
+            <p className="text-gray-700">${hotel.minPrice} - ${hotel.maxPrice}</p>
+
+            {userId && (
+              <GradientButton
+                onClick={handleBookClick}
+                className="w-full px-6 py-3 font-semibold text-white rounded-lg bg-gradient-to-r from-purple-500 via-pink-500 to-red-500 hover:from-pink-500 hover:to-yellow-500 transition-all hover:scale-105"
+              >
+                Book Now
+              </GradientButton>
+            )}
+          </div>
+
+          {/* Admin Section */}
           {isAdmin && (
-            <>
-              <button
-                onClick={handleUpdateHotel}
-                className="bg-blue-600 text-white text-sm px-4 py-2 rounded-full shadow-md hover:bg-blue-700 transition-all transform hover:scale-105"
-              >
-                Update Hotel
-              </button>
-              <button
-                onClick={() => handleDeleteHotel(hotel?.id!)}
-                className="bg-red-600 text-white text-sm px-4 py-2 rounded-full shadow-md hover:bg-red-700 transition-all transform hover:scale-105"
-              >
-                Delete Hotel
-              </button>
-            </>
+            <div className="bg-white rounded-2xl shadow-sm p-6 hover:shadow-md transition space-y-4">
+              <h3 className="text-lg font-semibold">Admin Actions</h3>
+              <div className="flex flex-col gap-3">
+                <GradientButton
+                  onClick={handleUpdateHotel}
+                  className="w-full px-6 py-3 font-semibold rounded-lg text-white bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500 hover:from-indigo-500 hover:to-pink-500 transition-all hover:scale-105"
+                >
+                  Update Hotel
+                </GradientButton>
+                <GradientButton
+                  onClick={handleDeleteHotel}
+                  className="w-full px-6 py-3 font-semibold rounded-lg text-white bg-gradient-to-r from-red-500 via-pink-500 to-orange-500 hover:from-pink-500 hover:to-yellow-500 transition-all hover:scale-105"
+                >
+                  Delete Hotel
+                </GradientButton>
+              </div>
+            </div>
           )}
         </div>
       </div>
-  
-      {/* Hotel Description */}
-      <p className="text-gray-800 text-lg mb-6">{hotel?.description}</p>
-  
-      {/* Pricing and Contact Info */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <ContactInfo hotel={hotel} />
-        <PricingTiming hotel={hotel} />
-      </div>
-  
-      {/* Reviews Section */}
-      {userId !== 0 && (
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-semibold text-gray-800">Reviews</h2>
-          <button
-            onClick={() => setIsReviewModalOpen(true)}
-            className="bg-green-600 text-white px-6 py-3 rounded-full shadow-md hover:bg-green-700 transition-all transform hover:scale-105"
-          >
-            Write a Review
-          </button>
-        </div>
-      )}
-  
-      {/* Reviews List */}
-      <Reviews reviews={reviews} userInfo={userInfo} />
     </div>
   );
-  
 };
 
 export default HotelDetails;

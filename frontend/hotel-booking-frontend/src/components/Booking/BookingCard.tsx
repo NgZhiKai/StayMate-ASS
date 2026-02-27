@@ -1,106 +1,81 @@
 import React from "react";
-import { DetailedBooking } from "../../types/Booking";
-import { CreditCard, XCircle } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { GradientButton } from "../../components/Button";
+import { BookingCardData } from "../../types/Booking";
 
-interface BookingCardProps {
-  booking: DetailedBooking;
-  hotelName: string;
-  hotelCheckIn: string;
-  hotelCheckOut: string;
-  onCancelBooking: (bookingId: number) => void;
-  onMakePayment: (bookingId: number) => void;
-}
-
-const formatDate = (date: string) => {
-  const d = new Date(date);
-  const day = String(d.getDate()).padStart(2, "0");
-  const month = d.toLocaleString("default", { month: "short" });
-  const year = d.getFullYear();
-  return `${day} ${month} ${year}`;
+export const statusStyles = {
+  PENDING: { bg: "bg-yellow-50", text: "text-yellow-700" },
+  CONFIRMED: { bg: "bg-green-50", text: "text-green-700" },
+  CANCELLED: { bg: "bg-red-50 line-through", text: "text-red-700" },
 };
 
-const BookingCard: React.FC<BookingCardProps> = ({
-  booking,
-  hotelName,
-  hotelCheckIn,
-  hotelCheckOut,
-  onCancelBooking,
-  onMakePayment,
-}) => {
-  const handleCancel = () => {
-    onCancelBooking(booking.bookingId);
-  };
+interface Props {
+  booking: BookingCardData;
+  loadingIds: number[];
+  onCancel: (id: number) => void;
+}
 
-  const handlePayment = () => {
-    onMakePayment(booking.bookingId);
-  };
+const BookingCard: React.FC<Props> = ({ booking, loadingIds, onCancel }) => {
+  const navigate = useNavigate();
 
-  const isPending = booking.status === "PENDING";
+  // Singapore timezone
+  const today = new Date(new Date().toLocaleString("en-US", { timeZone: "Asia/Singapore" }));
+  today.setHours(0, 0, 0, 0);
+
+  const checkIn = new Date(new Date(booking.checkInDate).toLocaleString("en-US", { timeZone: "Asia/Singapore" }));
+  const checkOut = new Date(new Date(booking.checkOutDate).toLocaleString("en-US", { timeZone: "Asia/Singapore" }));
+
+  const isUnderway = today >= checkIn && today <= checkOut;
+
+  // Only allow cancellation if booking is PENDING or future CONFIRMED
+  const canCancel = booking.status !== "CANCELLED" && booking.status === "PENDING";
+
+  const isLoading = loadingIds.includes(booking.bookingId);
 
   return (
     <div
-      className={`bg-gray-800 rounded-xl p-4 w-full max-w-md mx-auto text-sm text-gray-300 shadow hover:shadow-lg transition-all duration-200 ${
-        booking.status === "CANCELLED" ? "opacity-60 cursor-not-allowed" : ""
-      }`}
+      className={`p-4 rounded-xl shadow-sm hover:shadow-md transition flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 ${statusStyles[booking.status].bg}`}
     >
-      {/* Header: Hotel Name + Status */}
-      <div className="flex justify-between items-center mb-3">
-        <h3 className="text-lg font-semibold text-white truncate">
-          {hotelName || "Loading..."}
-        </h3>
-        <span
-          className={`text-xs font-semibold px-2 py-1 rounded-full ${
-            booking.status === "CONFIRMED"
-              ? "bg-green-200 text-green-800"
-              : booking.status === "CANCELLED"
-              ? "bg-red-200 text-red-800"
-              : "bg-yellow-200 text-yellow-800"
-          }`}
-        >
+      <div className="flex flex-col sm:flex-row sm:items-center gap-4">
+        <div>
+          <p className="font-semibold text-gray-800">{booking.roomType}</p>
+          <p className="text-xs text-gray-500">
+            {checkIn.toLocaleDateString("en-GB", { day: "2-digit", month: "short" })} →{" "}
+            {checkOut.toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
+          </p>
+        </div>
+        <span className={`mt-1 text-sm font-semibold ${statusStyles[booking.status].text}`}>
           {booking.status}
         </span>
       </div>
-  
-      {/* Booking Info */}
-      <div className="space-y-1.5 mb-2 text-sm">
-        <p>
-          <span className="font-medium text-gray-400">Check-in:</span>{" "}
-          {formatDate(booking.checkInDate)}{" "}
-          <span className="text-gray-500">{hotelCheckIn}</span>
-        </p>
-        <p>
-          <span className="font-medium text-gray-400">Check-out:</span>{" "}
-          {formatDate(booking.checkOutDate)}{" "}
-          <span className="text-gray-500">{hotelCheckOut}</span>
-        </p>
-        <p>
-          <span className="font-medium text-gray-400">Room:</span>{" "}
-          {booking.roomType}
-        </p>
-      </div>
-  
-      {/* Actions */}
-      {isPending && (
-        <div className="flex justify-end gap-2 mt-4">
-          <button
-            onClick={handlePayment}
-            className="flex items-center gap-1 bg-blue-600 hover:bg-blue-500 text-white text-xs px-3 py-1.5 rounded-md transition"
+
+      <div className="flex gap-2 mt-2 sm:mt-0">
+        {canCancel && (
+          <GradientButton
+            loading={isLoading}
+            onClick={() => onCancel(booking.bookingId)}
+            gradient="from-red-500 via-pink-500 to-purple-500"
+            className="text-sm px-3 py-1"
           >
-            <CreditCard size={14} />
-            Pay
-          </button>
-          <button
-            onClick={handleCancel}
-            className="flex items-center gap-1 bg-red-600 hover:bg-red-500 text-white text-xs px-3 py-1.5 rounded-md transition"
-          >
-            <XCircle size={14} />
             Cancel
-          </button>
-        </div>
-      )}
+          </GradientButton>
+        )}
+
+        {booking.status === "PENDING" && (
+          <GradientButton
+            onClick={() =>
+              navigate("/select-payment", {
+                state: { bookingId: booking.bookingId, hotelName: booking.hotelName },
+              })
+            }
+            className="text-sm px-3 py-1"
+          >
+            Pay Now
+          </GradientButton>
+        )}
+      </div>
     </div>
   );
-  
 };
 
 export default BookingCard;

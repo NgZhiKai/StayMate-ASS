@@ -1,0 +1,89 @@
+import React from "react";
+import { LoadingSpinner } from "../../components/Misc";
+import {
+  NotificationHeader,
+  NotificationList
+} from "../../components/Notification";
+import { useNotificationContext } from "../../contexts/NotificationContext";
+import { useMarkNotification, useSmartPagination } from "../../hooks";
+import { Notification } from "../../types/Notification";
+import { Pagination } from "../../components/Pagination";
+import HeroSection from "../../components/Misc/HeroSection";
+import { Bell } from "lucide-react";
+
+const ITEMS_PER_PAGE = 6;
+
+const NotificationsPage: React.FC = () => {
+  const { notifications, loading, error, markAsRead, markAllAsRead } =
+    useNotificationContext();
+
+  // sort notifications by read + date
+  const sortedNotifications: Notification[] = [...notifications].sort(
+    (a, b) => {
+      if (a.isread === b.isread) {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+      return a.isread ? 1 : -1;
+    }
+  );
+
+  const { currentPage, totalPages, paginatedData, goToPage, pages } =
+    useSmartPagination<Notification>({
+      data: sortedNotifications,
+      itemsPerPage: ITEMS_PER_PAGE,
+    });
+
+  const { markingId, handleMarkAsRead } = useMarkNotification(markAsRead);
+
+  if (loading)
+    return (
+      <div className="flex justify-center items-center h-full">
+        <LoadingSpinner />
+      </div>
+    );
+
+  if (error)
+    return (
+      <div className="flex justify-center items-center h-full text-red-500">
+        {error}
+      </div>
+    );
+
+  return (
+    <div className="space-y-8">
+      {/* Hero Section */}
+      <HeroSection
+        title="Your Notifications"
+        highlight="Notifications"
+        description="Stay updated with all the latest alerts and messages for your account."
+        align="left"
+      />
+
+      {/* Notification header with button aligned right */}
+      <div className="max-w-4xl mx-auto px-4">
+        <NotificationHeader onMarkAll={markAllAsRead} />
+
+        <NotificationList
+          key={currentPage} // triggers animation
+          notifications={paginatedData}
+          onMarkAsRead={handleMarkAsRead}
+          markingId={markingId}
+          className="animate-fadeIn"
+        />
+
+        {totalPages > 1 && (
+          <div className="mt-8 flex justify-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              pages={pages}
+              goToPage={goToPage}
+            />
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default NotificationsPage;

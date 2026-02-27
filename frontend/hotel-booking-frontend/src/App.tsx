@@ -1,28 +1,39 @@
 import React, { useEffect, useState } from "react";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
-import Header from "./components/Header";
-import Sidebar from "./components/Sidebar";
+
 import { AuthProvider } from "./contexts/AuthContext";
+import { BookingProvider } from "./contexts/BookingContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
-import AdminPaymentsPage from "./Pages/AdminPaymentsPage";
-import BookedHotelsPage from "./Pages/BookedHotelsPage";
-import BookingPage from './Pages/BookingPage';
-import BookmarkedHotelsPage from "./Pages/BookmarkedHotelsPage";
-import CreateBookingPage from './Pages/CreateBookingPage';
-import CreateUpdateHotelPage from "./Pages/CreateUpdateHotelPage";
-import HomePage from "./Pages/HomePage";
-import HotelDetailsPage from "./Pages/HotelDetailsPage";
-import LoginPage from "./Pages/LoginPage";
-import LogOutPage from "./Pages/LogoutPage";
-import ManageBookingsPage from './Pages/ManageBookingsPage';
-import ManageUsersPage from './Pages/ManageUsersPage';
-import MyPaymentsPage from './Pages/MyPaymentsPage';
-import NearMePage from "./Pages/NearMePage";
-import NotifcationsPage from "./Pages/NotificationPage";
-import PaymentPage from "./Pages/PaymentPage";
-import RegisterPage from "./Pages/RegisterPage";
-import UserAccountSettings from "./Pages/UserAccountSettings";
-import VerifyEmailPage from "./Pages/VerficationPage";
+
+import HeaderOnlyLayout from "./layouts/HeaderOnlyLayout";
+import MainLayout from "./layouts/MainLayout";
+
+// Pages
+import LoginPage from "./Pages/Auth/LoginPage";
+import LogOutPage from "./Pages/Auth/LogoutPage";
+import RegisterPage from "./Pages/Auth/RegisterPage";
+import ResetPasswordPage from "./Pages/Auth/ResetPasswordPage";
+import SignInPage from "./Pages/Auth/SignInPage";
+import VerifyEmailPage from "./Pages/Auth/VerifyEmailPage";
+import VerifyResetTokenPage from "./Pages/Auth/VerifyResetTokenPage";
+import BookingPage from "./Pages/Booking/BookingPage";
+import CreateBookingPage from "./Pages/Booking/CreateBookingPage";
+import ManageBookingsPage from "./Pages/Booking/ManageBookingsPage";
+import BookmarkedHotelsPage from "./Pages/BookmarkedHotels/BookmarkedHotelsPage";
+import HomePage from "./Pages/Home/HomePage";
+import CreateUpdateHotelPage from "./Pages/Hotel/CreateUpdateHotelPage";
+import HotelDetailsPage from "./Pages/Hotel/HotelDetailsPage";
+import PrivacyPolicyPage from "./Pages/Legal/PrivacyPolicyPage";
+import TermsOfServicePage from "./Pages/Legal/TermsOfServicePage";
+import NearMePage from "./Pages/NearMe/NearMePage";
+import NotifcationsPage from "./Pages/Notification/NotificationPage";
+import AdminPaymentsPage from "./Pages/Payment/AdminPaymentsPage";
+import MyPaymentsPage from "./Pages/Payment/MyPaymentsPage";
+import PaymentPage from "./Pages/Payment/PaymentPage";
+import SelectPaymentPage from "./Pages/Payment/SelectPaymentPage";
+import SearchResultsPage from "./Pages/SearchResults/SearchResultsPage";
+import ManageUsersPage from "./Pages/User/ManageUsersPage";
+import UserAccountSettings from "./Pages/User/UserAccountSettings";
 
 const App: React.FC = () => {
   const [isOpen, setIsOpen] = useState(() => {
@@ -34,43 +45,112 @@ const App: React.FC = () => {
     localStorage.setItem("sidebarOpen", JSON.stringify(isOpen));
   }, [isOpen]);
 
+  const userIdStr = sessionStorage.getItem("userId");
+  const userId = userIdStr ? Number(userIdStr) : null;
+
   return (
     <AuthProvider>
-      <NotificationProvider>
-        <Router basename={import.meta.env.BASE_URL}>
-          <div className="flex flex-col min-h-screen">
-            <Header toggleSidebar={() => setIsOpen(!isOpen)} />
-            <div className="flex flex-1 pt-16">
-              <Sidebar isOpen={isOpen} toggleSidebar={() => setIsOpen(!isOpen)} />
-              <div className={`flex-1 transition-all duration-300 p-4 ${isOpen ? "md:ml-64" : "ml-0"}`}>
-                <Routes>
-                  <Route path="/" element={<HomePage />} />
-                  <Route path="/hotel/:id" element={<HotelDetailsPage />} />
-                  <Route path="/create-hotel/:id?" element={<CreateUpdateHotelPage />} />
-                  <Route path="/create-bookings/:hotelId" element={<CreateBookingPage />} />
-                  <Route path="/nearme" element={<NearMePage />} />
-                  <Route path="/register" element={<RegisterPage />} />
-                  <Route path="/user-account-settings" element={<UserAccountSettings />} />
-                  <Route path="/login" element={<LoginPage />} />
-                  <Route path="/logout" element={<LogOutPage />} />
-                  <Route path="/verify" element={<VerifyEmailPage />} />
-                  <Route path="/admin/users" element={<ManageUsersPage />} />
-                  <Route path="/admin/bookings" element={<ManageBookingsPage />} />
-                  <Route path="/bookings" element={<BookingPage />} />
-                  <Route path="/booked-hotels" element={<BookedHotelsPage />} />
-                  <Route path="/notifications" element={<NotifcationsPage />} />
-                  <Route path="/my-payments" element={<MyPaymentsPage />} />
-                  <Route path="/admin/payments" element={<AdminPaymentsPage />} />
-                  <Route path="/payment" element={<PaymentPage />} />
-                  <Route path="/bookmarked-hotels" element={<BookmarkedHotelsPage />} />
-                </Routes>
-              </div>
-            </div>
-          </div>
-        </Router>
-      </NotificationProvider>
+      {/* Always wrap BookingProvider even if userId is null */}
+      <BookingProvider userId={userId}>
+        <NotificationProvider>
+          <Router basename={import.meta.env.BASE_URL}>
+            <AppRoutes />
+          </Router>
+        </NotificationProvider>
+      </BookingProvider>
     </AuthProvider>
   );
 };
+
+const AppRoutes: React.FC = () => (
+  <Routes>
+    {/* Auth-only pages */}
+    <Route
+      path="/signin"
+      element={
+        <HeaderOnlyLayout>
+          <SignInPage />
+        </HeaderOnlyLayout>
+      }
+    />
+    <Route
+      path="/login"
+      element={
+        <HeaderOnlyLayout>
+          <LoginPage />
+        </HeaderOnlyLayout>
+      }
+    />
+    <Route
+      path="/register"
+      element={
+        <HeaderOnlyLayout>
+          <RegisterPage />
+        </HeaderOnlyLayout>
+      }
+    />
+    <Route
+      path="/verify"
+      element={
+        <HeaderOnlyLayout>
+          <VerifyEmailPage />
+        </HeaderOnlyLayout>
+      }
+    />
+    <Route
+      path="/terms"
+      element={
+        <HeaderOnlyLayout>
+          <TermsOfServicePage />
+        </HeaderOnlyLayout>
+      }
+    />
+    <Route
+      path="/privacy"
+      element={
+        <HeaderOnlyLayout>
+          <PrivacyPolicyPage />
+        </HeaderOnlyLayout>
+      }
+    />
+    <Route
+      path="/verify-reset-token"
+      element={
+        <HeaderOnlyLayout>
+          <VerifyResetTokenPage />
+        </HeaderOnlyLayout>
+      }
+    />
+    <Route
+      path="/reset-password"
+      element={
+        <HeaderOnlyLayout>
+          <ResetPasswordPage />
+        </HeaderOnlyLayout>
+      }
+    />
+
+    {/* Main app pages */}
+    <Route path="/*" element={<MainLayout />}>
+      <Route index element={<HomePage />} />
+      <Route path="hotel/:id" element={<HotelDetailsPage />} />
+      <Route path="create-hotel/:id?" element={<CreateUpdateHotelPage />} />
+      <Route path="create-bookings/:hotelId" element={<CreateBookingPage />} />
+      <Route path="nearme" element={<NearMePage />} />
+      <Route path="user-account-settings" element={<UserAccountSettings />} />
+      <Route path="search" element={<SearchResultsPage />} />
+      <Route path="logout" element={<LogOutPage />} />
+      <Route path="admin/users" element={<ManageUsersPage />} />
+      <Route path="admin/bookings" element={<ManageBookingsPage />} />
+      <Route path="bookings" element={<BookingPage />} />
+      <Route path="notifications" element={<NotifcationsPage />} />
+      <Route path="my-payments" element={<MyPaymentsPage />} />
+      <Route path="admin/payments" element={<AdminPaymentsPage />} />
+      <Route path="payments/:bookingId" element={<PaymentPage />} />
+      <Route path="bookmarked-hotels" element={<BookmarkedHotelsPage />} />
+      <Route path="select-payment" element={<SelectPaymentPage />} />
+    </Route>
+  </Routes>
+);
 
 export default App;
