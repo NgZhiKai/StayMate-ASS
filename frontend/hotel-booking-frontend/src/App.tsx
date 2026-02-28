@@ -5,8 +5,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { BookingProvider } from "./contexts/BookingContext";
 import { NotificationProvider } from "./contexts/NotificationContext";
 
-import HeaderOnlyLayout from "./layouts/HeaderOnlyLayout";
-import MainLayout from "./layouts/MainLayout";
+import { HeaderOnlyLayout, MainLayout } from "./components/Layout";
 
 // Pages
 import LoginPage from "./Pages/Auth/LoginPage";

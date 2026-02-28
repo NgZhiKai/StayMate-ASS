@@ -1,5 +1,6 @@
 import { LoginData, RegisterData, ResetPasswordRequest, User } from "../../types/User";
-import { handleApiError } from "../../utils/handleApiError";
+import { toApiError } from "../_core/apiError";
+import { getDataOrThrow, getMessageOrThrow } from "../_core/response";
 import { userApiClient } from "./userApiClient";
 
 const USER_BASE = "/users";
@@ -34,51 +35,71 @@ const userApi = {
       }
 
       return { user: data.user, token: data.token };
-    } catch (err: any) {
-      throw new Error(handleApiError(err));
+    } catch (error) {
+      throw toApiError(error);
     }
   },
 
   getUserInfo: async (userId: string): Promise<{ user: User }> => {
-    const response = await userApiClient.get(`${USER_BASE}/${userId}`);
-    const data = response.data?.data;
-    if (!data) throw new Error(response.data?.message || "User not found.");
-    return { user: data };
+    try {
+      const response = await userApiClient.get(`${USER_BASE}/${userId}`);
+      const user = getDataOrThrow<User>(response.data, "User not found.");
+      return { user };
+    } catch (error) {
+      throw toApiError(error);
+    }
   },
 
   getAllUsers: async (): Promise<{ users: User[] }> => {
-    const response = await userApiClient.get(USER_BASE);
-    const data = response.data?.data;
-    if (!data) throw new Error(response.data?.message || "No users found.");
-    return { users: data };
+    try {
+      const response = await userApiClient.get(USER_BASE);
+      const users = getDataOrThrow<User[]>(response.data, "No users found.");
+      return { users };
+    } catch (error) {
+      throw toApiError(error);
+    }
   },
 
   getUserByEmail: async (email: string): Promise<{ user: User }> => {
-    const response = await userApiClient.get(`${USER_BASE}/by-email/${email}`);
-    const data = response.data?.data;
-    if (!data) throw new Error(response.data?.message || "User not found.");
-    return { user: data };
+    try {
+      const response = await userApiClient.get(`${USER_BASE}/by-email/${email}`);
+      const user = getDataOrThrow<User>(response.data, "User not found.");
+      return { user };
+    } catch (error) {
+      throw toApiError(error);
+    }
   },
 
   updateUser: async (id: string, userData: Partial<User>): Promise<{ user: User }> => {
-    const response = await userApiClient.put(`${USER_BASE}/${id}`, userData);
-    const data = response.data?.data;
-    if (!data) throw new Error(response.data?.message || "Failed to update user.");
-    return { user: data };
+    try {
+      const response = await userApiClient.put(`${USER_BASE}/${id}`, userData);
+      const user = getDataOrThrow<User>(response.data, "Failed to update user.");
+      return { user };
+    } catch (error) {
+      throw toApiError(error);
+    }
   },
 
   deleteUser: async (id: string): Promise<{ message: string }> => {
-    const response = await userApiClient.delete(`${USER_BASE}/${id}`);
-    if (response.status === 200 || response.status === 204) return { message: "User deleted successfully." };
-    throw new Error(response.data?.message || "Failed to delete user.");
+    try {
+      const response = await userApiClient.delete(`${USER_BASE}/${id}`);
+      if (response.status === 200 || response.status === 204) {
+        return { message: "User deleted successfully." };
+      }
+
+      const message = getMessageOrThrow(response.data, "Failed to delete user.");
+      return { message };
+    } catch (error) {
+      throw toApiError(error);
+    }
   },
 
   forgotPassword: async (email: string) => {
     try {
       const response = await userApiClient.post(`${USER_BASE}/forgot-password?email=${email}`);
-      return response.data.message;
-    } catch (err: any) {
-      throw new Error(handleApiError(err));
+      return getMessageOrThrow(response.data, "Failed to send forgot password email.");
+    } catch (error) {
+      throw toApiError(error);
     }
   },
 
@@ -86,9 +107,9 @@ const userApi = {
     try {
       const payload: ResetPasswordRequest = { token, newPassword };
       const response = await userApiClient.post(`${USER_BASE}/reset-password`, payload);
-      return response.data.message;
-    } catch (err: any) {
-      throw new Error(handleApiError(err));
+      return getMessageOrThrow(response.data, "Failed to reset password.");
+    } catch (error) {
+      throw toApiError(error);
     }
   },
 };

@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.hotelservice.entity.cityImage.CityImage;
+import com.example.hotelservice.entity.cityimage.CityImage;
 import com.example.hotelservice.repository.CityImageRepository;
 
 @Service

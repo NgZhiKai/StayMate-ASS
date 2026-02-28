@@ -1,9 +1,4 @@
-import axios from "axios";
 import { USER_BASE_URL } from "../../constants/constants";
+import { createApiClient } from "../_core/httpClient";
 
-export const userApiClient = axios.create({
-  baseURL: USER_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+export const userApiClient = createApiClient(USER_BASE_URL);

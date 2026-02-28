@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useEffect, useState } from "react";
+import React, { createContext, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { userApi } from "../services/User";
 
 interface AuthContextType {
@@ -23,7 +23,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const [userId, setUserId] = useState<string | null>(null);
 
   // Fetch role from API if userId exists
-  const fetchUserRole = async (id: string) => {
+  const fetchUserRole = useCallback(async (id: string) => {
     try {
       const { user } = await userApi.getUserInfo(id);
       setRole(user.role.toLowerCase());
@@ -34,7 +34,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       console.error("Failed to fetch user role:", err);
       setRole(null);
     }
-  };
+  }, []);
 
   useEffect(() => {
     const token = sessionStorage.getItem("token");
@@ -46,18 +46,18 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     if (savedUserId) {
       fetchUserRole(savedUserId);
     }
-  }, []);
+  }, [fetchUserRole]);
 
-  const login = (token: string, id: string) => {
+  const login = useCallback((token: string, id: string) => {
     sessionStorage.setItem("token", token);
     sessionStorage.setItem("userId", id);
     setIsLoggedIn(true);
     setUserId(id);
 
     fetchUserRole(id); // fetch role after login
-  };
+  }, [fetchUserRole]);
 
-  const logout = () => {
+  const logout = useCallback(() => {
     sessionStorage.removeItem("token");
     sessionStorage.removeItem("userId");
     sessionStorage.removeItem("role");
@@ -68,10 +68,15 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setIsLoggedIn(false);
     setUserId(null);
     setRole(null);
-  };
+  }, []);
+
+  const contextValue = useMemo(
+    () => ({ isLoggedIn, role, userId, login, logout }),
+    [isLoggedIn, role, userId, login, logout]
+  );
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, role, userId, login, logout }}>
+    <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );

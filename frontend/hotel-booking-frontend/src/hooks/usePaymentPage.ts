@@ -41,12 +41,11 @@ export const usePaymentPage = () => {
   // ---- Determine if invalid ----
   const invalid = !bookingId || !rawPaymentType || !isPaymentType(rawPaymentType);
 
-  if (invalid) {
-    // Redirect after render
-    useEffect(() => {
+  useEffect(() => {
+    if (invalid) {
       navigate("/");
-    }, [navigate]);
-  }
+    }
+  }, [invalid, navigate]);
 
   const paymentType: PaymentType = isPaymentType(rawPaymentType) ? rawPaymentType : "CREDIT_CARD";
 

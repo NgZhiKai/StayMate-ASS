@@ -23,8 +23,6 @@ const HotelDetailsPage = () => {
     setIsMessageOpen,
     messageType,
     message,
-    setMessageType,
-    setMessage,
     confirmDeletion,
     handleReviewSubmitted
   } = useHotelActions(hotel?.id || null, setReviews, setUserInfo);

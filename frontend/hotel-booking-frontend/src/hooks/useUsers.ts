@@ -48,6 +48,7 @@ export const useUsers = () => {
       await userApi.deleteUser(String(userId));
       showMessage("success", "User deleted successfully!");
     } catch (error) {
+      console.error(`Failed to delete user ${userId}:`, error);
       showMessage("error", "Failed to delete user");
     }
   };
@@ -63,6 +64,7 @@ export const useUsers = () => {
       }
       setIsModalOpen(false); // close modal after submit
     } catch (error) {
+      console.error("Failed to submit user:", error);
       showMessage("error", "Failed to submit user");
     }
   };

@@ -15,8 +15,6 @@ const UserAccountSettings: React.FC = () => {
     loading,
     messageModal,
     setMessageModal,
-    confirmModal,
-    setConfirmModal,
     handleNamePhoneUpdate,
     handleEmailChange,
     handlePasswordChange,

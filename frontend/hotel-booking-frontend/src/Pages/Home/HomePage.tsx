@@ -1,4 +1,3 @@
-// pages/HomePage.tsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FeaturedHotels, TrendingDestinations, WhyStaymate } from "../../components/Home";

@@ -2,8 +2,6 @@ package com.example.notificationservice.entity;
 
 import java.time.LocalDateTime;
 
-import com.example.notificationservice.entity.NotificationType;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;

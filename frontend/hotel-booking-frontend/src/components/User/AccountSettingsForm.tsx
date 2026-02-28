@@ -11,8 +11,8 @@ interface Props {
   userInfo: User;
   passwords: { currentPassword: string; newPassword: string };
   setPasswords: React.Dispatch<React.SetStateAction<{ currentPassword: string; newPassword: string }>>;
-  newEmail: string;                                  // <-- add this
-  setNewEmail: React.Dispatch<React.SetStateAction<string>>; // <-- add this
+  newEmail: string;
+  setNewEmail: React.Dispatch<React.SetStateAction<string>>;
   handleNamePhoneUpdate: (firstName: string, lastName: string, phoneNumber: string) => void;
   handleEmailChange: (email: string) => void;
   handlePasswordChange: () => void;

@@ -1,4 +1,3 @@
-// hooks/useSignIn.ts
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { userApi } from "../services/User";
@@ -10,8 +9,8 @@ export const useSignIn = (initialEmail: string = "") => {
 
   const navigate = useNavigate();
 
-  const handleSubmit = async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+  const handleSubmit = async (e?: { preventDefault: () => void }) => {
+    e?.preventDefault();
     setError("");
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;

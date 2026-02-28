@@ -1,5 +1,6 @@
 import { Payment, PaymentRequest, PaymentType } from "../../types/Payment";
-import { handleApiError } from "../../utils/handleApiError";
+import { toApiError } from "../_core/apiError";
+import { getDataOrDefault, getDataOrThrow } from "../_core/response";
 import { paymentApiClient } from "./paymentApiClient";
 
 const PAYMENT_BASE = "/payments";
@@ -28,13 +29,12 @@ const paymentApi = {
         { params: { paymentMethod } }
       );
 
-      if (!response.data) {
-        throw new Error("Error processing payment");
-      }
-
-      return response.data;
-    } catch (err: any) {
-      throw new Error(handleApiError(err));
+      return getDataOrThrow<{ message: string }>(
+        { data: response.data, message: response.data?.message },
+        "Error processing payment"
+      );
+    } catch (error) {
+      throw toApiError(error);
     }
   },
 
@@ -44,15 +44,9 @@ const paymentApi = {
   getPaymentById: async (paymentId: number): Promise<Payment> => {
     try {
       const response = await paymentApiClient.get(`${PAYMENT_BASE}/${paymentId}`);
-      const data = response.data;
-
-      if (!data) {
-        throw new Error("Payment not found");
-      }
-
-      return data;
-    } catch (err: any) {
-      throw new Error(handleApiError(err));
+      return getDataOrThrow<Payment>({ data: response.data, message: response.data?.message }, "Payment not found");
+    } catch (error) {
+      throw toApiError(error);
     }
   },
 
@@ -65,10 +59,10 @@ const paymentApi = {
         `${PAYMENT_BASE}/booking/${bookingId}`
       );
 
-      const data = response.data?.data ?? [];
+      const data = getDataOrDefault<Payment[]>(response.data, []);
       return data;
-    } catch (err: any) {
-      throw new Error(handleApiError(err));
+    } catch (error) {
+      throw toApiError(error);
     }
   },
 
@@ -81,10 +75,10 @@ const paymentApi = {
         `${PAYMENT_BASE}/user/${userId}`
       );
 
-      const data = response.data?.data ?? [];
+      const data = getDataOrDefault<any[]>(response.data, []);
       return data.map(mapPayment);
-    } catch (err: any) {
-      throw new Error(handleApiError(err));
+    } catch (error) {
+      throw toApiError(error);
     }
   },
 
@@ -95,10 +89,10 @@ const paymentApi = {
     try {
       const response = await paymentApiClient.get(PAYMENT_BASE);
 
-      const data = response.data?.data ?? [];
+      const data = getDataOrDefault<any[]>(response.data, []);
       return data.map(mapPayment);
-    } catch (err: any) {
-      throw new Error(handleApiError(err));
+    } catch (error) {
+      throw toApiError(error);
     }
   },
 };

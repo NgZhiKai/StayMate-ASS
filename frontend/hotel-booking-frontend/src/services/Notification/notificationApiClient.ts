@@ -1,9 +1,4 @@
-import axios from "axios";
 import { NOTIFICATION_BASE_URL } from "../../constants/constants";
+import { createApiClient } from "../_core/httpClient";
 
-export const notificationApiClient = axios.create({
-  baseURL: NOTIFICATION_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+export const notificationApiClient = createApiClient(NOTIFICATION_BASE_URL);

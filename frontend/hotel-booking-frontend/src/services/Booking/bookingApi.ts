@@ -1,4 +1,3 @@
-// src/services/Booking/bookingApi.ts
 import { Booking, DetailedBooking } from "../../types/Booking";
 import { bookingApiClient } from "./bookingApiClient";
 import { handleApiError } from "../../utils/handleApiError";

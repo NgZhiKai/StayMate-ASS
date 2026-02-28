@@ -1,11 +1,32 @@
 import { useEffect, useState } from "react";
-import { getHotelsNearby } from "../services/Hotel/hotelApi";
-import { getReviewsForHotel } from "../services/Hotel/ratingApi";
+import { hotelApi, ratingApi } from "../services/Hotel";
 import { HotelData } from "../types/Hotels";
 
-export const useNearbyHotels = (
-  location: [number, number] | null
-) => {
+type Location = [number, number];
+
+const calculateAverageRating = (ratings: number[]): number => {
+  if (ratings.length === 0) return 0;
+
+  let sum = 0;
+  for (const rating of ratings) {
+    sum += rating;
+  }
+  return sum / ratings.length;
+};
+
+const enrichHotelWithAverageRating = async (hotel: HotelData): Promise<HotelData> => {
+  const reviews = await ratingApi.getReviewsForHotel(hotel.id);
+  const ratings = reviews.map((review) => review.rating);
+  const averageRating = calculateAverageRating(ratings);
+  return { ...hotel, averageRating };
+};
+
+const fetchNearbyHotelsWithRatings = async (location: Location): Promise<HotelData[]> => {
+  const nearbyHotels = await hotelApi.getHotelsNearby(location[0], location[1]);
+  return Promise.all(nearbyHotels.map(enrichHotelWithAverageRating));
+};
+
+export const useNearbyHotels = (location: Location | null) => {
   const [hotels, setHotels] = useState<HotelData[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -14,27 +35,10 @@ export const useNearbyHotels = (
 
     const fetchHotels = async () => {
       try {
-        const nearbyHotels = await getHotelsNearby(
-          location[0],
-          location[1]
-        );
-
-        const hotelsWithRatings = await Promise.all(
-          nearbyHotels.map(async (hotel) => {
-            const reviews = await getReviewsForHotel(hotel.id);
-
-            const averageRating =
-              reviews.length > 0
-                ? reviews.reduce((sum, r) => sum + r.rating, 0) /
-                  reviews.length
-                : 0;
-
-            return { ...hotel, averageRating };
-          })
-        );
-
+        const hotelsWithRatings = await fetchNearbyHotelsWithRatings(location);
         setHotels(hotelsWithRatings);
-      } catch {
+      } catch (error) {
+        console.error("Failed to fetch nearby hotels:", error);
         setError("Failed to fetch nearby hotels");
       }
     };

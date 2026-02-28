@@ -1,9 +1,4 @@
-import axios from "axios";
 import { BOOKING_BASE_URL } from "../../constants/constants";
+import { createApiClient } from "../_core/httpClient";
 
-export const bookingApiClient = axios.create({
-  baseURL: BOOKING_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+export const bookingApiClient = createApiClient(BOOKING_BASE_URL);

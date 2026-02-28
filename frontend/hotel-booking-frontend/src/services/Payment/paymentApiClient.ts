@@ -1,9 +1,4 @@
-import axios from "axios";
 import { PAYMENT_BASE_URL } from "../../constants/constants";
+import { createApiClient } from "../_core/httpClient";
 
-export const paymentApiClient = axios.create({
-  baseURL: PAYMENT_BASE_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+export const paymentApiClient = createApiClient(PAYMENT_BASE_URL);

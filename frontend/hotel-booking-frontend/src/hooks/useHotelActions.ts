@@ -1,4 +1,3 @@
-// hooks/useHotelActions.ts
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { hotelApi } from "../services/Hotel";

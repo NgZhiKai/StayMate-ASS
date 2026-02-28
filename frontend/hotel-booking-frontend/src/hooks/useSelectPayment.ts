@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { PaymentType } from "../components/Payment/PaymentOptionCard";
+import { useLocation, useNavigate } from "react-router-dom";
+import { PaymentType } from "../types/Payment";
 
 interface LocationState {
   bookingId?: number;

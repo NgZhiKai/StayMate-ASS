@@ -15,6 +15,8 @@ import com.example.hotelservice.repository.ReviewRepository;
 @Service
 @Transactional
 public class ReviewService {
+    private static final String HOTEL_ID_REQUIRED_MESSAGE = "Hotel ID must be provided.";
+    private static final String REVIEW_NOT_FOUND_PREFIX = "Review not found with id: ";
 
     private final ReviewRepository reviewRepository;
 
@@ -44,7 +46,7 @@ public class ReviewService {
         validateDTO(dto);
 
         Review existingReview = reviewRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Review not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(REVIEW_NOT_FOUND_PREFIX + id));
 
         // Update only allowed fields
         existingReview.setComment(dto.getComment());
@@ -63,19 +65,19 @@ public class ReviewService {
     @Transactional(readOnly = true)
     public Review getReviewById(Long id) {
         return reviewRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Review not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(REVIEW_NOT_FOUND_PREFIX + id));
     }
 
     // ==================== DELETE ====================
 
     public void deleteReview(Long id) {
         Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Review not found with id: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException(REVIEW_NOT_FOUND_PREFIX + id));
         reviewRepository.delete(review);
     }
 
     public void deleteReviewsByHotelId(Long hotelId) {
-        Objects.requireNonNull(hotelId, "Hotel ID must be provided.");
+        Objects.requireNonNull(hotelId, HOTEL_ID_REQUIRED_MESSAGE);
         reviewRepository.deleteByHotelId(hotelId);
     }
 
@@ -83,7 +85,7 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public List<Review> findReviewsByHotelId(Long hotelId) {
-        Objects.requireNonNull(hotelId, "Hotel ID must be provided.");
+        Objects.requireNonNull(hotelId, HOTEL_ID_REQUIRED_MESSAGE);
         return reviewRepository.findByHotelId(hotelId);
     }
 
@@ -97,7 +99,7 @@ public class ReviewService {
 
     private void validateDTO(ReviewDTO dto) {
         Objects.requireNonNull(dto, "ReviewDTO cannot be null.");
-        Objects.requireNonNull(dto.getHotelId(), "Hotel ID must be provided.");
+        Objects.requireNonNull(dto.getHotelId(), HOTEL_ID_REQUIRED_MESSAGE);
         Objects.requireNonNull(dto.getUserId(), "User ID must be provided.");
 
         if (dto.getRating() < 1 || dto.getRating() > 5) {

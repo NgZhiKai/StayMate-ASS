@@ -9,6 +9,8 @@ import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -56,10 +58,15 @@ public class EmailService {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-            helper.setFrom(fromEmail);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(body, true);
+            String safeFrom = requireText(fromEmail, "Sender email is required");
+            String safeTo = requireText(to, "Recipient email is required");
+            String safeSubject = requireText(subject, "Email subject is required");
+            String safeBody = requireText(body, "Email body is required");
+
+            helper.setFrom(safeFrom);
+            helper.setTo(safeTo);
+            helper.setSubject(safeSubject);
+            helper.setText(safeBody, true);
 
             mailSender.send(message);
         } catch (MessagingException e) {
@@ -86,5 +93,9 @@ public class EmailService {
                 token,
                 resetLink,
                 "Reset Password");
+    }
+
+    private @NonNull String requireText(@Nullable String value, String message) {
+        return Objects.requireNonNull(value, message);
     }
 }
