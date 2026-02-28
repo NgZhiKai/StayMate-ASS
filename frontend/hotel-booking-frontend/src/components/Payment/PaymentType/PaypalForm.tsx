@@ -7,6 +7,7 @@ interface Props {
 
 export const PaypalForm: React.FC<Props> = ({ fields, setFields }) => {
   const paypalEmail = fields.paypalEmail || "";
+  const paypalEmailInputId = "paypal-email";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFields({ ...fields, paypalEmail: e.target.value });
@@ -14,8 +15,11 @@ export const PaypalForm: React.FC<Props> = ({ fields, setFields }) => {
 
   return (
     <div>
-      <label className="block text-gray-700 font-medium mb-2">PayPal Email</label>
+      <label htmlFor={paypalEmailInputId} className="block text-gray-700 font-medium mb-2">
+        PayPal Email
+      </label>
       <input
+        id={paypalEmailInputId}
         type="email"
         placeholder="Enter your PayPal email"
         value={paypalEmail}

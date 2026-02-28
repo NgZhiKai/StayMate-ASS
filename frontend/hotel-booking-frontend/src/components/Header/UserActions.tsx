@@ -21,13 +21,6 @@ export const UserActions = () => {
   const userLastName = sessionStorage.getItem("lastName") || "";
   const userId = sessionStorage.getItem("userId");
   const userInitials = `${userFirstName.charAt(0).toUpperCase()}${userLastName.charAt(0).toUpperCase()}` || "U";
-  
-  const handleKeyPress = (callback: () => void) => (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      callback();
-    }
-  };
 
   if (!userId) {
     return (
@@ -61,19 +54,12 @@ export const UserActions = () => {
             </DropdownButton>
             <NotificationDropdown isOpen={activeDropdown === "notifications"} />
         </div>
-      <div
-        role="button"
-        tabIndex={0}
-        onClick={() => toggleDropdown("user")}
-        onKeyDown={handleKeyPress(() => toggleDropdown("user"))}
-        className="relative focus:outline-none focus:ring-2 focus:ring-indigo-400 rounded"
-        aria-haspopup="true"
-        aria-expanded={activeDropdown === "user"}
-      >
+      <div className="relative">
         <UserMenu
           isOpen={activeDropdown === "user"}
           initial={userInitials}
           onLogout={() => {}}
+          onToggle={() => toggleDropdown("user")}
         />
       </div>
     </div>

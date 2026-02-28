@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import NearMeMap, { NearMeMapRef } from "./NearMeMap";
-import HotelListPanel from "./HotelListPanel";
 import { HotelData } from "../../types/Hotels";
+import HotelListPanel from "./HotelListPanel";
+import NearMeMap, { NearMeMapRef } from "./NearMeMap";
 
 interface NearMeLayoutProps {
   location: [number, number] | null;

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { FaStar } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { ratingApi } from "../../services/Hotel";
@@ -38,7 +38,9 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
 
   const handleRatingClick = (value: number) => setRating(value);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (
+    e: Parameters<NonNullable<React.ComponentProps<"form">["onSubmit"]>>[0]
+  ) => {
     e.preventDefault();
     if (!userId) return navigate("/login");
 
@@ -74,13 +76,17 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
 
   const inputClass =
     "w-full px-4 py-2 bg-white/20 backdrop-blur-sm border border-gray-300/40 text-gray-900 placeholder-gray-500 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-400 transition";
+  const commentInputId = "review-comment";
+  const ratingValues = Array.from(new Array(5), (_, index) => index + 1);
 
   return (
     <>
       {/* Overlay */}
-      <div
+      <button
+        type="button"
         className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
         onClick={onClose}
+        aria-label="Close review modal"
       />
 
       {/* Modal */}
@@ -88,6 +94,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
         <div className="bg-white/90 backdrop-blur-md text-gray-900 rounded-3xl shadow-2xl w-full max-w-lg p-6 relative border border-gray-200/50">
           {/* Close button */}
           <button
+            type="button"
             className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-2xl transition"
             onClick={onClose}
             aria-label="Close Modal"
@@ -113,27 +120,34 @@ const ReviewModal: React.FC<ReviewModalProps> = ({
           ) : (
             <form onSubmit={handleSubmit} className="space-y-5">
               {/* Rating */}
-              <div>
-                <label className="block text-sm font-medium mb-2">
-                  Rating
-                </label>
+              <fieldset>
+                <legend className="block text-sm font-medium mb-2">Rating</legend>
                 <div className="flex space-x-2">
-                  {[...Array(5)].map((_, i) => (
-                    <FaStar
-                      key={i}
-                      className={`cursor-pointer text-2xl transition-transform transform ${
-                        i < rating ? "text-yellow-500" : "text-gray-300"
-                      } hover:scale-110`}
-                      onClick={() => handleRatingClick(i + 1)}
-                    />
+                  {ratingValues.map((value) => (
+                    <button
+                      key={`rating-star-${value}`}
+                      type="button"
+                      className="transition-transform transform hover:scale-110"
+                      onClick={() => handleRatingClick(value)}
+                      aria-label={`Rate ${value} star${value > 1 ? "s" : ""}`}
+                    >
+                      <FaStar
+                        className={`text-2xl ${
+                          value <= rating ? "text-yellow-500" : "text-gray-300"
+                        }`}
+                      />
+                    </button>
                   ))}
                 </div>
-              </div>
+              </fieldset>
 
               {/* Comment */}
               <div>
-                <label className="block text-sm font-medium mb-2">Comment</label>
+                <label htmlFor={commentInputId} className="block text-sm font-medium mb-2">
+                  Comment
+                </label>
                 <textarea
+                  id={commentInputId}
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
                   placeholder="Write your review here..."

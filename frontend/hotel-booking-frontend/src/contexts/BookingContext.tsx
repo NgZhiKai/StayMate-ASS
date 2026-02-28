@@ -20,9 +20,14 @@ export const BookingProvider: React.FC<BookingProviderProps> = ({ userId, childr
   const [bookings, setBookings] = useState<BookingContextData[]>([]);
 
   const loadBookings = useCallback(async () => {
-    if (!userId) return; // no user, skip fetching
+    const effectiveUserId = userId ?? Number(sessionStorage.getItem("userId"));
+    if (!effectiveUserId) {
+      setBookings([]);
+      return;
+    }
+
     try {
-      const data = await bookingApi.fetchBookingsForUser(userId);
+      const data = await bookingApi.fetchBookingsForUser(effectiveUserId);
       setBookings(data);
     } catch (err) {
       console.error("Failed to fetch bookings:", err);

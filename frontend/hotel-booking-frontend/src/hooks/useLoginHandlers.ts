@@ -1,6 +1,8 @@
 import { useState, useContext, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthContext";
+import { useBookingContext } from "../contexts/BookingContext";
+import { useNotificationContext } from "../contexts/NotificationContext";
 import { userApi } from "../services/User";
 import { LoginData } from "../types/User";
 
@@ -12,6 +14,8 @@ export const useLoginHandlers = (initialData: LoginData) => {
   const [modalType, setModalType] = useState<"success" | "error">("error");
 
   const { login } = useContext(AuthContext);
+  const { refreshBookings } = useBookingContext();
+  const { refreshNotifications } = useNotificationContext();
   const navigate = useNavigate();
   const location = useLocation();
   const state = location.state as { userId?: number } | undefined;
@@ -47,6 +51,18 @@ export const useLoginHandlers = (initialData: LoginData) => {
       setIsLoading(true);
       const { user, token } = await userApi.loginUser(data);
       login(token, String(user.id));
+      const [bookingRefreshResult, notificationRefreshResult] = await Promise.allSettled([
+        refreshBookings(),
+        refreshNotifications(),
+      ]);
+
+      if (bookingRefreshResult.status === "rejected") {
+        console.error("Failed to refresh bookings after login:", bookingRefreshResult.reason);
+      }
+      if (notificationRefreshResult.status === "rejected") {
+        console.error("Failed to refresh notifications after login:", notificationRefreshResult.reason);
+      }
+
       navigate("/");
     } catch (err: any) {
       setModalType("error");

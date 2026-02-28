@@ -1,4 +1,3 @@
-// components/Search/SearchLayout.tsx
 import React from "react";
 import { Destination } from "../../types/Hotels";
 import SearchBar from "./SearchBar";

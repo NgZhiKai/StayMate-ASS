@@ -19,9 +19,10 @@ const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items }) => {
       <ol className="flex flex-wrap items-center gap-2 text-sm sm:text-base">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
+          const itemKey = `${item.label}-${item.path ?? "no-path"}-${index + 1}`;
 
           return (
-            <li key={index} className="flex items-center gap-2">
+            <li key={itemKey} className="flex items-center gap-2">
               {item.path && !isLast ? (
                 <Link
                   to={item.path}

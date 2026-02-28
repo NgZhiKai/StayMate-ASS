@@ -1,6 +1,6 @@
 import React from "react";
-import BookingCard from "./BookingCard";
 import { BookingCardData } from "../../types/Booking";
+import BookingCard from "./BookingCard";
 
 interface Props {
   title: string;

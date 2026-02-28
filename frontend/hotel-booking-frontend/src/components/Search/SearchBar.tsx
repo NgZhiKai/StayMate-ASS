@@ -1,8 +1,8 @@
 import React from "react";
 import { Destination } from "../../types/Hotels";
-import { DestinationInput } from "./DestinationInput";
-import { DateRangeInput } from "./DateRangeInput";
 import { GradientButton } from "../Button";
+import { DateRangeInput } from "./DateRangeInput";
+import { DestinationInput } from "./DestinationInput";
 
 interface SearchBarProps {
   destinations: Destination[];

@@ -1,15 +1,14 @@
 import React from "react";
 import { LoadingSpinner } from "../../components/Misc";
+import HeroSection from "../../components/Misc/HeroSection";
 import {
   NotificationHeader,
   NotificationList
 } from "../../components/Notification";
+import { Pagination } from "../../components/Pagination";
 import { useNotificationContext } from "../../contexts/NotificationContext";
 import { useMarkNotification, useSmartPagination } from "../../hooks";
 import { Notification } from "../../types/Notification";
-import { Pagination } from "../../components/Pagination";
-import HeroSection from "../../components/Misc/HeroSection";
-import { Bell } from "lucide-react";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -50,7 +49,7 @@ const NotificationsPage: React.FC = () => {
     );
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 select-none">
       {/* Hero Section */}
       <HeroSection
         title="Your Notifications"

@@ -6,6 +6,8 @@ interface Props {
 }
 
 export const ImageUploader: React.FC<Props> = ({ imagePreview, onChange }) => {
+  const inputId = "hotel-image-upload";
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) onChange(file);
@@ -13,8 +15,15 @@ export const ImageUploader: React.FC<Props> = ({ imagePreview, onChange }) => {
 
   return (
     <div>
-      <label className="block mb-2 font-medium text-gray-700">Hotel Image</label>
-      <input type="file" onChange={handleFileChange} className="w-full px-4 py-3 border rounded-xl" />
+      <label htmlFor={inputId} className="block mb-2 font-medium text-gray-700">
+        Hotel Image
+      </label>
+      <input
+        id={inputId}
+        type="file"
+        onChange={handleFileChange}
+        className="w-full px-4 py-3 border rounded-xl"
+      />
       {imagePreview && (
         <img
           src={imagePreview.startsWith('data:') ? imagePreview : `data:image/jpeg;base64,${imagePreview}`}

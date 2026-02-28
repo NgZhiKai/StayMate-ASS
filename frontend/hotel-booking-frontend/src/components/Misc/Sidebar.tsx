@@ -5,7 +5,7 @@ import {
   MapPin,
   Users
 } from "lucide-react";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthContext";
 
@@ -20,6 +20,7 @@ interface MenuItem {
 const Sidebar: React.FC<{ isOpen: boolean }> = ({ isOpen }) => {
   const { isLoggedIn, role } = useContext(AuthContext);
   const location = useLocation();
+  const [isHoveringNav, setIsHoveringNav] = useState(false);
 
   const menuItems: MenuItem[] = [
     { label: "Hotels", path: "/", icon: <Hotel size={20} />, section: "Explore" },
@@ -48,15 +49,20 @@ const Sidebar: React.FC<{ isOpen: boolean }> = ({ isOpen }) => {
     <aside
       className={`fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 select-none
         text-white p-6 shadow-2xl rounded-tr-3xl rounded-br-3xl
-        transition-transform duration-300 z-40
+        z-40
         ${isOpen ? "translate-x-0" : "-translate-x-64"}`}
       style={{
         background: "linear-gradient(to bottom, #770265, #9b30ff, #ff5ec4)",
         backgroundSize: "200% 200%",
-        transition: "background-position 0.5s ease"
+        backgroundPosition: isHoveringNav ? "100% 0%" : "0% 0%",
+        transition: "transform 320ms cubic-bezier(0.22, 1, 0.36, 1), background-position 500ms ease"
       }}
     >
-      <nav className="flex flex-col space-y-6">
+      <nav
+        className="flex flex-col space-y-6"
+        onMouseEnter={() => setIsHoveringNav(true)}
+        onMouseLeave={() => setIsHoveringNav(false)}
+      >
         {sections.map(([sectionName, items]) => (
           <div key={sectionName}>
             <p className="text-xs uppercase tracking-wider text-white/70 mb-2">
@@ -74,12 +80,6 @@ const Sidebar: React.FC<{ isOpen: boolean }> = ({ isOpen }) => {
                         ? "bg-white/20 backdrop-blur shadow-lg"
                         : "hover:bg-white/10 hover:shadow-md hover:scale-[1.02]"}`
                     }
-                    onMouseEnter={(e) => {
-                      (e.currentTarget.parentElement!.parentElement!.style as any).backgroundPosition = "100% 0%";
-                    }}
-                    onMouseLeave={(e) => {
-                      (e.currentTarget.parentElement!.parentElement!.style as any).backgroundPosition = "0% 0%";
-                    }}
                   >
                     {item.icon}
                     {item.label}

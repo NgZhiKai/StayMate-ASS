@@ -5,7 +5,7 @@ interface Props {
   children: React.ReactNode;
 }
 
-export default function DropdownWrapper({ isOpen, children }: Props) {
+export default function DropdownWrapper({ isOpen, children }: Readonly<Props>) {
   return (
     <AnimatePresence>
       {isOpen && (

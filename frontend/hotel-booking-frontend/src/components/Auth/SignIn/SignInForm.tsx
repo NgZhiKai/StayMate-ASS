@@ -7,7 +7,7 @@ interface SignInFormProps {
   setEmail: (val: string) => void;
   error?: string;
   loading?: boolean;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: React.ComponentProps<"form">["onSubmit"];
 }
 
 const SignInForm: React.FC<SignInFormProps> = ({

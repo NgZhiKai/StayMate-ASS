@@ -32,7 +32,8 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel, layout = "grid", hovered =
     <div
       className={`group cursor-pointer h-full rounded-2xl overflow-hidden bg-gradient-to-br from-white to-pink-50 select-none
         flex ${layout === "list" ? "flex-row gap-6 p-4" : "flex-col"} 
-        shadow-lg transition-all duration-300 hover:shadow-2xl hover:scale-105 relative`}
+        shadow-lg transition-all duration-300 relative
+        ${hovered ? "shadow-2xl scale-105" : "hover:shadow-2xl hover:scale-105"}`}
     >
       {/* Image */}
       <div
@@ -65,7 +66,9 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel, layout = "grid", hovered =
         {/* Heart / Bookmark Button */}
         {currentUserId && (
           <button
+            type="button"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               toggleBookmark();
             }}
@@ -100,7 +103,9 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel, layout = "grid", hovered =
               </p>
               {description.length > 120 && (
                 <button
+                  type="button"
                   onClick={(e) => {
+                    e.preventDefault();
                     e.stopPropagation();
                     setExpanded(!expanded);
                   }}

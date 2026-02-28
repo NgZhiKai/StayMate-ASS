@@ -8,8 +8,11 @@ interface AmountInputProps {
 
 const AmountInput: React.FC<AmountInputProps> = ({ value, onChange, error }) => (
   <div>
-    <label className="block text-gray-700 mb-2 font-medium">Amount You’re Paying Now</label>
+    <label htmlFor="payment-amount" className="block text-gray-700 mb-2 font-medium">
+      Amount You’re Paying Now
+    </label>
     <input
+      id="payment-amount"
       type="number"
       placeholder="Enter amount"
       value={value}

@@ -1,5 +1,5 @@
-import React from "react";
 import { Star } from "lucide-react";
+import React from "react";
 import { Range, getTrackBackground } from "react-range";
 import { roomTypes } from "../../types/Room";
 
@@ -56,9 +56,6 @@ const HotelFilters: React.FC<HotelFiltersProps> = ({
     maxHotelPrice
   );
 
-  // For slider: ensure max > min
-  const sliderMaxPrice = maxPrice <= minPrice ? minPrice + PRICE_STEP : maxPrice;
-
   return (
     <div className="bg-white rounded-2xl shadow-lg p-6 flex flex-col h-full border border-gray-100">
       {/* Header */}
@@ -89,38 +86,46 @@ const HotelFilters: React.FC<HotelFiltersProps> = ({
           onChange={(values) =>
             setFilters({ ...filters, minPrice: values[0], maxPrice: values[1] })
           }
-          renderTrack={({ props, children }) => (
-            <div
-              {...(props as any)}
-              style={{
-                ...props.style,
-                height: "8px",
-                borderRadius: "8px",
-                background: getTrackBackground({
-                  values: [minPrice, maxPrice],
-                  colors: ["#F87171", "#FBBF24", "#34D399"],
-                  min: minHotelPrice,
-                  max: maxHotelPrice,
-                }),
-              }}
-            >
-              {children}
-            </div>
-          )}
-          renderThumb={({ props }) => (
-            <div
-              {...(props as any)}
-              style={{
-                ...props.style,
-                height: "24px",
-                width: "24px",
-                borderRadius: "50%",
-                backgroundColor: "#6366F1",
-                boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
-                border: "2px solid white",
-              }}
-            />
-          )}
+          renderTrack={({ props, children }) => {
+            const { key, ...trackProps } = props as any;
+            return (
+              <div
+                key={key}
+                {...trackProps}
+                style={{
+                  ...props.style,
+                  height: "8px",
+                  borderRadius: "8px",
+                  background: getTrackBackground({
+                    values: [minPrice, maxPrice],
+                    colors: ["#F87171", "#FBBF24", "#34D399"],
+                    min: minHotelPrice,
+                    max: maxHotelPrice,
+                  }),
+                }}
+              >
+                {children}
+              </div>
+            );
+          }}
+          renderThumb={({ props }) => {
+            const { key, ...thumbProps } = props as any;
+            return (
+              <div
+                key={key}
+                {...thumbProps}
+                style={{
+                  ...props.style,
+                  height: "24px",
+                  width: "24px",
+                  borderRadius: "50%",
+                  backgroundColor: "#6366F1",
+                  boxShadow: "0 2px 6px rgba(0,0,0,0.3)",
+                  border: "2px solid white",
+                }}
+              />
+            );
+          }}
         />
       ) : (
         <div className="h-2 bg-gray-200 rounded-full" />

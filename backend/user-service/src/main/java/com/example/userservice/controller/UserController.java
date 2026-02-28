@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.userservice.dto.CustomResponse;
 import com.example.userservice.dto.ResetPasswordRequestDTO;
-import com.example.userservice.dto.UserCreationRequestDTO;
 import com.example.userservice.dto.UserLoginRequestDTO;
 import com.example.userservice.dto.UserRequestUpdateDto;
 import com.example.userservice.dto.UserResponseDTO;

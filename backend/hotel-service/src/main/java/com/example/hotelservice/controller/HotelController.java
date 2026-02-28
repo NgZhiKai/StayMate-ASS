@@ -24,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.hotelservice.dto.custom.CustomResponse;
 import com.example.hotelservice.dto.hotel.HotelRequestDTO;
 import com.example.hotelservice.dto.hotel.HotelSearchDTO;
+import com.example.hotelservice.dto.review.ReviewDTO;
 import com.example.hotelservice.dto.room.RoomRequestDTO;
 import com.example.hotelservice.entity.hotel.Hotel;
 import com.example.hotelservice.entity.room.Room;
@@ -195,8 +196,7 @@ public class HotelController {
     @DeleteMapping("/{id}")
     public ResponseEntity<CustomResponse<Map<String, Object>>> deleteHotel(
             @Parameter(description = "ID of the hotel to delete") @PathVariable @NonNull Long id) {
-
-        hotelService.getHotelById(id); // validate existence
+        
         hotelService.deleteHotel(id);
 
         Map<String, Object> response = Map.of(

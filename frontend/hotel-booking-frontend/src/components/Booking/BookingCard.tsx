@@ -25,9 +25,6 @@ const BookingCard: React.FC<Props> = ({ booking, loadingIds, onCancel }) => {
   const checkIn = new Date(new Date(booking.checkInDate).toLocaleString("en-US", { timeZone: "Asia/Singapore" }));
   const checkOut = new Date(new Date(booking.checkOutDate).toLocaleString("en-US", { timeZone: "Asia/Singapore" }));
 
-  const isUnderway = today >= checkIn && today <= checkOut;
-
-  // Only allow cancellation if booking is PENDING or future CONFIRMED
   const canCancel = booking.status !== "CANCELLED" && booking.status === "PENDING";
 
   const isLoading = loadingIds.includes(booking.bookingId);

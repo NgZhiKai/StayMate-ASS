@@ -17,4 +17,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     // Find reviews by hotel id and user id
     List<Review> findByHotelIdAndUserId(Long hotelId, Long userId);
+
+    // Delete all reviews for a hotel
+    void deleteByHotelId(Long hotelId);
 }

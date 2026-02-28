@@ -7,6 +7,7 @@ interface Props {
 
 export const StripeForm: React.FC<Props> = ({ fields, setFields }) => {
   const stripeToken = fields.stripeToken || "";
+  const stripeTokenInputId = "stripe-token";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFields({ ...fields, stripeToken: e.target.value });
@@ -14,8 +15,11 @@ export const StripeForm: React.FC<Props> = ({ fields, setFields }) => {
 
   return (
     <div>
-      <label className="block text-gray-700 font-medium mb-2">Stripe Token</label>
+      <label htmlFor={stripeTokenInputId} className="block text-gray-700 font-medium mb-2">
+        Stripe Token
+      </label>
       <input
+        id={stripeTokenInputId}
         type="text"
         placeholder="Enter Stripe token"
         value={stripeToken}

@@ -7,7 +7,7 @@ interface SignInPageLayoutProps {
   setEmail: (value: string) => void;
   error: string;
   loading: boolean;
-  onSubmit: (e?: React.FormEvent) => void;
+  onSubmit: React.ComponentProps<"form">["onSubmit"];
 }
 
 const SignInPageLayout: React.FC<SignInPageLayoutProps> = ({

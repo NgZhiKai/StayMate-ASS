@@ -21,8 +21,8 @@ const CreateBookingForm: React.FC<Props> = ({
 }) => {
   const groupedRooms = rooms.reduce<Record<string, { available: number; price: number }>>(
     (acc, room) => {
-      if (!acc[room.room_type]) acc[room.room_type] = { available: 1, price: room.pricePerNight };
-      else acc[room.room_type].available += 1;
+      if (acc[room.room_type]) acc[room.room_type].available += 1;
+      else acc[room.room_type] = { available: 1, price: room.pricePerNight };
       return acc;
     },
     {}
@@ -32,6 +32,7 @@ const CreateBookingForm: React.FC<Props> = ({
   const validDates =
     hasDates &&
     new Date(bookingData.checkInDate) < new Date(bookingData.checkOutDate);
+  const invalidDates = hasDates && validDates === false;
   const today = new Date().toISOString().split("T")[0];
 
   return (
@@ -40,7 +41,7 @@ const CreateBookingForm: React.FC<Props> = ({
         Reserve Your Stay
       </h2>
 
-      {hasDates && !validDates && (
+      {invalidDates && (
         <div className="w-full bg-red-100 border-l-4 border-red-500 text-red-700 p-3 rounded-md font-medium text-sm">
           ⚠️ Check-in date must be before check-out date.
         </div>

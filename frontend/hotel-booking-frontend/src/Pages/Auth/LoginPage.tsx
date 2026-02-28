@@ -1,6 +1,6 @@
 import React from "react";
 import { LoginPageLayout } from "../../components/Auth/Login";
-import { useLoginHandlers } from "../../hooks/useLoginHandlers";
+import { useLoginHandlers } from "../../hooks";
 import { LoginData } from "../../types/User";
 
 const LoginPage: React.FC = () => {

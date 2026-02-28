@@ -1,7 +1,7 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { forwardRef } from "react";
-import { MapContainer, Marker, TileLayer, Popup, useMap } from "react-leaflet";
+import { forwardRef, useImperativeHandle, useRef } from "react";
+import { MapContainer, Marker, Popup, TileLayer, useMap } from "react-leaflet";
 import { HotelData } from "../../types/Hotels";
 
 export interface NearMeMapRef {
@@ -23,8 +23,21 @@ const MapFlyer = ({ hotel }: { hotel: HotelData | null }) => {
   return null;
 };
 
+const MapRefBridge = ({ mapRef }: { mapRef: React.RefObject<L.Map | null> }) => {
+  const map = useMap();
+  mapRef.current = map;
+  return null;
+};
+
 const NearMeMap = forwardRef<NearMeMapRef, NearMeMapProps>(
   ({ location, hotels, hoveredHotelId }, ref) => {
+    const leafletMapRef = useRef<L.Map | null>(null);
+
+    useImperativeHandle(ref, () => ({
+      flyToHotel: (hotel: HotelData) => {
+        leafletMapRef.current?.flyTo([hotel.latitude, hotel.longitude], 15, { duration: 1.5 });
+      },
+    }), []);
 
     if (!location) return <div className="w-full h-full bg-gray-200">Loading map...</div>;
 
@@ -62,6 +75,7 @@ const NearMeMap = forwardRef<NearMeMapRef, NearMeMapProps>(
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           attribution="&copy; OpenStreetMap contributors"
         />
+        <MapRefBridge mapRef={leafletMapRef} />
 
         {hotels
           .filter(hotel => hotel.latitude != null && hotel.longitude != null)

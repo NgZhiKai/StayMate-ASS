@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { HotelData } from "../../types/Hotels";
 import { HotelCard } from "../Hotel";
 
@@ -16,8 +16,6 @@ const HotelsGrid: React.FC<HotelsGridProps> = ({
   setHoveredHotelId,
   layout,
 }) => {
-  const navigate = useNavigate();
-
   return (
     <div
       className={`transition-all duration-300 w-full ${
@@ -27,15 +25,16 @@ const HotelsGrid: React.FC<HotelsGridProps> = ({
       }`}
     >
       {hotels.map((hotel) => (
-        <div
+        <Link
           key={hotel.id}
+          to={`/hotel/${hotel.id}`}
           className="h-full cursor-pointer group relative rounded-2xl overflow-hidden shadow-lg transition-shadow duration-300 hover:shadow-2xl hover:scale-105"
-          onClick={() => navigate(`/hotel/${hotel.id}`)}
           onMouseEnter={() => setHoveredHotelId(hotel.id)}
           onMouseLeave={() => setHoveredHotelId(null)}
+          aria-label={`Open ${hotel.name} details`}
         >
-          <HotelCard key={hotel.id} hotel={hotel} layout={layout} hovered={hoveredHotelId === hotel.id} />
-        </div>
+          <HotelCard hotel={hotel} layout={layout} hovered={hoveredHotelId === hotel.id} />
+        </Link>
       ))}
     </div>
   );

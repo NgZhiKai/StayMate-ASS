@@ -6,7 +6,7 @@ interface Props {
   notifications: Notification[];
   onMarkAsRead: (id: number) => void;
   markingId: number | null;
-  className?: string; // added for animation
+  className?: string;
 }
 
 const NotificationList: React.FC<Props> = ({

@@ -8,6 +8,7 @@ import java.util.Objects;
 
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.hotelservice.dto.hotel.HotelSearchDTO;
 import com.example.hotelservice.entity.hotel.Hotel;
@@ -118,10 +119,14 @@ public class HotelService {
         return hotelRepository.save(hotel);
     }
 
+    @Transactional
     public void deleteHotel(@NonNull Long id) {
         Objects.requireNonNull(id, "Hotel ID must not be null");
+
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found for deletion with ID " + id));
+
+        reviewService.deleteReviewsByHotelId(id);
         hotelRepository.delete(hotel);
     }
 

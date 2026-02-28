@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { HotelCard } from "../Hotel";
 import { HotelData } from "../../types/Hotels";
 
@@ -8,14 +8,17 @@ interface Props {
 }
 
 export const BookmarkedHotelsList: React.FC<Props> = ({ hotels }) => {
-  const navigate = useNavigate();
-
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {hotels.map((hotel) => (
-        <div key={hotel.id} onClick={() => navigate(`/hotel/${hotel.id}`)}>
+        <Link
+          key={hotel.id}
+          to={`/hotel/${hotel.id}`}
+          className="text-left"
+          aria-label={`Open ${hotel.name} details`}
+        >
           <HotelCard hotel={hotel} />
-        </div>
+        </Link>
       ))}
     </div>
   );

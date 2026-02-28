@@ -27,13 +27,16 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
         const isHovered = hoveredHotelId === hotel.id;
 
         return (
-          <div
+          <button
+            type="button"
             key={hotel.id}
             onClick={() => onHotelClick?.(hotel)}
             onMouseEnter={() => onHotelHover?.(hotel)}
             onMouseLeave={() => onHotelHover?.(null)}
+            onFocus={() => onHotelHover?.(hotel)}
+            onBlur={() => onHotelHover?.(null)}
             className={`
-              relative bg-white rounded-2xl shadow-sm cursor-pointer overflow-hidden
+              relative w-full text-left bg-white rounded-2xl shadow-sm cursor-pointer overflow-hidden
               transition-all duration-300 hover:shadow-xl hover:scale-[1.02]
               ${isHovered ? "border-2 border-indigo-500 shadow-lg scale-[1.03]" : ""}
             `}
@@ -55,7 +58,7 @@ const HotelListPanel: React.FC<HotelListPanelProps> = ({
               </div>
               <p className="text-sm text-gray-500 mt-1">{hotel.address}</p>
             </div>
-          </div>
+          </button>
         );
       })}
     </div>

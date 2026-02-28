@@ -8,7 +8,8 @@ interface PaymentOptionCardProps {
 }
 
 const PaymentOptionCard: React.FC<PaymentOptionCardProps> = ({ option, isSelected, onSelect }) => (
-  <div
+  <button
+    type="button"
     onClick={() => onSelect(option.id)}
     className={`cursor-pointer p-6 rounded-2xl border transition flex flex-col items-center justify-center gap-4 shadow-md hover:shadow-lg
       ${isSelected
@@ -17,13 +18,12 @@ const PaymentOptionCard: React.FC<PaymentOptionCardProps> = ({ option, isSelecte
       }`}
   >
     <div className="flex gap-3 items-center justify-center">
-      {option.logos.map((logo, idx) => (
-        <img key={idx} src={logo} alt={`${option.label} logo`} className="w-12 h-12 object-contain" />
+      {option.logos.map((logo) => (
+        <img key={logo} src={logo} alt={`${option.label} logo`} className="w-12 h-12 object-contain" />
       ))}
     </div>
     <span className="font-semibold text-gray-700 text-lg">{option.label}</span>
-  </div>
+  </button>
 );
 
 export default PaymentOptionCard;
-export type { PaymentType };
