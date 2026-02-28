@@ -17,13 +17,14 @@ const Pagination: React.FC<Props> = ({
 
   const handleJump = () => {
     const page = Number(jumpValue);
-    if (!isNaN(page)) {
+    if (!Number.isNaN(page)) {
       goToPage(page);
       setJumpValue("");
     }
   };
 
   if (totalPages <= 1) return null;
+  let ellipsisCount = 0;
 
   return (
     <div className="flex flex-col items-center gap-4 mt-8">
@@ -37,9 +38,9 @@ const Pagination: React.FC<Props> = ({
           Prev
         </button>
 
-        {pages.map((page, index) =>
+        {pages.map((page) =>
           page === "..." ? (
-            <span key={index} className="px-2 text-gray-400">
+            <span key={`ellipsis-${++ellipsisCount}`} className="px-2 text-gray-400">
               ...
             </span>
           ) : (

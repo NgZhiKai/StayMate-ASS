@@ -1,7 +1,7 @@
+import { parsePhoneNumberFromString } from "libphonenumber-js";
 import React from "react";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
-import { parsePhoneNumberFromString, AsYouType } from "libphonenumber-js";
 
 interface PhoneFieldProps {
   value: string;
@@ -28,22 +28,19 @@ const PhoneField: React.FC<PhoneFieldProps> = ({
 
     // Try to parse the number
     const phoneNumber = parsePhoneNumberFromString(sanitized);
-    if (phoneNumber && phoneNumber.isValid()) {
-      // Valid number: store E.164 internally
+    if (phoneNumber?.isValid()) {
       onChange(phoneNumber.number);
     } else {
-      // Invalid: store sanitized raw input
       onChange(sanitized);
     }
   };
 
-  // Display value nicely with spaces if valid, else raw
   const displayValue = (() => {
     const phoneNumber = parsePhoneNumberFromString(value);
-    if (phoneNumber && phoneNumber.isValid()) {
-      return phoneNumber.formatInternational(); // nicely spaced for display
+    if (phoneNumber?.isValid()) {
+      return phoneNumber.formatInternational();
     }
-    return value; // fallback for invalid numbers
+    return value;
   })();
 
   return (

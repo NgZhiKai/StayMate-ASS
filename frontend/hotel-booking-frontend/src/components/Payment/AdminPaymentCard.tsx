@@ -10,12 +10,12 @@ interface Props {
 export const AdminPaymentCard: React.FC<Props> = ({ group, formatDate }) => {
   const booking = group.bookingDetails;
 
-  const statusColor =
-    group.status === "SUCCESS"
-      ? "bg-green-200 text-green-900"
-      : group.status === "FAILURE"
-      ? "bg-red-200 text-red-900"
-      : "bg-yellow-200 text-yellow-900";
+  let statusColor = "bg-yellow-200 text-yellow-900";
+  if (group.status === "SUCCESS") {
+    statusColor = "bg-green-200 text-green-900";
+  } else if (group.status === "FAILURE") {
+    statusColor = "bg-red-200 text-red-900";
+  }
 
   return (
     <div className="flex flex-col p-3 bg-white/30 backdrop-blur-sm rounded-2xl shadow hover:shadow-lg hover:scale-[1.02] transition-transform duration-200 gap-2">

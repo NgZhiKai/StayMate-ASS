@@ -5,7 +5,7 @@ interface BrandingPanelProps {
   title?: string;
   subtitle?: string;
   gradient?: string;
-  icon?: React.ReactNode; // optional illustration or icon
+  icon?: React.ReactNode;
 }
 
 const BrandingPanel: React.FC<BrandingPanelProps> = ({
@@ -18,7 +18,6 @@ const BrandingPanel: React.FC<BrandingPanelProps> = ({
     <div
       className={`relative flex flex-col justify-center items-center text-white w-full h-full p-10 bg-gradient-to-br ${gradient} overflow-hidden`}
     >
-      {/* Animated background circles */}
       <motion.div
         className="absolute -top-20 -left-20 w-96 h-96 bg-white/10 rounded-full blur-3xl animate-pulse"
         animate={{ scale: [1, 1.2, 1] }}
@@ -30,10 +29,8 @@ const BrandingPanel: React.FC<BrandingPanelProps> = ({
         transition={{ duration: 12, repeat: Infinity }}
       />
 
-      {/* Optional icon / illustration */}
       {icon && <div className="mb-6">{icon}</div>}
 
-      {/* Title */}
       <motion.h1
         className="text-4xl md:text-5xl font-bold mb-4 text-center drop-shadow-lg"
         initial={{ y: -20, opacity: 0 }}
@@ -43,7 +40,6 @@ const BrandingPanel: React.FC<BrandingPanelProps> = ({
         {title}
       </motion.h1>
 
-      {/* Subtitle */}
       <motion.p
         className="text-lg md:text-xl text-center opacity-90 max-w-xs md:max-w-md"
         initial={{ y: 20, opacity: 0 }}
@@ -53,7 +49,6 @@ const BrandingPanel: React.FC<BrandingPanelProps> = ({
         {subtitle}
       </motion.p>
 
-      {/* Decorative bottom gradient overlay */}
       <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-black/20 to-transparent" />
     </div>
   );

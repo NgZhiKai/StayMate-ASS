@@ -5,9 +5,10 @@ interface Props {
   isOpen: boolean;
   initial?: string; // optional now
   onLogout?: () => void; // optional
+  onToggle?: () => void;
 }
 
-export default function UserMenu({ isOpen, initial, onLogout }: Props) {
+export default function UserMenu({ isOpen, initial, onLogout, onToggle }: Readonly<Props>) {
   const navigate = useNavigate();
 
   // If no initial is passed, compute from sessionStorage
@@ -25,6 +26,7 @@ export default function UserMenu({ isOpen, initial, onLogout }: Props) {
       {/* Avatar button */}
       <button
         type="button"
+        onClick={onToggle}
         className="h-8 w-8 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold focus:outline-none focus:ring-2 focus:ring-indigo-400"
         aria-haspopup="true"
         aria-expanded={isOpen}

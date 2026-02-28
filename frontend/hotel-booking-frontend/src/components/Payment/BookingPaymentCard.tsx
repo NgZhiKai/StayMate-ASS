@@ -21,7 +21,6 @@ export const BookingPaymentCard: React.FC<Props> = ({ group }) => {
 
   return (
     <div className="p-4 rounded-3xl bg-gradient-to-br from-white/20 via-white/10 to-white/5 backdrop-blur-lg shadow-lg hover:shadow-2xl hover:scale-105 transition-transform duration-300">
-      {/* Header */}
       <div className="flex justify-between items-start mb-3">
         <div>
           <div className="text-base sm:text-lg font-semibold text-gray-900">{`Booking #${group.bookingId}`}</div>
@@ -42,14 +41,11 @@ export const BookingPaymentCard: React.FC<Props> = ({ group }) => {
         </div>
       </div>
 
-      {/* Divider */}
       <div className="border-t border-gray-300/40 mb-3" />
 
-      {/* Payment timeline */}
       <div className="flex flex-col gap-2 relative">
         {paymentsByMethod.map((payment, idx) => (
           <div key={payment.paymentMethod ?? payment.id} className="relative pl-5">
-            {/* Vertical timeline line */}
             {idx !== paymentsByMethod.length - 1 && (
               <span className="absolute left-1.5 top-5 h-full w-0.5 bg-gray-400/50"></span>
             )}

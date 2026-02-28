@@ -74,6 +74,11 @@ public class ReviewService {
         reviewRepository.delete(review);
     }
 
+    public void deleteReviewsByHotelId(Long hotelId) {
+        Objects.requireNonNull(hotelId, "Hotel ID must be provided.");
+        reviewRepository.deleteByHotelId(hotelId);
+    }
+
     // ==================== FILTERS ====================
 
     @Transactional(readOnly = true)

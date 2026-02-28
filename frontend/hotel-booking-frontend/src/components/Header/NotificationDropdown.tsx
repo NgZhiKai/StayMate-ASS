@@ -7,11 +7,11 @@ interface Props {
   isOpen: boolean;
 }
 
-export default function NotificationDropdown({ isOpen }: Props) {
+export default function NotificationDropdown({ isOpen }: Readonly<Props>) {
   const navigate = useNavigate();
   const { notifications } = useNotificationContext();
 
-  const unreadCount = notifications.filter(n => !n.isread).length;
+  const unreadCount = notifications.filter((n) => n.isread === false).length;
 
   const topFive = useMemo(() => {
     return [...notifications]
@@ -43,12 +43,13 @@ export default function NotificationDropdown({ isOpen }: Props) {
               No notifications.
             </p>
           ) : (
-            topFive.map(n => (
-              <div
+            topFive.map((n) => (
+              <button
+                type="button"
                 key={n.id}
                 onClick={() => navigate("/notifications")}
-                className={`p-3 rounded-xl cursor-pointer transition ${
-                  !n.isread
+                className={`w-full text-left p-3 rounded-xl transition ${
+                  n.isread === false
                     ? "bg-indigo-50 hover:bg-indigo-100"
                     : "hover:bg-gray-50"
                 }`}
@@ -59,7 +60,7 @@ export default function NotificationDropdown({ isOpen }: Props) {
                 <p className="text-xs text-gray-400">
                   {new Date(n.createdAt).toLocaleString()}
                 </p>
-              </div>
+              </button>
             ))
           )}
         </div>

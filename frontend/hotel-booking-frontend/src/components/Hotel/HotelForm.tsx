@@ -15,7 +15,9 @@ export const HotelForm: React.FC<Props> = ({ hotelId, hotelData, onSave }) => {
   const form = useHotelForm(hotelId, hotelData);
   const { validateHotel } = useHotelValidation();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (
+    e: Parameters<NonNullable<React.ComponentProps<"form">["onSubmit"]>>[0]
+  ) => {
     e.preventDefault();
 
     const newErrors = validateHotel({
@@ -86,7 +88,7 @@ export const HotelForm: React.FC<Props> = ({ hotelId, hotelData, onSave }) => {
       <InputField name="description" label="Description" type="text" value={form.description} onChange={e => form.setDescription(e.target.value)} placeholder="Brief description" />
       <PhoneField value={form.contact} onChange={form.setContact} label="Contact Number" required />
 
-      {!hotelId && <RoomTypeList rooms={form.rooms} setRooms={form.setRooms} hotelId={hotelId} />}
+      {!hotelId && <RoomTypeList rooms={form.rooms} setRooms={form.setRooms} />}
 
       <div className="flex justify-end">
         <GradientButton type="submit" className="w-full py-3 text-white font-semibold rounded-xl shadow-lg hover:scale-105 transition-transform duration-300">

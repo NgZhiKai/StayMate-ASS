@@ -55,10 +55,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     <section
       className={`relative overflow-hidden bg-gradient-to-br ${gradient} text-white px-6 ${paddingMap[padding]} ${className}`}
     >
-      {/* Grid overlay (premium SaaS look) */}
       <div className="absolute inset-0 opacity-10 bg-[linear-gradient(to_right,white_1px,transparent_1px),linear-gradient(to_bottom,white_1px,transparent_1px)] bg-[size:40px_40px]" />
 
-      {/* Decorative gradient blobs */}
       <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-purple-600/30 rounded-full blur-3xl" />
       <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-indigo-600/30 rounded-full blur-3xl" />
 
@@ -67,7 +65,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           isLeft ? "mx-0 text-left" : "mx-auto text-center"
         }`}
       >
-        {/* Optional accent line (Stripe-style) */}
         {isLeft && (
           <div className="w-16 h-1 bg-white/80 mb-6 rounded-full" />
         )}

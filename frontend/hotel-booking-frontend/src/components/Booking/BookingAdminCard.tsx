@@ -13,7 +13,6 @@ export const BookingAdminCard: React.FC<BookingCardProps> = ({ booking, onCancel
     booking.status !== "CANCELLED" &&
     new Date(booking.checkInDate) > new Date();
 
-  // Short date format: Feb 26
   const formatShortDate = (date: string) =>
     new Date(date).toLocaleDateString("en-US", {
       month: "short",
@@ -34,17 +33,15 @@ export const BookingAdminCard: React.FC<BookingCardProps> = ({ booking, onCancel
       ? "from-gray-200/50 to-gray-300/50"
       : "from-purple-50/40 to-pink-50/40";
 
+  let statusAccentColor = "bg-yellow-400";
+  if (booking.status === "CONFIRMED") statusAccentColor = "bg-green-400";
+  else if (booking.status === "CANCELLED") statusAccentColor = "bg-red-400";
+
   return (
     <div className={`relative flex flex-col p-4 rounded-3xl shadow-md backdrop-blur-sm hover:shadow-lg hover:scale-105 transition-transform duration-300 bg-gradient-to-br ${cardGradient}`}>
       {/* Left status accent */}
       <span
-        className={`absolute left-0 top-0 h-full w-1 rounded-l-3xl ${
-          booking.status === "CONFIRMED"
-            ? "bg-green-400"
-            : booking.status === "CANCELLED"
-            ? "bg-red-400"
-            : "bg-yellow-400"
-        }`}
+        className={`absolute left-0 top-0 h-full w-1 rounded-l-3xl ${statusAccentColor}`}
       />
 
       {/* Header */}

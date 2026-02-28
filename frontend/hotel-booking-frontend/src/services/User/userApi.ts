@@ -1,13 +1,13 @@
-import { LoginData, RegisterData, User, ResetPasswordRequest } from "../../types/User";
-import { userApiClient } from "./userApiClient";
+import { LoginData, RegisterData, ResetPasswordRequest, User } from "../../types/User";
 import { handleApiError } from "../../utils/handleApiError";
+import { userApiClient } from "./userApiClient";
 
 const USER_BASE = "/users";
 
 const userApi = {
   initiateRegistration: async (email: string) => {
     const response = await userApiClient.post(`${USER_BASE}/initiate-registration`, { email });
-    return response.data; // { message: string, data?: token }
+    return response.data;
   },
 
   verifyUser: async (token: string) => {

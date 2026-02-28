@@ -33,8 +33,9 @@ export const NotificationProvider: React.FC<{ children: React.ReactNode }> = ({ 
     const userId = getUserId();
     if (!userId) {
       setNotifications([]);
+      setError(null);
       setLoading(false);
-      throw new Error("User not logged in.");
+      return;
     }
 
     setLoading(true);

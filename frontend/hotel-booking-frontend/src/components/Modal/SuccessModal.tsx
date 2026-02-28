@@ -4,7 +4,7 @@ interface SuccessModalProps {
   isOpen: boolean;
   message: string;
   onClose: () => void;
-  duration?: number; // in ms
+  duration?: number;
 }
 
 const SuccessModal: React.FC<SuccessModalProps> = ({

@@ -30,7 +30,6 @@ const UserModal: React.FC<UserModalProps> = ({
   const [passwordError, setPasswordError] = useState<string>("");
   const [nameError, setNameError] = useState<string>("");
 
-  // Reset form when the modal is opened or currentUser changes
   useEffect(() => {
     if (isOpen) {
       if (currentUser) {
@@ -67,7 +66,7 @@ const UserModal: React.FC<UserModalProps> = ({
   };
 
   const handleNameInput = (
-    e: React.FormEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement>,
     name: "firstName" | "lastName"
   ) => {
     const value = e.currentTarget.value;
@@ -80,7 +79,9 @@ const UserModal: React.FC<UserModalProps> = ({
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (
+    e: Parameters<NonNullable<React.ComponentProps<"form">["onSubmit"]>>[0]
+  ) => {
     e.preventDefault();
 
     if (!currentUser) {
@@ -111,7 +112,7 @@ const UserModal: React.FC<UserModalProps> = ({
   if (!isOpen) return null;
 
   const isAdmin =
-    (currentUser && currentUser.role === "ADMIN") ||
+    (currentUser?.role === "ADMIN") ||
     (!currentUser && user.role === "ADMIN");
 
   const headerGradient = isAdmin
@@ -121,9 +122,11 @@ const UserModal: React.FC<UserModalProps> = ({
   return (
     <>
       {/* Backdrop */}
-      <div
+      <button
+        type="button"
         className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 transition-opacity"
         onClick={onClose}
+        aria-label="Close user modal"
       />
 
       {/* Modal */}
@@ -150,6 +153,7 @@ const UserModal: React.FC<UserModalProps> = ({
             </div>
 
             <button
+              type="button"
               className="absolute top-5 right-6 text-white/80 hover:text-white text-2xl transition"
               onClick={onClose}
             >

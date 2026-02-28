@@ -1,4 +1,3 @@
-// components/Legal/LegalLinks.tsx
 import React from "react";
 
 const LegalLinks: React.FC = () => (

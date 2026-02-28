@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import AmountInput from "./AmountInput";
 
 interface AmountSectionProps {
@@ -22,7 +22,6 @@ const AmountSection: React.FC<AmountSectionProps> = ({
 
     setAmount(value);
 
-    // 🔥 Convert to cents for safe comparison
     const valueCents = Math.round(value * 100);
     const remainingCents = Math.round(remainingAmount * 100);
 

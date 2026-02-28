@@ -1,5 +1,5 @@
 import React from "react";
-import Stepper from "../Stepper/Stepper";
+import { Stepper } from "../Stepper";
 
 interface PageHeaderProps {
   steps: string[];

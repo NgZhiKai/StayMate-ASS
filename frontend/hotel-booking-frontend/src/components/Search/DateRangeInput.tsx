@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { DateRangePicker, RangeKeyDict } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
@@ -72,16 +72,20 @@ export const DateRangeInput: React.FC<DateRangeInputProps> = ({
 
   return (
     <div ref={ref} className="flex-1 relative">
-      <div
+      <button
+        type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         className="w-full px-4 py-3 border border-gray-300 rounded-full cursor-pointer bg-white shadow-sm hover:shadow-md transition flex items-center justify-between"
+        aria-expanded={isOpen}
+        aria-controls="date-range-picker-panel"
       >
         <span className={`${checkIn && checkOut ? "text-gray-900 font-medium" : "text-gray-400"}`}>
           {displayDateRange}
         </span>
-      </div>
+      </button>
 
       <div
+        id="date-range-picker-panel"
         className={`absolute top-full left-1/2 -translate-x-1/2 mt-4 z-50 transition-all duration-300 ease-out ${
           isOpen ? "opacity-100 translate-y-0 scale-100 pointer-events-auto" : "opacity-0 -translate-y-2 scale-95 pointer-events-none"
         }`}

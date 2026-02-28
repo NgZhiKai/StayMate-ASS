@@ -22,7 +22,64 @@ interface Props {
   isOpen: boolean;
 }
 
-export default function CalendarDropdown({ isOpen }: Props) {
+interface HotelBookingButtonProps {
+  readonly hotel: HotelGrouped;
+  readonly onOpen: (hotel: HotelGrouped) => void;
+}
+
+function HotelBookingButton({ hotel, onOpen }: Readonly<HotelBookingButtonProps>) {
+  const handleKeyPress = (e: KeyboardEvent<HTMLButtonElement>) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onOpen(hotel);
+    }
+  };
+
+  return (
+    <button
+      onClick={() => onOpen(hotel)}
+      onKeyDown={handleKeyPress}
+      className="w-full text-left p-3 bg-gradient-to-r from-white via-purple-50 to-white rounded-xl hover:shadow-lg transition focus:outline-none focus:ring-2 focus:ring-purple-300"
+    >
+      <p className="font-semibold text-sm text-purple-700">{hotel.hotelName}</p>
+      <div className="text-xs text-gray-500">
+        {hotel.rooms.map((room) => (
+          <div key={room.roomType} className="mb-1">
+            {Object.entries(room.statusCounts).map(([status, count], i) => {
+              let colorClass = "";
+              switch (status.toLowerCase()) {
+                case "confirmed":
+                  colorClass = "text-green-600 font-semibold";
+                  break;
+                case "pending":
+                  colorClass = "text-yellow-600 font-semibold";
+                  break;
+                case "cancelled":
+                  colorClass = "text-red-600 font-semibold";
+                  break;
+              }
+              return (
+                <span key={status}>
+                  {i > 0 && ", "}
+                  <span className={colorClass}>
+                    {count} x {room.roomType} ({status.toLowerCase()})
+                  </span>
+                </span>
+              );
+            })}
+          </div>
+        ))}
+      </div>
+      <p className="text-xs text-gray-400 mt-1">
+        Dates:{" "}
+        {new Date(hotel.checkInDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })} →{" "}
+        {new Date(hotel.checkOutDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
+      </p>
+    </button>
+  );
+}
+
+export default function CalendarDropdown({ isOpen }: Readonly<Props>) {
   const navigate = useNavigate();
   const { bookings, refreshBookings } = useBookingContext();
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -123,19 +180,15 @@ export default function CalendarDropdown({ isOpen }: Props) {
     fetchNames();
   }, [filteredBookings, hotelNames]);
 
-  /** Keyboard navigation for accessibility */
-  const handleKeyPress = (e: KeyboardEvent<HTMLButtonElement>, hotel: HotelGrouped) => {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      navigate("/bookings", {
-        state: {
-          bookingIds: hotel.bookingIds,
-          hotelName: hotel.hotelName,
-          checkInDate: hotel.checkInDate,
-          checkOutDate: hotel.checkOutDate,
-        },
-      });
-    }
+  const openHotelBookings = (hotel: HotelGrouped) => {
+    navigate("/bookings", {
+      state: {
+        bookingIds: hotel.bookingIds,
+        hotelName: hotel.hotelName,
+        checkInDate: hotel.checkInDate,
+        checkOutDate: hotel.checkOutDate,
+      },
+    });
   };
 
   return (
@@ -176,56 +229,7 @@ export default function CalendarDropdown({ isOpen }: Props) {
             <p className="text-sm text-gray-400 text-center">No bookings for this day.</p>
           ) : (
             groupedBookings.map((hotel) => (
-              <button
-                key={hotel.hotelId}
-                onClick={() =>
-                  navigate("/bookings", {
-                    state: {
-                      bookingIds: hotel.bookingIds,
-                      hotelName: hotel.hotelName,
-                      checkInDate: hotel.checkInDate,
-                      checkOutDate: hotel.checkOutDate,
-                    },
-                  })
-                }
-                onKeyDown={(e) => handleKeyPress(e, hotel)}
-                className="w-full text-left p-3 bg-gradient-to-r from-white via-purple-50 to-white rounded-xl hover:shadow-lg transition focus:outline-none focus:ring-2 focus:ring-purple-300"
-              >
-                <p className="font-semibold text-sm text-purple-700">{hotel.hotelName}</p>
-                <div className="text-xs text-gray-500">
-                  {hotel.rooms.map((room, idx) => (
-                    <div key={idx} className="mb-1">
-                      {Object.entries(room.statusCounts).map(([status, count], i) => {
-                        let colorClass = "";
-                        switch (status.toLowerCase()) {
-                          case "confirmed":
-                            colorClass = "text-green-600 font-semibold";
-                            break;
-                          case "pending":
-                            colorClass = "text-yellow-600 font-semibold";
-                            break;
-                          case "cancelled":
-                            colorClass = "text-red-600 font-semibold";
-                            break;
-                        }
-                        return (
-                          <span key={status}>
-                            {i > 0 && ", "}
-                            <span className={colorClass}>
-                              {count} x {room.roomType} ({status.toLowerCase()})
-                            </span>
-                          </span>
-                        );
-                      })}
-                    </div>
-                  ))}
-                </div>
-                <p className="text-xs text-gray-400 mt-1">
-                  Dates:{" "}
-                  {new Date(hotel.checkInDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })} →{" "}
-                  {new Date(hotel.checkOutDate).toLocaleDateString("en-GB", { day: "2-digit", month: "short" })}
-                </p>
-              </button>
+              <HotelBookingButton key={hotel.hotelId} hotel={hotel} onOpen={openHotelBookings} />
             ))
           )}
 
