@@ -2,7 +2,7 @@ import React from "react";
 
 interface StepperProps {
   steps: string[];
-  currentStep: number; // 0-based index
+  currentStep: number;
 }
 
 const Stepper: React.FC<StepperProps> = ({ steps, currentStep }) => {

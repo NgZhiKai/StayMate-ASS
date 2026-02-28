@@ -46,9 +46,7 @@ const BookmarkedHotelsPage: React.FC = () => {
       />
 
       <div className="max-w-7xl mx-auto px-6 py-12">
-        {!hasData ? (
-          <BookmarkedHotelsEmpty />
-        ) : (
+        {hasData ? (
           <>
             <div className="grid gap-6">
               <BookmarkedHotelsList hotels={paginatedData} />
@@ -63,6 +61,8 @@ const BookmarkedHotelsPage: React.FC = () => {
               />
             </div>
           </>
+        ) : (
+          <BookmarkedHotelsEmpty />
         )}
       </div>
     </div>

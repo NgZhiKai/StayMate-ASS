@@ -1,4 +1,4 @@
-import { handleApiError } from "../../utils/handleApiError";
+import { toApiError } from "../_core/apiError";
 import { userApiClient } from "./userApiClient";
 
 const BOOKMARK_BASE = "/bookmarks";
@@ -12,8 +12,8 @@ const bookmarkApi = {
       const response = await userApiClient.get(`${BOOKMARK_BASE}/${userId}`);
       const hotelIds = response.data ?? [];
       return { hotelIds };
-    } catch (err: any) {
-      throw new Error(handleApiError(err));
+    } catch (error) {
+      throw toApiError(error);
     }
   },
 
@@ -24,8 +24,8 @@ const bookmarkApi = {
     try {
       const response = await userApiClient.post(BOOKMARK_BASE, { userId, hotelIds });
       return { message: response.data?.message ?? "Bookmark added successfully" };
-    } catch (err: any) {
-      throw new Error(handleApiError(err));
+    } catch (error) {
+      throw toApiError(error);
     }
   },
 
@@ -36,8 +36,8 @@ const bookmarkApi = {
     try {
       const response = await userApiClient.delete(`${BOOKMARK_BASE}/${userId}/${hotelId}`);
       return { message: response.data?.message ?? "Bookmark removed successfully" };
-    } catch (err: any) {
-      throw new Error(handleApiError(err));
+    } catch (error) {
+      throw toApiError(error);
     }
   },
 };

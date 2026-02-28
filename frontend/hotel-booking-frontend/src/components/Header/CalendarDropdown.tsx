@@ -91,10 +91,25 @@ export default function CalendarDropdown({ isOpen }: Readonly<Props>) {
     refreshBookings();
   }, [viewMode, refreshBookings]);
 
-  /** Collect all booked dates for highlighting on calendar */
+  /** Filter bookings by view mode first (upcoming / past) */
+  const modeBookings = useMemo(() => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    return bookings.filter((b) => {
+      const checkIn = new Date(`${b.checkInDate}T00:00:00+08:00`);
+      const checkOut = new Date(`${b.checkOutDate}T23:59:59+08:00`);
+      const isUpcoming = checkIn >= today;
+      const isPast = checkOut < today;
+
+      return viewMode === "upcoming" ? isUpcoming : isPast;
+    });
+  }, [bookings, viewMode]);
+
+  /** Collect booked dates for highlighting on calendar (respecting selected view mode) */
   const bookedDates = useMemo(() => {
     const dates = new Set<string>();
-    bookings.forEach((b) => {
+    modeBookings.forEach((b) => {
       const checkIn = new Date(`${b.checkInDate}T00:00:00+08:00`);
       const checkOut = new Date(`${b.checkOutDate}T00:00:00+08:00`);
       let current = new Date(checkIn);
@@ -104,25 +119,18 @@ export default function CalendarDropdown({ isOpen }: Readonly<Props>) {
       }
     });
     return dates;
-  }, [bookings]);
+  }, [modeBookings]);
 
-  /** Filter bookings based on selected date and view mode */
+  /** Filter mode bookings by selected date for list display */
   const filteredBookings = useMemo(() => {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    const selected = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
 
-    return bookings.filter((b) => {
+    return modeBookings.filter((b) => {
       const checkIn = new Date(`${b.checkInDate}T00:00:00+08:00`);
       const checkOut = new Date(`${b.checkOutDate}T23:59:59+08:00`);
-      const selected = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
-      const isActive = selected >= checkIn && selected <= checkOut;
-
-      const isUpcoming = checkIn >= today;
-      const isPast = checkOut < today;
-
-      return isActive && (viewMode === "upcoming" ? isUpcoming : isPast);
+      return selected >= checkIn && selected <= checkOut;
     });
-  }, [bookings, selectedDate, viewMode]);
+  }, [modeBookings, selectedDate]);
 
   /** Group bookings by hotel */
   const groupedBookings: HotelGrouped[] = useMemo(() => {

@@ -1,12 +1,12 @@
 // layouts/HeaderOnlyLayout.tsx
 import React from "react";
-import Header from "../components/Header/Header";
+import { Header } from "../Header";
 
 interface HeaderOnlyLayoutProps {
   children: React.ReactNode;
 }
 
-export default function HeaderOnlyLayout({ children }: HeaderOnlyLayoutProps) {
+export default function HeaderOnlyLayout({ children }: Readonly<HeaderOnlyLayoutProps>) {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header without sidebar toggle */}

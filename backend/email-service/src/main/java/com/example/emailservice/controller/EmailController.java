@@ -39,12 +39,13 @@ public class EmailController {
             switch (request.getType().toLowerCase()) {
                 case "verification":
                     emailService.sendVerificationEmail(request.getTo(), request.getLink(), request.getToken());
-                    return ResponseEntity.ok("Verification email sent successfully.");
+                    return ResponseEntity.status(HttpStatus.ACCEPTED).body("Verification email sent successfully.");
                 case "reset":
                     emailService.sendPasswordResetEmail(request.getTo(), request.getLink(), request.getToken());
-                    return ResponseEntity.ok("Password reset email sent successfully.");
+                    return ResponseEntity.status(HttpStatus.ACCEPTED).body("Password reset email sent successfully.");
                 default:
-                    return ResponseEntity.badRequest().body("Invalid email type. Must be 'verification' or 'reset'.");
+                    return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                            .body("Invalid email type. Must be 'verification' or 'reset'.");
             }
         } catch (EmailServiceException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

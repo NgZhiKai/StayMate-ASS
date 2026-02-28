@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Outlet } from "react-router-dom";
-import Header from "../components/Header/Header";
-import Sidebar from "../components/Misc/Sidebar";
+import { Header } from "../Header";
+import { Sidebar } from "../Misc";
 
 const MainLayout: React.FC = () => {
   const [isOpen, setIsOpen] = useState(true);

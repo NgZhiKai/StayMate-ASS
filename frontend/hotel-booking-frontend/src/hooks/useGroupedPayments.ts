@@ -18,22 +18,24 @@ export const useGroupedPayments = () => {
         // Group payments by bookingId
         const groupsMap: { [key: number]: GroupedPayment } = {};
         payments.forEach((p) => {
-          if (!groupsMap[p.bookingId]) {
-            groupsMap[p.bookingId] = {
-              bookingId: p.bookingId,
-              totalAmount: p.amount,
-              status: p.status,
-              latestTransactionDate: p.transactionDate,
-              payments: [p],
-            };
-          } else {
-            groupsMap[p.bookingId].totalAmount += p.amount;
-            groupsMap[p.bookingId].payments.push(p);
-            if (new Date(p.transactionDate) > new Date(groupsMap[p.bookingId].latestTransactionDate)) {
-              groupsMap[p.bookingId].latestTransactionDate = p.transactionDate;
-              groupsMap[p.bookingId].status = p.status; // latest status
+          const existingGroup = groupsMap[p.bookingId];
+          if (existingGroup) {
+            existingGroup.totalAmount += p.amount;
+            existingGroup.payments.push(p);
+            if (new Date(p.transactionDate) > new Date(existingGroup.latestTransactionDate)) {
+              existingGroup.latestTransactionDate = p.transactionDate;
+              existingGroup.status = p.status; // latest status
             }
+            return;
           }
+
+          groupsMap[p.bookingId] = {
+            bookingId: p.bookingId,
+            totalAmount: p.amount,
+            status: p.status,
+            latestTransactionDate: p.transactionDate,
+            payments: [p],
+          };
         });
 
         const groupedArray = Object.values(groupsMap);
@@ -47,7 +49,8 @@ export const useGroupedPayments = () => {
           try {
             const userData = await userApi.getUserInfo(bookingDetails.userId.toString());
             user = { firstName: userData.user.firstName, lastName: userData.user.lastName };
-          } catch {
+          } catch (error) {
+            console.error(`Failed to fetch user info for booking ${g.bookingId}:`, error);
             user = { firstName: "Unknown", lastName: "" };
           }
 
@@ -56,7 +59,8 @@ export const useGroupedPayments = () => {
           try {
             const hotelData = await hotelApi.fetchHotelById(bookingDetails.hotelId);
             hotelName = hotelData.name;
-          } catch {
+          } catch (error) {
+            console.error(`Failed to fetch hotel name for booking ${g.bookingId}:`, error);
             hotelName = "Unknown";
           }
 
@@ -65,7 +69,8 @@ export const useGroupedPayments = () => {
 
         const results = await Promise.all(bookingPromises);
         setGroupedPayments(results);
-      } catch (err: any) {
+      } catch (error) {
+        console.error("Failed to fetch grouped payments:", error);
         setError("Failed to fetch payments.");
       } finally {
         setLoading(false);

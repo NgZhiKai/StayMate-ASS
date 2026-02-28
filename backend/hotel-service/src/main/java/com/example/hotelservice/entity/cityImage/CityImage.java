@@ -1,7 +1,15 @@
-package com.example.hotelservice.entity.cityImage;
+package com.example.hotelservice.entity.cityimage;
 
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
+import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 @Entity
 @Table(name = "city_images", uniqueConstraints = @UniqueConstraint(columnNames = "city"))

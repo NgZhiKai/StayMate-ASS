@@ -20,14 +20,24 @@ import com.example.hotelservice.repository.HotelRepository;
 @Service
 public class HotelService {
 
+    private static final String HOTEL_REPOSITORY_NULL_MESSAGE = "HotelRepository must not be null";
+    private static final String HOTEL_ID_NULL_MESSAGE = "Hotel ID must not be null";
+    private static final String HOTEL_NULL_MESSAGE = "Hotel must not be null";
+    private static final String NAME_NULL_MESSAGE = "Name must not be null";
+    private static final String LATITUDE_NULL_MESSAGE = "Latitude must not be null";
+    private static final String LONGITUDE_NULL_MESSAGE = "Longitude must not be null";
+
     private final HotelRepository hotelRepository;
     private final ImageService imageService;
     private final RoomService roomService;
     private final ReviewService reviewService;
 
-    public HotelService(@NonNull HotelRepository hotelRepository, ImageService imageService, RoomService roomService,
+    public HotelService(
+            @NonNull HotelRepository hotelRepository,
+            ImageService imageService,
+            RoomService roomService,
             ReviewService reviewService) {
-        this.hotelRepository = Objects.requireNonNull(hotelRepository, "HotelRepository must not be null");
+        this.hotelRepository = Objects.requireNonNull(hotelRepository, HOTEL_REPOSITORY_NULL_MESSAGE);
         this.imageService = imageService;
         this.roomService = roomService;
         this.reviewService = reviewService;
@@ -35,58 +45,12 @@ public class HotelService {
 
     public List<HotelSearchDTO> getHotelsByIds(List<Long> ids) {
         List<Hotel> hotels = hotelRepository.findAllById(ids);
-
-        return hotels.stream().map(hotel -> {
-
-            List<Room> rooms = roomService.getHotelRooms(hotel.getId());
-
-            double minPrice = rooms.stream()
-                    .mapToDouble(Room::getPricePerNight)
-                    .min()
-                    .orElse(0);
-
-            double maxPrice = rooms.stream()
-                    .mapToDouble(Room::getPricePerNight)
-                    .max()
-                    .orElse(0);
-
-            List<Review> reviews = reviewService.findReviewsByHotelId(hotel.getId());
-
-            double avgRating = reviews.isEmpty()
-                    ? 0
-                    : reviews.stream().mapToInt(Review::getRating).average().orElse(0);
-
-            return new HotelSearchDTO(hotel, avgRating, minPrice, maxPrice);
-
-        }).toList();
+        return hotels.stream().map(this::toHotelSearchDTO).toList();
     }
 
     public List<HotelSearchDTO> getAllHotels() {
         List<Hotel> hotels = hotelRepository.findAll();
-
-        return hotels.stream().map(hotel -> {
-
-            List<Room> rooms = roomService.getHotelRooms(hotel.getId());
-
-            double minPrice = rooms.stream()
-                    .mapToDouble(Room::getPricePerNight)
-                    .min()
-                    .orElse(0);
-
-            double maxPrice = rooms.stream()
-                    .mapToDouble(Room::getPricePerNight)
-                    .max()
-                    .orElse(0);
-
-            List<Review> reviews = reviewService.findReviewsByHotelId(hotel.getId());
-
-            double avgRating = reviews.isEmpty()
-                    ? 0
-                    : reviews.stream().mapToInt(Review::getRating).average().orElse(0);
-
-            return new HotelSearchDTO(hotel, avgRating, minPrice, maxPrice);
-
-        }).toList();
+        return hotels.stream().map(this::toHotelSearchDTO).toList();
     }
 
     public Hotel getHotelEntityById(Long id) {
@@ -95,33 +59,21 @@ public class HotelService {
     }
 
     public HotelSearchDTO getHotelById(@NonNull Long id) {
-        Objects.requireNonNull(id, "Hotel ID must not be null");
+        Objects.requireNonNull(id, HOTEL_ID_NULL_MESSAGE);
 
-        // Fetch hotel
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found with ID " + id));
-
-        // Get rooms
-        List<Room> rooms = roomService.getHotelRooms(hotel.getId());
-        double minPrice = rooms.stream().mapToDouble(Room::getPricePerNight).min().orElse(0);
-        double maxPrice = rooms.stream().mapToDouble(Room::getPricePerNight).max().orElse(0);
-
-        // Get reviews
-        List<Review> reviews = reviewService.findReviewsByHotelId(hotel.getId());
-        double avgRating = reviews.isEmpty() ? 0 : reviews.stream().mapToInt(Review::getRating).average().orElse(0);
-
-        // Return DTO
-        return new HotelSearchDTO(hotel, avgRating, minPrice, maxPrice);
+        return toHotelSearchDTO(hotel);
     }
 
     public Hotel saveHotel(@NonNull Hotel hotel) {
-        Objects.requireNonNull(hotel, "Hotel must not be null");
+        Objects.requireNonNull(hotel, HOTEL_NULL_MESSAGE);
         return hotelRepository.save(hotel);
     }
 
     @Transactional
     public void deleteHotel(@NonNull Long id) {
-        Objects.requireNonNull(id, "Hotel ID must not be null");
+        Objects.requireNonNull(id, HOTEL_ID_NULL_MESSAGE);
 
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Hotel not found for deletion with ID " + id));
@@ -131,50 +83,30 @@ public class HotelService {
     }
 
     public List<HotelSearchDTO> findHotelsByName(@NonNull String name) {
-        Objects.requireNonNull(name, "Name must not be null");
+        Objects.requireNonNull(name, NAME_NULL_MESSAGE);
         List<Hotel> hotels = hotelRepository.findByNameContaining(name);
-
-        return hotels.stream().map(hotel -> {
-
-            List<Room> rooms = roomService.getHotelRooms(hotel.getId());
-
-            double minPrice = rooms.stream()
-                    .mapToDouble(Room::getPricePerNight)
-                    .min()
-                    .orElse(0);
-
-            double maxPrice = rooms.stream()
-                    .mapToDouble(Room::getPricePerNight)
-                    .max()
-                    .orElse(0);
-
-            List<Review> reviews = reviewService.findReviewsByHotelId(hotel.getId());
-
-            double avgRating = reviews.isEmpty()
-                    ? 0
-                    : reviews.stream().mapToInt(Review::getRating).average().orElse(0);
-
-            return new HotelSearchDTO(hotel, avgRating, minPrice, maxPrice);
-
-        }).toList();
+        return hotels.stream().map(this::toHotelSearchDTO).toList();
     }
 
     public List<Room> getRoomsByHotel(@NonNull Long hotelId) {
-        Objects.requireNonNull(hotelId, "Hotel ID must not be null");
+        Objects.requireNonNull(hotelId, HOTEL_ID_NULL_MESSAGE);
         return hotelRepository.findById(hotelId)
                 .map(Hotel::getRooms)
                 .filter(Objects::nonNull)
                 .orElse(Collections.emptyList());
     }
 
-    private static double calculateDistance(@NonNull Double lat1, @NonNull Double lon1,
-            @NonNull Double lat2, @NonNull Double lon2) {
+    private static double calculateDistance(
+            @NonNull Double lat1,
+            @NonNull Double lon1,
+            @NonNull Double lat2,
+            @NonNull Double lon2) {
         Objects.requireNonNull(lat1, "lat1 must not be null");
         Objects.requireNonNull(lon1, "lon1 must not be null");
         Objects.requireNonNull(lat2, "lat2 must not be null");
         Objects.requireNonNull(lon2, "lon2 must not be null");
 
-        final double R = 6371; // Earth radius in km
+        final double R = 6371;
         double latDistance = Math.toRadians(lat2 - lat1);
         double lonDistance = Math.toRadians(lon2 - lon1);
 
@@ -187,8 +119,8 @@ public class HotelService {
     }
 
     public List<Hotel> getNearbyHotels(@NonNull Double latitude, @NonNull Double longitude) {
-        Objects.requireNonNull(latitude, "Latitude must not be null");
-        Objects.requireNonNull(longitude, "Longitude must not be null");
+        Objects.requireNonNull(latitude, LATITUDE_NULL_MESSAGE);
+        Objects.requireNonNull(longitude, LONGITUDE_NULL_MESSAGE);
 
         return hotelRepository.findAll().stream()
                 .filter(hotel -> {
@@ -201,36 +133,13 @@ public class HotelService {
     }
 
     public List<HotelSearchDTO> findHotelsByCityAndCountry(String city, String country) {
-        if (city == null)
-            city = "";
-        if (country == null)
-            country = "";
-        List<Hotel> hotels = hotelRepository.findByCityIgnoreCaseContainingAndCountryIgnoreCaseContaining(city,
-                country);
+        String normalizedCity = city == null ? "" : city;
+        String normalizedCountry = country == null ? "" : country;
 
-        return hotels.stream().map(hotel -> {
-
-            List<Room> rooms = roomService.getHotelRooms(hotel.getId());
-
-            double minPrice = rooms.stream()
-                    .mapToDouble(Room::getPricePerNight)
-                    .min()
-                    .orElse(0);
-
-            double maxPrice = rooms.stream()
-                    .mapToDouble(Room::getPricePerNight)
-                    .max()
-                    .orElse(0);
-
-            List<Review> reviews = reviewService.findReviewsByHotelId(hotel.getId());
-
-            double avgRating = reviews.isEmpty()
-                    ? 0
-                    : reviews.stream().mapToInt(Review::getRating).average().orElse(0);
-
-            return new HotelSearchDTO(hotel, avgRating, minPrice, maxPrice);
-
-        }).toList();
+        List<Hotel> hotels = hotelRepository.findByCityIgnoreCaseContainingAndCountryIgnoreCaseContaining(
+                normalizedCity,
+                normalizedCountry);
+        return hotels.stream().map(this::toHotelSearchDTO).toList();
     }
 
     public List<Map<String, Object>> getHotelCountsByCityCountry() {
@@ -242,7 +151,6 @@ public class HotelService {
             String country = (String) row[1];
             Long count = (Long) row[2];
 
-            // 🔹 Use ImageService to get cached/fallback Base64 image
             String imageBase64 = imageService.getDestinationImageBase64(city, country);
 
             Map<String, Object> dest = Map.of(
@@ -254,5 +162,16 @@ public class HotelService {
         }
 
         return destinations;
+    }
+
+    private HotelSearchDTO toHotelSearchDTO(Hotel hotel) {
+        List<Room> rooms = roomService.getHotelRooms(hotel.getId());
+        double minPrice = rooms.stream().mapToDouble(Room::getPricePerNight).min().orElse(0);
+        double maxPrice = rooms.stream().mapToDouble(Room::getPricePerNight).max().orElse(0);
+
+        List<Review> reviews = reviewService.findReviewsByHotelId(hotel.getId());
+        double avgRating = reviews.stream().mapToInt(Review::getRating).average().orElse(0);
+
+        return new HotelSearchDTO(hotel, avgRating, minPrice, maxPrice);
     }
 }

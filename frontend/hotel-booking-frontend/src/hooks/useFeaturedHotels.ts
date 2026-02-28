@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { hotelApi, ratingApi } from "../services/Hotel";
+import { hotelApi } from "../services/Hotel";
 import { HotelData } from "../types/Hotels";
 
 interface UseFeaturedHotelsReturn {
@@ -20,9 +20,8 @@ export const useFeaturedHotels = (): UseFeaturedHotelsReturn => {
         setError(null);
 
         const allHotels = await hotelApi.fetchHotels();
-        const topHotels = allHotels
-          .sort((a, b) => b.averageRating - a.averageRating)
-          .slice(0, 4);
+        const sortedHotels = [...allHotels].sort((a, b) => b.averageRating - a.averageRating);
+        const topHotels = sortedHotels.slice(0, 4);
 
         setHotels(topHotels);
       } catch (err) {

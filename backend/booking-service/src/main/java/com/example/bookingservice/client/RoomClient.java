@@ -6,16 +6,26 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
 public class RoomClient {
-
     private final RestTemplate restTemplate;
 
     @Value("${room.service.url}") // e.g., http://localhost:8083
     private String roomServiceUrl;
+
+    @Value("${room.service.book-path:/rooms/%d/%d/book?checkIn=%s&checkOut=%s}")
+    private String roomBookPath;
+
+    @Value("${room.service.room-by-id-path:/rooms/%d/%d}")
+    private String roomByIdPath;
+
+    @Value("${room.service.rooms-by-hotel-path:/rooms/hotel/%d}")
+    private String roomsByHotelPath;
 
     public RoomClient(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -27,14 +37,14 @@ public class RoomClient {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> bookRoom(Long hotelId, Long roomId, LocalDate checkIn, LocalDate checkOut) {
-        try {
-            String url = String.format("%s/rooms/%d/%d/book?checkIn=%s&checkOut=%s",
-                    roomServiceUrl, hotelId, roomId, checkIn, checkOut);
-            Map<String, Object> result = restTemplate.postForObject(url, null, Map.class);
-            return result != null ? result : Collections.emptyMap();
-        } catch (Exception e) {
-            return Collections.emptyMap();
-        }
+        String url = ClientCallSupport.buildUrl(roomServiceUrl, roomBookPath, hotelId, roomId, checkIn, checkOut);
+        return ClientCallSupport.exchangeForBody(
+                restTemplate,
+                url,
+                HttpMethod.POST,
+                HttpEntity.EMPTY,
+                Map.class,
+                Collections.emptyMap());
     }
 
     /**
@@ -43,19 +53,14 @@ public class RoomClient {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> getRoomById(Long hotelId, Long roomId) {
-        try {
-            String url = String.format("%s/rooms/%d/%d", roomServiceUrl, hotelId, roomId);
-            Map<String, Object> room = restTemplate.getForObject(url, Map.class);
-
-            if (room != null) {
-                return room; // room object is returned directly
-            } else {
-                return Collections.emptyMap();
-            }
-        } catch (Exception e) {
-            // fallback if service call fails
-            return Collections.emptyMap();
-        }
+        String url = ClientCallSupport.buildUrl(roomServiceUrl, roomByIdPath, hotelId, roomId);
+        return ClientCallSupport.exchangeForBody(
+                restTemplate,
+                url,
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                Map.class,
+                Collections.emptyMap());
     }
 
     /**
@@ -64,13 +69,13 @@ public class RoomClient {
      */
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> getRoomsByHotelId(Long hotelId) {
-        try {
-            String url = String.format("%s/rooms/hotel/%d", roomServiceUrl, hotelId);
-            List<Map<String, Object>> rooms = restTemplate.getForObject(url, List.class);
-            return rooms != null ? rooms : Collections.emptyList();
-        } catch (Exception e) {
-            // log error if needed
-            return Collections.emptyList();
-        }
+        String url = ClientCallSupport.buildUrl(roomServiceUrl, roomsByHotelPath, hotelId);
+        return ClientCallSupport.exchangeForBody(
+                restTemplate,
+                url,
+                HttpMethod.GET,
+                HttpEntity.EMPTY,
+                List.class,
+                Collections.emptyList());
     }
 }

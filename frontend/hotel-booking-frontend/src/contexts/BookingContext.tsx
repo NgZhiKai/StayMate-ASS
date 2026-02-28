@@ -6,7 +6,7 @@ interface BookingContextType {
   bookings: BookingContextData[];
   updateBookingStatus: (id: number, status: BookingContextData["status"]) => void;
   refreshBookings: () => Promise<void>;
-  userId?: number | null; // optional
+  userId?: number | null;
 }
 
 const BookingContext = createContext<BookingContextType | undefined>(undefined);

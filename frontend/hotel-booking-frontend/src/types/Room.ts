@@ -10,23 +10,23 @@ export interface Room {
 }
 
 export interface RoomRequestDTO {
-  roomType: string;       // Type of room (e.g., "Single", "Double", etc.)
-  pricePerNight: number;  // Price per night
-  maxOccupancy: number;   // Max number of people allowed in the room
-  quantity: number;       // Quantity of available rooms of this type
+  roomType: string;
+  pricePerNight: number;
+  maxOccupancy: number;
+  quantity: number;
 }
 
 
 // src/types/Rooms.ts
 export interface RoomData {
-  id: number;           // Room ID
-  roomId: number;       // Optional alternative ID if you use both
-  hotelId: number;      // ID of the hotel this room belongs to
-  roomType: string;     // e.g., "Single", "Double", "Suite"
-  price: number;        // Room price per night
-  capacity: number;     // Number of guests
-  description?: string; // Optional room description
-  imageUrl?: string;    // Optional image URL
+  id: number;
+  roomId: number;
+  hotelId: number;
+  roomType: string;
+  price: number;  
+  capacity: number;
+  description?: string;
+  imageUrl?: string;
 }
 
 export const roomTypes = ['SINGLE', 'DOUBLE', 'SUITE', 'DELUXE'];
