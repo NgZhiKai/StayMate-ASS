@@ -1,7 +1,6 @@
 package com.example.hotelservice.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -24,11 +23,9 @@ import org.springframework.web.multipart.MultipartFile;
 import com.example.hotelservice.dto.custom.CustomResponse;
 import com.example.hotelservice.dto.hotel.HotelRequestDTO;
 import com.example.hotelservice.dto.hotel.HotelSearchDTO;
-import com.example.hotelservice.dto.room.RoomRequestDTO;
 import com.example.hotelservice.entity.hotel.Hotel;
 import com.example.hotelservice.entity.room.Room;
 import com.example.hotelservice.service.HotelService;
-import com.example.hotelservice.service.RoomService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -48,22 +45,14 @@ public class HotelController {
     private static final String DESTINATIONS_RETRIEVED_SUCCESSFULLY = "Destinations retrieved successfully";
     private static final String NO_HOTELS_FOUND = "No hotels found";
     private static final String NO_HOTELS_FOUND_FOR_LOCATION = "No hotels found for the specified location";
-    private static final String HOTEL_NAME_REQUIRED = "Hotel name is required";
-    private static final String ROOM_QUANTITY_INVALID = "Room quantity must be greater than zero";
-    private static final String SEARCH_QUERY_EMPTY = "Search query cannot be empty";
-
     private final HotelService hotelService;
-    private final RoomService roomService;
     private final ObjectMapper objectMapper;
 
     private static final String MESSAGE_KEY = "message";
     private static final String HOTEL_ID_KEY = "hotelId";
 
-    public HotelController(HotelService hotelService,
-            RoomService roomService,
-            ObjectMapper objectMapper) {
+    public HotelController(HotelService hotelService, ObjectMapper objectMapper) {
         this.hotelService = hotelService;
-        this.roomService = roomService;
         this.objectMapper = objectMapper;
     }
 
@@ -75,20 +64,9 @@ public class HotelController {
             @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
 
         HotelRequestDTO hotelRequestDTO = parseHotelRequest(hotelDetailsJson);
-
-        if (hotelRequestDTO.getName() == null || hotelRequestDTO.getName().isBlank()) {
-            throw new IllegalArgumentException(HOTEL_NAME_REQUIRED);
-        }
-
-        Hotel hotel = new Hotel();
-        applyHotelDetails(hotel, hotelRequestDTO);
-        attachImageIfPresent(hotel, image);
-
-        Hotel savedHotel = hotelService.saveHotel(hotel);
+        byte[] imageBytes = extractImageBytes(image);
+        Hotel savedHotel = hotelService.createHotel(hotelRequestDTO, imageBytes);
         Long hotelId = Objects.requireNonNull(savedHotel.getId(), "Saved hotel ID cannot be null");
-
-        List<Room> rooms = createRoomsForHotel(savedHotel, hotelRequestDTO.getRooms());
-        savedHotel.setRooms(rooms);
         return createdWithHotelId(HOTEL_CREATED_SUCCESSFULLY, hotelId);
     }
 
@@ -134,12 +112,9 @@ public class HotelController {
             @RequestPart("hotelDetails") String hotelDetailsJson,
             @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
 
-        Hotel existingHotel = hotelService.getHotelEntityById(id);
         HotelRequestDTO hotelRequestDTO = parseHotelRequest(hotelDetailsJson);
-        applyHotelDetails(existingHotel, hotelRequestDTO);
-        attachImageIfPresent(existingHotel, image);
-
-        Hotel updatedHotel = hotelService.saveHotel(existingHotel);
+        byte[] imageBytes = extractImageBytes(image);
+        Hotel updatedHotel = hotelService.updateHotel(id, hotelRequestDTO, imageBytes);
         Long hotelId = Objects.requireNonNull(updatedHotel.getId(), "Updated hotel ID cannot be null");
         return okWithHotelId(HOTEL_UPDATED_SUCCESSFULLY, hotelId);
     }
@@ -157,11 +132,6 @@ public class HotelController {
     @Operation(summary = "Search hotels by name", description = "Search for hotels by their name")
     @GetMapping("/search")
     public ResponseEntity<CustomResponse<List<HotelSearchDTO>>> searchHotelsByName(@RequestParam String name) {
-
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException(SEARCH_QUERY_EMPTY);
-        }
-
         List<HotelSearchDTO> hotels = hotelService.findHotelsByName(name);
 
         if (hotels.isEmpty()) {
@@ -191,8 +161,7 @@ public class HotelController {
     @Operation(summary = "Get hotel rooms", description = "Get all rooms for a specific hotel")
     @GetMapping("/{id}/rooms")
     public ResponseEntity<CustomResponse<List<Room>>> getHotelRooms(@PathVariable @NonNull Long id) {
-        hotelService.getHotelById(id);
-        List<Room> rooms = roomService.getHotelRooms(id);
+        List<Room> rooms = hotelService.getRoomsByHotel(id);
         return ok(ROOMS_RETRIEVED_SUCCESSFULLY, rooms);
     }
 
@@ -217,48 +186,11 @@ public class HotelController {
         return objectMapper.readValue(hotelDetailsJson, HotelRequestDTO.class);
     }
 
-    private void applyHotelDetails(Hotel hotel, HotelRequestDTO dto) {
-        hotel.setName(dto.getName());
-        hotel.setAddress(dto.getAddress());
-        hotel.setDescription(dto.getDescription());
-        hotel.setLatitude(dto.getLatitude());
-        hotel.setLongitude(dto.getLongitude());
-        hotel.setContact(dto.getContact());
-        hotel.setCheckIn(dto.getCheckIn());
-        hotel.setCheckOut(dto.getCheckOut());
-        hotel.setCity(dto.getCity());
-        hotel.setCountry(dto.getCountry());
-    }
-
-    private void attachImageIfPresent(Hotel hotel, MultipartFile image) throws IOException {
-        if (image != null && !image.isEmpty()) {
-            hotel.setImage(image.getBytes());
+    private byte[] extractImageBytes(MultipartFile image) throws IOException {
+        if (image == null || image.isEmpty()) {
+            return null;
         }
-    }
-
-    private List<Room> createRoomsForHotel(Hotel hotel, List<RoomRequestDTO> roomRequests) {
-        if (roomRequests == null) {
-            return List.of();
-        }
-
-        List<Room> rooms = new ArrayList<>();
-        long roomIdCounter = 100;
-
-        for (RoomRequestDTO roomRequest : roomRequests) {
-            if (roomRequest.getQuantity() <= 0) {
-                throw new IllegalArgumentException(ROOM_QUANTITY_INVALID);
-            }
-            for (int i = 0; i < roomRequest.getQuantity(); i++) {
-                Room room = roomService.createRoom(
-                        hotel,
-                        roomIdCounter++,
-                        roomRequest.getRoomType(),
-                        roomRequest.getPricePerNight(),
-                        roomRequest.getMaxOccupancy());
-                rooms.add(room);
-            }
-        }
-        return rooms;
+        return image.getBytes();
     }
 
     private ResponseEntity<CustomResponse<Map<String, Object>>> createdWithHotelId(String message, Long hotelId) {

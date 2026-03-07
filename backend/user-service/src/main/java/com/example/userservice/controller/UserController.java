@@ -1,6 +1,5 @@
 package com.example.userservice.controller;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -17,14 +16,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.userservice.dto.CompleteRegistrationRequestDTO;
 import com.example.userservice.dto.CustomResponse;
+import com.example.userservice.dto.InitiateRegistrationRequestDTO;
 import com.example.userservice.dto.ResetPasswordRequestDTO;
 import com.example.userservice.dto.UserLoginRequestDTO;
 import com.example.userservice.dto.UserRequestUpdateDto;
 import com.example.userservice.dto.UserResponseDTO;
+import com.example.userservice.dto.VerifyUserRequestDTO;
 import com.example.userservice.dto.VerificationResult;
 import com.example.userservice.entity.user.User;
-import com.example.userservice.entity.user.UserRole;
 import com.example.userservice.exception.InvalidUserException;
 import com.example.userservice.exception.ResourceNotFoundException;
 import com.example.userservice.service.UserService;
@@ -46,9 +47,9 @@ public class UserController {
     // ---------------- Initiate Registration ----------------
     @PostMapping("/initiate-registration")
     public ResponseEntity<CustomResponse<String>> initiateRegistration(
-            @RequestBody Map<String, String> body) {
+            @RequestBody InitiateRegistrationRequestDTO request) {
         try {
-            String email = body.get("email");
+            String email = request.getEmail();
             String token = userService.initiateRegistration(email);
             return ResponseEntity.ok(new CustomResponse<>(
                     "Verification email sent to " + email, token));
@@ -60,10 +61,9 @@ public class UserController {
 
     // ---------------- Verify ----------------
     @PostMapping("/verify")
-    public ResponseEntity<CustomResponse<VerificationResult>> verifyUser(@RequestBody Map<String, String> body) {
+    public ResponseEntity<CustomResponse<VerificationResult>> verifyUser(@RequestBody VerifyUserRequestDTO request) {
         try {
-            String token = body.get("token");
-            VerificationResult result = userService.verifyUser(token);
+            VerificationResult result = userService.verifyUser(request.getToken());
 
             return ResponseEntity.ok(new CustomResponse<>("Email verified successfully", result));
         } catch (InvalidUserException ex) {
@@ -75,24 +75,9 @@ public class UserController {
     // ---------------- Registration ----------------
     @PostMapping("/register")
     public ResponseEntity<CustomResponse<UserResponseDTO>> completeRegistration(
-            @RequestBody Map<String, String> body) {
+            @RequestBody CompleteRegistrationRequestDTO request) {
         try {
-            Long userId = Long.parseLong(body.getOrDefault("id", "0"));
-            String firstName = body.get("firstName");
-            String lastName = body.get("lastName");
-            String phone = body.get("phoneNumber");
-            String password = body.get("password");
-            String email = body.get("email");
-
-            // Safe role parsing with default
-            UserRole role;
-            try {
-                role = UserRole.valueOf(body.getOrDefault("role", "CUSTOMER"));
-            } catch (IllegalArgumentException | NullPointerException e) {
-                role = UserRole.CUSTOMER;
-            }
-
-            User completedUser = userService.completeRegistration(userId, firstName, lastName, phone, password, email, role);
+            User completedUser = userService.completeRegistration(request);
             UserResponseDTO dto = UserResponseDTO.fromEntity(completedUser);
 
             return ResponseEntity.status(HttpStatus.CREATED)
@@ -113,13 +98,13 @@ public class UserController {
     public ResponseEntity<CustomResponse<Map<String, Object>>> loginUser(
             @Valid @RequestBody UserLoginRequestDTO loginDto) {
         try {
-            String token = userService.loginUser(loginDto.getEmail(), loginDto.getPassword(), loginDto.getRole());
+            String token = userService.loginUser(loginDto.getEmail(), loginDto.getPassword());
             User user = userService.getUserByEmail(loginDto.getEmail());
             UserResponseDTO responseDTO = UserResponseDTO.fromEntity(user);
 
-            Map<String, Object> responseData = new HashMap<>();
-            responseData.put("token", token);
-            responseData.put("user", responseDTO);
+            Map<String, Object> responseData = Map.of(
+                    "token", token,
+                    "user", responseDTO);
 
             return ResponseEntity.ok(new CustomResponse<>("Login successful", responseData));
         } catch (InvalidUserException ex) {
@@ -168,15 +153,7 @@ public class UserController {
             @PathVariable Long id,
             @Valid @RequestBody UserRequestUpdateDto dto) {
         try {
-            User existingUser = userService.getUserById(id);
-            existingUser.setFirstName(dto.getFirstName());
-            existingUser.setLastName(dto.getLastName());
-            existingUser.setEmail(dto.getEmail());
-            existingUser.setPhoneNumber(dto.getPhoneNumber());
-            if (dto.getPassword() != null && !dto.getPassword().isBlank())
-                existingUser.setPassword(dto.getPassword());
-
-            User updatedUser = userService.updateUser(id, existingUser);
+            User updatedUser = userService.updateUser(id, dto);
             UserResponseDTO responseDTO = UserResponseDTO.fromEntity(updatedUser);
             return ResponseEntity.ok(new CustomResponse<>("User updated successfully", responseDTO));
         } catch (ResourceNotFoundException ex) {

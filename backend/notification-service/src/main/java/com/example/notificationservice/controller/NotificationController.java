@@ -5,37 +5,39 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import com.example.notificationservice.client.UserClient;
 import com.example.notificationservice.dto.NotificationRequestDTO;
+import com.example.notificationservice.dto.PromotionRequestDTO;
 import com.example.notificationservice.entity.Notification;
 import com.example.notificationservice.entity.NotificationType;
 import com.example.notificationservice.service.NotificationService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/notifications")
+@Validated
 public class NotificationController {
 
     private final NotificationService notificationService;
-    private final UserClient userClient;
 
-    public NotificationController(NotificationService notificationService, UserClient userClient) {
+    public NotificationController(NotificationService notificationService) {
         this.notificationService = notificationService;
-        this.userClient = userClient;
     }
 
     // Create a new notification for a single user
     @PostMapping
     public ResponseEntity<Notification> createNotification(
-            @RequestBody NotificationRequestDTO request) {
-
-        Notification notification = new Notification();
-        notification.setUserId(request.getUserId());
-        notification.setMessage(request.getMessage());
-        notification.setType(request.getType());
-
-        Notification saved = notificationService.createNotification(notification);
+            @Valid @RequestBody NotificationRequestDTO request) {
+        Notification saved = notificationService.createNotification(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(saved);
     }
 
@@ -73,39 +75,15 @@ public class NotificationController {
 
     @PutMapping("/user/{userId}/read")
     public ResponseEntity<Map<String, String>> markAllAsRead(@PathVariable Long userId) {
-        notificationService.markAllNotificationsAsRead(userId);
-        Map<String, String> response = Map.of("message", "All notifications marked as read");
+        int updatedCount = notificationService.markAllNotificationsAsRead(userId);
+        Map<String, String> response = Map.of("message", "Marked " + updatedCount + " notifications as read");
         return ResponseEntity.ok(response);
     }
 
     // Send promotion notifications to all users from User Service
     @PostMapping("/promotion")
-    public ResponseEntity<String> sendPromotionNotifications(@RequestBody PromotionMessage request) {
-        // Fetch all user IDs from User Service
-        List<Long> userIds = userClient.getAllUserIds();
-
-        // Send notification to each user
-        userIds.forEach(userId -> {
-            Notification notification = new Notification();
-            notification.setUserId(userId);
-            notification.setMessage(request.getMessage());
-            notification.setType(NotificationType.PROMOTION);
-            notificationService.createNotification(notification);
-        });
-
-        return ResponseEntity.ok("Promotion notifications sent successfully to " + userIds.size() + " users.");
-    }
-
-    // DTO for promotion message
-    public static class PromotionMessage {
-        private String message;
-
-        public String getMessage() {
-            return message;
-        }
-
-        public void setMessage(String message) {
-            this.message = message;
-        }
+    public ResponseEntity<String> sendPromotionNotifications(@Valid @RequestBody PromotionRequestDTO request) {
+        int count = notificationService.sendPromotionNotifications(request.getMessage());
+        return ResponseEntity.ok("Promotion notifications sent successfully to " + count + " users.");
     }
 }

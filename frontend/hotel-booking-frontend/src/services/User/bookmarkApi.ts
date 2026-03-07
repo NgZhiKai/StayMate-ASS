@@ -1,4 +1,5 @@
 import { toApiError } from "../_core/apiError";
+import { getDataOrDefault, getMessageOrThrow } from "../_core/response";
 import { userApiClient } from "./userApiClient";
 
 const BOOKMARK_BASE = "/bookmarks";
@@ -10,7 +11,9 @@ const bookmarkApi = {
   getBookmarkedHotelIds: async (userId: number): Promise<{ hotelIds: number[] }> => {
     try {
       const response = await userApiClient.get(`${BOOKMARK_BASE}/${userId}`);
-      const hotelIds = response.data ?? [];
+      const payload = response.data;
+      const rawHotelIds = getDataOrDefault<number[] | unknown>(payload, []);
+      const hotelIds = Array.isArray(rawHotelIds) ? rawHotelIds : [];
       return { hotelIds };
     } catch (error) {
       throw toApiError(error);
@@ -23,7 +26,7 @@ const bookmarkApi = {
   addBookmark: async (userId: number, hotelIds: number[]): Promise<{ message: string }> => {
     try {
       const response = await userApiClient.post(BOOKMARK_BASE, { userId, hotelIds });
-      return { message: response.data?.message ?? "Bookmark added successfully" };
+      return { message: getMessageOrThrow(response.data, "Bookmark added successfully") };
     } catch (error) {
       throw toApiError(error);
     }
@@ -35,7 +38,7 @@ const bookmarkApi = {
   removeBookmark: async (userId: number, hotelId: number): Promise<{ message: string }> => {
     try {
       const response = await userApiClient.delete(`${BOOKMARK_BASE}/${userId}/${hotelId}`);
-      return { message: response.data?.message ?? "Bookmark removed successfully" };
+      return { message: getMessageOrThrow(response.data, "Bookmark removed successfully") };
     } catch (error) {
       throw toApiError(error);
     }

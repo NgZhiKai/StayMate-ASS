@@ -2,22 +2,21 @@ package com.example.hotelservice.controller;
 
 import java.util.List;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.hotelservice.entity.room.Room;
-import com.example.hotelservice.exception.HotelNotFoundException;
-import com.example.hotelservice.exception.RoomNotFoundException;
 import com.example.hotelservice.service.RoomService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/rooms")
+@Validated
 @Tag(name = "Room Controller", description = "API for managing hotel rooms")
 public class RoomController {
 
@@ -42,12 +41,7 @@ public class RoomController {
     public ResponseEntity<Room> getRoomById(
             @PathVariable Long hotelId,
             @PathVariable Long roomId) {
-
-        try {
-            Room room = roomService.getRoomById(hotelId, roomId);
-            return ResponseEntity.ok(room);
-        } catch (RoomNotFoundException | HotelNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+        Room room = roomService.getRoomById(hotelId, roomId);
+        return ResponseEntity.ok(room);
     }
 }

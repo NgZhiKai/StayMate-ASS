@@ -1,143 +1,152 @@
+# StayMate Backend
 
-# StayMate - Backend Setup
+Spring Boot microservices backend for StayMate with:
+- API Gateway (`api-gateway`)
+- Service Discovery (Eureka) (`discovery-service`)
+- Domain services (`user`, `hotel`, `booking`, `payment`, `notification`, `email`)
 
-This is the backend part of the StayMate Hotel Booking System. It is built with **Java**, **Spring Boot**, and **MySQL**.
+## Architecture
 
-## Features
+Request flow:
+- Frontend -> API Gateway (`http://localhost:8080/api/...`)
+- API Gateway -> Services via Eureka (`lb://service-name`)
+- Service-to-service calls -> Eureka service names
 
-- User management (Customers, Admin, Hotel Owners)
-- Hotel and room management
-- Booking management (create, view, update, delete bookings)
-- Payment integration (CREDIT_CARD, PAYPAL, STRIPE)
-- Review system for hotels and rooms
-- Notifications for booking confirmations and payment success
+Services:
+- `discovery-service` (Eureka server): `8761`
+- `api-gateway`: `8080`
+- `user-service`: `8081`
+- `hotel-service`: `8082`
+- `notification-service`: `8083`
+- `booking-service`: `8084`
+- `email-service`: `8085`
+- `payment-service`: `8086`
 
-## Requirements
+## Prerequisites
 
-- **Java 17+**
-- **MySQL** (or compatible) database
-- **Maven 3.6+** for building and managing dependencies
+- Java 17+
+- Maven 3.9+
+- MySQL 8+
+- Windows cmd (for provided `.bat` scripts)
 
-## Setup
+## Local Development (dev profile)
 
-### 1. Clone the Repository
+1. Prepare MySQL schema and tables using:
+- `backend/mysql-ddl-microservices.sql`
 
-Clone the repository to your local machine using Git:
-
-```bash
-cd staymate/backend
+2. Run the DDL script in MySQL:
+```bat
+mysql -u root -p < mysql-ddl-microservices.sql
 ```
-### 2. Install Dependencies
 
-Make sure **Maven** is installed on your machine. You can download and install Maven from [here](https://maven.apache.org/download.cgi).
+3. If you are not running as a MySQL admin user:
+- Keep `CREATE USER` / `GRANT` lines commented in `mysql-ddl-microservices.sql`.
+- Ensure your existing MySQL user matches each service `application-dev.properties` credentials.
 
-Once Maven is installed, run the following command to install the dependencies:
+4. If you want to use the default dev credentials:
+- Uncomment `CREATE USER` / `GRANT` lines in `mysql-ddl-microservices.sql`.
+- Run the script with an admin account (for example `root`).
 
-```bash
+5. From `backend` directory, start all services:
+```bat
+run-all.bat
+```
+
+6. Eureka dashboard:
+- `http://localhost:8761`
+
+7. Gateway base URL:
+- `http://localhost:8080/api`
+
+Stop all services:
+```bat
+stop-all.bat
+```
+
+### Startup Scripts
+
+The backend includes helper scripts in `backend/`:
+- `run-all.bat`: starts `discovery-service`, `api-gateway`, and all domain services with `dev` profile.
+- `stop-all.bat`: kills processes bound to backend service ports (`8080-8086`, `8761`).
+
+## API Gateway Routes
+
+Current routes in `api-gateway`:
+- `/api/users/**` -> `user-service`
+- `/api/bookmarks/**` -> `user-service`
+- `/api/hotels/**` -> `hotel-service`
+- `/api/rooms/**` -> `hotel-service`
+- `/api/reviews/**` -> `hotel-service`
+- `/api/bookings/**` -> `booking-service`
+- `/api/payments/**` -> `payment-service`
+- `/api/notifications/**` -> `notification-service`
+- `/api/email/**` -> `email-service`
+
+Examples:
+- `GET http://localhost:8080/api/users`
+- `GET http://localhost:8080/api/hotels`
+- `GET http://localhost:8080/api/reviews/hotel/2`
+- `GET http://localhost:8080/api/bookmarks/1`
+
+## CORS
+
+- CORS is configured at API Gateway.
+- Service-level CORS configs were removed for gateway-only browser access.
+- Frontend should call only gateway endpoints (`/api/...`), not direct service ports.
+
+## Profiles and Environment
+
+Active profile:
+- `SPRING_PROFILES_ACTIVE=dev|prod`
+
+Common discovery setting:
+- `EUREKA_SERVER_URL` (example: `http://localhost:8761/eureka/`)
+
+Prod essentials:
+- `SERVER_PORT`
+- `DB_URL`, `DB_USERNAME`, `DB_PASSWORD` (for DB-backed services)
+- `MAIL_USERNAME`, `MAIL_PASSWORD` (email-service)
+- `FRONTEND_HOST_URL` (gateway CORS prod)
+
+Gateway rate-limit env vars:
+- `GATEWAY_RATE_LIMIT_ENABLED` (default `true`)
+- `GATEWAY_RATE_LIMIT_REPLENISH_TOKENS` (default `60`)
+- `GATEWAY_RATE_LIMIT_BURST_CAPACITY` (default `120`)
+- `GATEWAY_RATE_LIMIT_WINDOW_SECONDS` (default `60`)
+
+## Build and Test
+
+Build all modules:
+```bat
 mvn clean install "-Dspring.profiles.active=dev"
 ```
 
-### 3. Configure the Database
-
-Make sure you have a **MySQL** (or compatible) database running. You'll need to create a `application.properties` file in the `src/main/resources` directory with the following configuration:
-
-```properties
-db.url=jdbc:mysql://localhost:3306/staymatedb
-db.username=<username>
-db.password=<password>
-db.driver=com.mysql.cj.jdbc.Driver
-``` 
-
-Adjust the values based on your MySQL setup.
-
-
-### 4. Run the Application
-
-To run the application, use the following Maven command:
-```bash
-mvn spring-boot:run "-Dspring.profiles.active=dev"
+Compile specific modules:
+```bat
+mvn -pl api-gateway,user-service,hotel-service,booking-service,notification-service,payment-service,email-service,discovery-service -DskipTests compile
 ```
 
-This will start the application on the default port (**4200**). You can visit `http://localhost:4200` to access the application.
-
-If you want to change the port, update the `application.properties` file:
-```properties
-server.port=4200
-```
-### 5. Run the Application in Development Mode
-
--   The backend will be available at `http://localhost:4200` (or another port if specified in `application.properties`).
-## Database Schema
-
-The following tables are created for the application:
-
--   **User**: Stores user details (id, first name, last name, email, password, etc.)
-    
--   **Hotel**: Stores hotel details (id, name, address, latitude, longitude, etc.)
-    
--   **Room**: Stores room details (id, room type, price, status, etc.)
-    
--   **Booking**: Stores booking information (check-in/out dates, status, etc.)
-    
--   **Review**: Stores reviews for hotels and rooms (rating, comment, etc.)
-    
--   **Payment**: Stores payment information (method, amount, transaction date, etc.)
-    
--   **Notification**: Stores notifications for users (message, type, status, etc.)
-    
-
-## API Endpoints
-
-Below are some of the key endpoints exposed by the backend:
-
--   **POST /api/users/register**: Register a new user
-    
--   **POST /api/users/login**: Log in a user
-    
--   **GET /api/hotels**: Retrieve a list of hotels
-    
--   **POST /api/bookings**: Create a new booking
-    
--   **GET /api/bookings/{id}**: View booking details
-    
--   **PUT /api/bookings/{id}**: Update an existing booking
-    
--   **DELETE /api/bookings/{id}**: Cancel a booking
-    
--   **POST /api/payments**: Process a payment
-    
--   **POST /api/reviews**: Leave a review for a hotel or room
-    
-
-## Testing
-
-The application uses **JUnit** and **Mockito** for unit testing. To run the tests, use the following Maven command:
-```bash
+Run tests:
+```bat
 mvn test
 ```
 
-### Code Coverage with JaCoCo
+## Troubleshooting
 
-The project uses JaCoCo for code coverage reporting. To generate and view the coverage report:
+`404` on gateway endpoint:
+- Confirm route exists in `backend/api-gateway/src/main/resources/application.yml`.
+- Restart gateway after route changes.
 
-1. Run the tests with coverage:
-```bash
-mvn clean test jacoco:report
+`CORS blocked`:
+- Ensure frontend calls `http://localhost:8080/api/...`.
+- Confirm gateway CORS config and restart gateway.
+
+Service exits immediately:
+- Run service directly to see stacktrace:
+```bat
+mvn -pl <service-name> spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
-2. The coverage report will be generated in `target/site/jacoco/index.html`. You can open this file in your web browser using:
-```bash
-start target/site/jacoco/index.html
-```
-
-The report includes:
-- Overall coverage percentage
-- Line coverage
-- Branch coverage
-- Method coverage
-- Class coverage
-
-## Contributing
-
-Contributions are welcome! If you have suggestions or improvements, feel free to submit a pull request.
-
+Slow responses:
+- Wait until all services are registered in Eureka.
+- Check downstream service health and DB latency.

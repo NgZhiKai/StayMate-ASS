@@ -21,6 +21,8 @@
 		<license/>
 	</licenses>
 	<modules>
+		<module>discovery-service</module>
+		<module>api-gateway</module>
         <module>user-service</module>
 		<module>hotel-service</module>
 		<module>notification-service</module>

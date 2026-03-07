@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -24,6 +23,7 @@ import com.example.bookingservice.dto.BookingResponseDTO;
 import com.example.bookingservice.dto.UserBookingResponseDTO;
 import com.example.bookingservice.entity.Booking;
 import com.example.bookingservice.entity.BookingStatus;
+import com.example.bookingservice.exception.BookingNotFoundException;
 import com.example.bookingservice.repository.BookingRepository;
 
 @Service
@@ -90,8 +90,9 @@ public class BookingService {
     @Transactional
     public Booking updateBookingStatus(Long bookingId, BookingStatus status) {
         Booking booking = getBookingById(requireBookingId(bookingId));
-        if (booking == null)
-            throw new IllegalArgumentException("Booking not found");
+        if (status == null) {
+            throw new IllegalArgumentException("Booking status is required");
+        }
 
         booking.setStatus(status);
         Booking updated = bookingRepository.save(booking);
@@ -108,8 +109,6 @@ public class BookingService {
     @Transactional
     public Booking cancelBooking(Long bookingId) {
         Booking booking = getBookingById(requireBookingId(bookingId));
-        if (booking == null)
-            return null;
 
         booking.setStatus(BookingStatus.CANCELLED);
         Booking canceled = bookingRepository.save(booking);
@@ -119,8 +118,10 @@ public class BookingService {
 
     // ------------------- Read Operations -------------------
 
-    public @Nullable Booking getBookingById(Long id) {
-        return bookingRepository.findById(requireBookingId(id)).orElse(null);
+    public Booking getBookingById(Long id) {
+        Long safeBookingId = requireBookingId(id);
+        return bookingRepository.findById(safeBookingId)
+                .orElseThrow(() -> new BookingNotFoundException("Booking not found with ID: " + safeBookingId));
     }
 
     public List<BookingResponseDTO> getBookingsByHotel(Long hotelId) {
@@ -144,9 +145,7 @@ public class BookingService {
     // ------------------- Availability -------------------
 
     public boolean isRoomAvailable(Long hotelId, Long roomId, LocalDate checkIn, LocalDate checkOut) {
-        if (checkIn == null || checkOut == null || !checkOut.isAfter(checkIn)) {
-            throw new IllegalArgumentException("Invalid check-in/check-out dates");
-        }
+        validateDateRange(checkIn, checkOut, "Check-out must be after check-in");
         return bookingRepository.findOverlappingBookings(
                 requireHotelId(hotelId),
                 requireRoomId(roomId),
@@ -157,6 +156,7 @@ public class BookingService {
 
     public List<Map<String, Object>> getAvailableRoomsForHotel(Long hotelId, LocalDate checkIn, LocalDate checkOut) {
         Long safeHotelId = requireHotelId(hotelId);
+        validateDateRange(checkIn, checkOut, "Check-out must be after check-in");
 
         List<Booking> overlappingBookings = bookingRepository.findByHotelId(safeHotelId).stream()
                 .filter(b -> b.getStatus() != BookingStatus.CANCELLED
@@ -179,9 +179,7 @@ public class BookingService {
     // ------------------- Search / Query -------------------
 
     public List<Booking> getBookingsByDateRange(LocalDate startDate, LocalDate endDate) {
-        if (startDate == null || endDate == null || !endDate.isAfter(startDate)) {
-            return Collections.emptyList();
-        }
+        validateDateRange(startDate, endDate, "End date must be after start date");
         return bookingRepository.findBookingsByDateRange(startDate, endDate);
     }
 
@@ -240,6 +238,9 @@ public class BookingService {
     }
 
     private void validateBookingRequest(BookingRequestDTO dto) {
+        if (dto == null) {
+            throw new IllegalArgumentException("Booking payload is required");
+        }
 
         if (dto.getHotelId() == null)
             throw new IllegalArgumentException(HOTEL_ID_REQUIRED_MESSAGE);
@@ -258,6 +259,12 @@ public class BookingService {
 
         if (!dto.getCheckOutDate().isAfter(dto.getCheckInDate()))
             throw new IllegalArgumentException(CHECKOUT_AFTER_CHECKIN_MESSAGE);
+    }
+
+    private void validateDateRange(LocalDate startDate, LocalDate endDate, String errorMessage) {
+        if (startDate == null || endDate == null || !endDate.isAfter(startDate)) {
+            throw new IllegalArgumentException(errorMessage);
+        }
     }
 
     private @NonNull Long requireHotelId(@Nullable Long hotelId) {

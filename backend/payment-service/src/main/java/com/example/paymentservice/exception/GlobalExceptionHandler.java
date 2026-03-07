@@ -19,10 +19,25 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage());
     }
 
-    // Handle not found / runtime exceptions (404)
+    @ExceptionHandler(PaymentNotFoundException.class)
+    public ResponseEntity<CustomResponse<String>> handleNotFound(PaymentNotFoundException ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(BookingClientException.class)
+    public ResponseEntity<CustomResponse<String>> handleBookingClient(BookingClientException ex) {
+        return buildResponse(HttpStatus.BAD_GATEWAY, ex.getMessage());
+    }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<CustomResponse<String>> handleIllegalState(IllegalStateException ex) {
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    // Catch all other runtime exceptions (500)
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<CustomResponse<String>> handleRuntime(RuntimeException ex) {
-        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+        return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, ex.getMessage());
     }
 
     // Catch all other exceptions (500)

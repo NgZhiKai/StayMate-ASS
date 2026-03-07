@@ -1,0 +1,25 @@
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          "[/**]":
+            allowedOrigins:
+              - ${FRONTEND_HOST_URL}
+
+server:
+  port: ${SERVER_PORT:8080}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: ${EUREKA_SERVER_URL}
+  instance:
+    prefer-ip-address: true
+
+gateway:
+  rate-limit:
+    enabled: ${GATEWAY_RATE_LIMIT_ENABLED:true}
+    replenish-tokens: ${GATEWAY_RATE_LIMIT_REPLENISH_TOKENS:60}
+    burst-capacity: ${GATEWAY_RATE_LIMIT_BURST_CAPACITY:120}
+    window-seconds: ${GATEWAY_RATE_LIMIT_WINDOW_SECONDS:60}

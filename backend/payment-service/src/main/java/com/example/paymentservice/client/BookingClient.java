@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -18,8 +18,9 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
-@Service
+@Component
 public class BookingClient {
+    private static final String DISCOVERY_BASE_PREFIX = "http://";
     private static final String BOOKING_BY_ID_PATH = "/bookings/%d";
     private static final String BOOKINGS_BY_USER_PATH = "/bookings/user/%d";
     private static final String BOOKING_STATUS_PATH = "/bookings/%d/status";
@@ -30,14 +31,15 @@ public class BookingClient {
     };
 
     private final RestTemplate restTemplate;
-
-    @Value("${booking.service.url}")
-    private String bookingServiceUrl;
+    private final String bookingServiceName;
 
     private final ObjectMapper mapper;
 
-    public BookingClient(RestTemplate restTemplate) {
+    public BookingClient(
+            RestTemplate restTemplate,
+            @Value("${booking.service.name:booking-service}") String bookingServiceName) {
         this.restTemplate = restTemplate;
+        this.bookingServiceName = bookingServiceName;
         this.mapper = new ObjectMapper();
         this.mapper.registerModule(new JavaTimeModule()); // Support for LocalDate / LocalDateTime
     }
@@ -92,7 +94,7 @@ public class BookingClient {
      */
     public void updateBookingStatus(Long bookingId, String status) {
         try {
-            String url = UriComponentsBuilder.fromUriString(bookingServiceUrl)
+            String url = UriComponentsBuilder.fromUriString(resolveBaseUrl())
                     .path(String.format(BOOKING_STATUS_PATH, bookingId))
                     .queryParam(STATUS_PARAM, status)
                     .toUriString();
@@ -111,12 +113,16 @@ public class BookingClient {
 
     private String buildUrl(String pathTemplate, Object... args) {
         String resolvedPath = String.format(pathTemplate, args);
-        return UriComponentsBuilder.fromUriString(bookingServiceUrl)
+        return UriComponentsBuilder.fromUriString(resolveBaseUrl())
                 .path(resolvedPath)
                 .toUriString();
     }
 
     private JsonNode extractDataNode(String responseStr) throws Exception {
         return mapper.readTree(responseStr).path(DATA_KEY);
+    }
+
+    private String resolveBaseUrl() {
+        return DISCOVERY_BASE_PREFIX + bookingServiceName;
     }
 }

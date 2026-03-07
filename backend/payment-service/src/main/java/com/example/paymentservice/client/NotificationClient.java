@@ -13,6 +13,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 public class NotificationClient {
+    private static final String DISCOVERY_BASE_PREFIX = "http://";
     private static final String NOTIFICATIONS_PATH = "/notifications";
     private static final String PAYMENT_TYPE = "PAYMENT";
     private static final String USER_ID_KEY = "userId";
@@ -20,20 +21,20 @@ public class NotificationClient {
     private static final String TYPE_KEY = "type";
 
     private final RestTemplate restTemplate;
+    private final String notificationServiceName;
 
-    // Base URL of your Notification microservice
-    @Value("${notification.service.url}")
-    private String notificationServiceUrl;
-
-    public NotificationClient(RestTemplate restTemplate) {
+    public NotificationClient(
+            RestTemplate restTemplate,
+            @Value("${notification.service.name:notification-service}") String notificationServiceName) {
         this.restTemplate = restTemplate;
+        this.notificationServiceName = notificationServiceName;
     }
 
     public void sendNotification(Long userId, String message) {
         String safeMessage = Objects.requireNonNull(message, "Notification message must not be null");
         Long safeUserId = Objects.requireNonNull(userId, "User ID must not be null");
 
-        String url = UriComponentsBuilder.fromUriString(notificationServiceUrl)
+        String url = UriComponentsBuilder.fromUriString(resolveBaseUrl())
                 .path(NOTIFICATIONS_PATH)
                 .toUriString();
 
@@ -50,5 +51,9 @@ public class NotificationClient {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         return headers;
+    }
+
+    private String resolveBaseUrl() {
+        return DISCOVERY_BASE_PREFIX + notificationServiceName;
     }
 }

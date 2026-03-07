@@ -12,23 +12,24 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class NotificationClient {
+    private static final String DISCOVERY_BASE_PREFIX = "http://";
     private static final String BOOKING_NOTIFICATION_TYPE = "BOOKING";
 
     private final RestTemplate restTemplate;
+    private final String notificationServiceName;
+    private final String notificationsPath;
 
-    // Base URL of your Notification microservice
-    @Value("${notification.service.url}")
-    private String notificationServiceUrl;
-
-    @Value("${notification.service.notifications-path:/notifications}")
-    private String notificationsPath;
-
-    public NotificationClient(RestTemplate restTemplate) {
+    public NotificationClient(
+            RestTemplate restTemplate,
+            @Value("${notification.service.name:notification-service}") String notificationServiceName,
+            @Value("${notification.service.notifications-path:/notifications}") String notificationsPath) {
         this.restTemplate = restTemplate;
+        this.notificationServiceName = notificationServiceName;
+        this.notificationsPath = notificationsPath;
     }
 
     public void sendNotification(Long userId, String message) {
-        String url = ClientCallSupport.buildUrl(notificationServiceUrl, notificationsPath);
+        String url = ClientCallSupport.buildUrl(resolveBaseUrl(), notificationsPath);
         Map<String, Object> body = Map.of(
                 "userId", userId,
                 "message", message,
@@ -41,5 +42,9 @@ public class NotificationClient {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         return headers;
+    }
+
+    private String resolveBaseUrl() {
+        return DISCOVERY_BASE_PREFIX + notificationServiceName;
     }
 }

@@ -10,14 +10,17 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Component
 public class UserClient {
+    private static final String DISCOVERY_BASE_PREFIX = "http://";
     private static final String USERS_PATH = "/users";
 
     private final RestTemplate restTemplate;
-    private final String userServiceUrl;
+    private final String userServiceName;
 
-    public UserClient(RestTemplate restTemplate, @Value("${user.service.url}") String userServiceUrl) {
+    public UserClient(
+            RestTemplate restTemplate,
+            @Value("${user.service.name:user-service}") String userServiceName) {
         this.restTemplate = restTemplate;
-        this.userServiceUrl = userServiceUrl;
+        this.userServiceName = userServiceName;
     }
 
     public List<Long> getAllUserIds() {
@@ -27,9 +30,14 @@ public class UserClient {
     }
 
     private String buildUsersUrl() {
-        return UriComponentsBuilder.fromUriString(userServiceUrl)
+        String baseUrl = resolveBaseUrl();
+        return UriComponentsBuilder.fromUriString(baseUrl)
                 .path(USERS_PATH)
                 .toUriString();
+    }
+
+    private String resolveBaseUrl() {
+        return DISCOVERY_BASE_PREFIX + userServiceName;
     }
 
     private List<Long> extractUserIds(UsersResponse response) {

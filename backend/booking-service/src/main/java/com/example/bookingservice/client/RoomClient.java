@@ -13,22 +13,25 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class RoomClient {
+    private static final String DISCOVERY_BASE_PREFIX = "http://";
+
     private final RestTemplate restTemplate;
+    private final String roomServiceName;
+    private final String roomBookPath;
+    private final String roomByIdPath;
+    private final String roomsByHotelPath;
 
-    @Value("${room.service.url}") // e.g., http://localhost:8083
-    private String roomServiceUrl;
-
-    @Value("${room.service.book-path:/rooms/%d/%d/book?checkIn=%s&checkOut=%s}")
-    private String roomBookPath;
-
-    @Value("${room.service.room-by-id-path:/rooms/%d/%d}")
-    private String roomByIdPath;
-
-    @Value("${room.service.rooms-by-hotel-path:/rooms/hotel/%d}")
-    private String roomsByHotelPath;
-
-    public RoomClient(RestTemplate restTemplate) {
+    public RoomClient(
+            RestTemplate restTemplate,
+            @Value("${room.service.name:hotel-service}") String roomServiceName,
+            @Value("${room.service.book-path:/rooms/%d/%d/book?checkIn=%s&checkOut=%s}") String roomBookPath,
+            @Value("${room.service.room-by-id-path:/rooms/%d/%d}") String roomByIdPath,
+            @Value("${room.service.rooms-by-hotel-path:/rooms/hotel/%d}") String roomsByHotelPath) {
         this.restTemplate = restTemplate;
+        this.roomServiceName = roomServiceName;
+        this.roomBookPath = roomBookPath;
+        this.roomByIdPath = roomByIdPath;
+        this.roomsByHotelPath = roomsByHotelPath;
     }
 
     /**
@@ -37,7 +40,7 @@ public class RoomClient {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> bookRoom(Long hotelId, Long roomId, LocalDate checkIn, LocalDate checkOut) {
-        String url = ClientCallSupport.buildUrl(roomServiceUrl, roomBookPath, hotelId, roomId, checkIn, checkOut);
+        String url = ClientCallSupport.buildUrl(resolveBaseUrl(), roomBookPath, hotelId, roomId, checkIn, checkOut);
         return ClientCallSupport.exchangeForBody(
                 restTemplate,
                 url,
@@ -53,7 +56,7 @@ public class RoomClient {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> getRoomById(Long hotelId, Long roomId) {
-        String url = ClientCallSupport.buildUrl(roomServiceUrl, roomByIdPath, hotelId, roomId);
+        String url = ClientCallSupport.buildUrl(resolveBaseUrl(), roomByIdPath, hotelId, roomId);
         return ClientCallSupport.exchangeForBody(
                 restTemplate,
                 url,
@@ -69,7 +72,7 @@ public class RoomClient {
      */
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> getRoomsByHotelId(Long hotelId) {
-        String url = ClientCallSupport.buildUrl(roomServiceUrl, roomsByHotelPath, hotelId);
+        String url = ClientCallSupport.buildUrl(resolveBaseUrl(), roomsByHotelPath, hotelId);
         return ClientCallSupport.exchangeForBody(
                 restTemplate,
                 url,
@@ -77,5 +80,9 @@ public class RoomClient {
                 HttpEntity.EMPTY,
                 List.class,
                 Collections.emptyList());
+    }
+
+    private String resolveBaseUrl() {
+        return DISCOVERY_BASE_PREFIX + roomServiceName;
     }
 }

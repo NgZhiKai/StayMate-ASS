@@ -11,16 +11,19 @@ import org.springframework.web.client.RestTemplate;
 
 @Component
 public class UserClient {
+    private static final String DISCOVERY_BASE_PREFIX = "http://";
+
     private final RestTemplate restTemplate;
+    private final String userServiceName;
+    private final String userByIdPath;
 
-    @Value("${user.service.url}")
-    private String userServiceUrl;
-
-    @Value("${user.service.user-by-id-path:/users/%d}")
-    private String userByIdPath;
-
-    public UserClient(RestTemplate restTemplate) {
+    public UserClient(
+            RestTemplate restTemplate,
+            @Value("${user.service.name:user-service}") String userServiceName,
+            @Value("${user.service.user-by-id-path:/users/%d}") String userByIdPath) {
         this.restTemplate = restTemplate;
+        this.userServiceName = userServiceName;
+        this.userByIdPath = userByIdPath;
     }
 
     /**
@@ -29,7 +32,7 @@ public class UserClient {
      */
     @SuppressWarnings("unchecked")
     public Map<String, Object> getUserById(Long userId) {
-        String url = ClientCallSupport.buildUrl(userServiceUrl, userByIdPath, userId);
+        String url = ClientCallSupport.buildUrl(resolveBaseUrl(), userByIdPath, userId);
         Map<String, Object> response = ClientCallSupport.exchangeForBody(
                 restTemplate,
                 url,
@@ -44,5 +47,9 @@ public class UserClient {
             }
         }
         return Collections.emptyMap();
+    }
+
+    private String resolveBaseUrl() {
+        return DISCOVERY_BASE_PREFIX + userServiceName;
     }
 }

@@ -28,16 +28,7 @@ public class ReviewService {
 
     public Review createReview(ReviewDTO dto) {
         validateDTO(dto);
-
-        Review review = new Review();
-        review.setHotelId(dto.getHotelId());
-        review.setUserId(dto.getUserId());
-        review.setComment(dto.getComment());
-        review.setRating(dto.getRating());
-        review.setCreatedAt(
-                dto.getCreated() != null ? dto.getCreated() : LocalDateTime.now());
-
-        return reviewRepository.save(review);
+        return reviewRepository.save(buildReviewFromDTO(dto));
     }
 
     // ==================== UPDATE ====================
@@ -45,8 +36,7 @@ public class ReviewService {
     public Review updateReview(Long id, ReviewDTO dto) {
         validateDTO(dto);
 
-        Review existingReview = reviewRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(REVIEW_NOT_FOUND_PREFIX + id));
+        Review existingReview = getExistingReviewById(id);
 
         // Update only allowed fields
         existingReview.setComment(dto.getComment());
@@ -64,15 +54,13 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public Review getReviewById(Long id) {
-        return reviewRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(REVIEW_NOT_FOUND_PREFIX + id));
+        return getExistingReviewById(id);
     }
 
     // ==================== DELETE ====================
 
     public void deleteReview(Long id) {
-        Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException(REVIEW_NOT_FOUND_PREFIX + id));
+        Review review = getExistingReviewById(id);
         reviewRepository.delete(review);
     }
 
@@ -105,5 +93,21 @@ public class ReviewService {
         if (dto.getRating() < 1 || dto.getRating() > 5) {
             throw new IllegalArgumentException("Rating must be between 1 and 5.");
         }
+    }
+
+    private Review getExistingReviewById(Long id) {
+        Objects.requireNonNull(id, "Review ID must be provided.");
+        return reviewRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(REVIEW_NOT_FOUND_PREFIX + id));
+    }
+
+    private Review buildReviewFromDTO(ReviewDTO dto) {
+        Review review = new Review();
+        review.setHotelId(dto.getHotelId());
+        review.setUserId(dto.getUserId());
+        review.setComment(dto.getComment());
+        review.setRating(dto.getRating());
+        review.setCreatedAt(dto.getCreated() != null ? dto.getCreated() : LocalDateTime.now());
+        return review;
     }
 }

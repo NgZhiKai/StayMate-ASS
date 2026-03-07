@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,14 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.hotelservice.dto.custom.CustomResponse;
 import com.example.hotelservice.dto.review.ReviewDTO;
 import com.example.hotelservice.entity.review.Review;
-import com.example.hotelservice.exception.ResourceNotFoundException;
 import com.example.hotelservice.service.ReviewService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/reviews")
+@Validated
 public class ReviewController {
 
     private final ReviewService reviewService;
@@ -56,10 +58,6 @@ public class ReviewController {
 
         Review review = reviewService.getReviewById(id);
 
-        if (review == null) {
-            throw new ResourceNotFoundException("Review not found for id: " + id);
-        }
-
         return ResponseEntity.ok(
                 new CustomResponse<>("Review retrieved successfully",
                         ReviewDTO.convertToDTO(review)));
@@ -70,7 +68,7 @@ public class ReviewController {
     @Operation(summary = "Create review")
     @PostMapping
     public ResponseEntity<CustomResponse<ReviewDTO>> createReview(
-            @RequestBody ReviewDTO reviewDTO) {
+            @Valid @RequestBody ReviewDTO reviewDTO) {
 
         Review savedReview = reviewService.createReview(reviewDTO);
 
@@ -85,7 +83,7 @@ public class ReviewController {
     @PutMapping("/{id}")
     public ResponseEntity<CustomResponse<ReviewDTO>> updateReview(
             @PathVariable Long id,
-            @RequestBody ReviewDTO reviewDTO) {
+            @Valid @RequestBody ReviewDTO reviewDTO) {
 
         Review updatedReview = reviewService.updateReview(id, reviewDTO);
 

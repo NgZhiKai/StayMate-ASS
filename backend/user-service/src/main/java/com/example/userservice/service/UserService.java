@@ -5,12 +5,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.userservice.client.EmailClient;
+import com.example.userservice.dto.CompleteRegistrationRequestDTO;
 import com.example.userservice.dto.EmailRequestDTO;
+import com.example.userservice.dto.UserRequestUpdateDto;
 import com.example.userservice.dto.VerificationResult;
 import com.example.userservice.entity.user.User;
 import com.example.userservice.entity.user.UserRole;
@@ -27,7 +28,7 @@ public class UserService {
 
     // ---------------- Constructor Injection ----------------
     public UserService(UserRepository userRepository,
-            @Value("${frontend.host.url}") String baseUrl,
+            @Value("${app.base-url:http://localhost:5173}") String baseUrl,
             EmailClient emailClient) {
         this.userRepository = userRepository;
         this.baseUrl = baseUrl;
@@ -51,27 +52,27 @@ public class UserService {
         }
 
         String token = generateVerificationToken(user);
-        String verificationLink = baseUrl + "/verify?token=" + token;
-
-        // Send email with token
-        EmailRequestDTO emailRequest = new EmailRequestDTO(email, token, "verification", verificationLink);
-        emailClient.sendEmail(emailRequest);
+        sendEmail(email, token, "verification", "/verify?token=");
 
         return token;
     }
 
-    public User completeRegistration(Long userId, String firstName, String lastName, String phone, String password,
-            String email, UserRole role) {
+    public User completeRegistration(CompleteRegistrationRequestDTO request) {
+        if (request == null) {
+            throw new InvalidUserException("Registration payload cannot be null.");
+        }
+        Long userId = request.getId() != null ? request.getId() : 0L;
+        UserRole role = parseRoleOrDefault(request.getRole(), UserRole.CUSTOMER);
 
         User user;
 
         if (userId == 0) {
             user = new User();
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setPhoneNumber(phone);
-            user.setPassword(password);
-            user.setEmail(email);
+            user.setFirstName(request.getFirstName());
+            user.setLastName(request.getLastName());
+            user.setPhoneNumber(request.getPhoneNumber());
+            user.setPassword(request.getPassword());
+            user.setEmail(request.getEmail());
             user.setVerified(true);
             user.setRole(role != null ? role : UserRole.CUSTOMER);
 
@@ -85,10 +86,10 @@ public class UserService {
                 throw new InvalidUserException("Email not verified yet.");
             }
 
-            user.setFirstName(firstName);
-            user.setLastName(lastName);
-            user.setPhoneNumber(phone);
-            user.setPassword(password);
+            user.setFirstName(request.getFirstName());
+            user.setLastName(request.getLastName());
+            user.setPhoneNumber(request.getPhoneNumber());
+            user.setPassword(request.getPassword());
 
             // Keep existing role if present, or use provided role
             if (user.getRole() == null) {
@@ -114,11 +115,7 @@ public class UserService {
         User savedUser = userRepository.save(user);
 
         String token = generateVerificationToken(savedUser);
-        String verificationLink = baseUrl + "/verify?token=" + token;
-
-        // Send verification email via EmailClient
-        EmailRequestDTO emailRequest = new EmailRequestDTO(user.getEmail(), token, "verification", verificationLink);
-        emailClient.sendEmail(emailRequest);
+        sendEmail(user.getEmail(), token, "verification", "/verify?token=");
 
         return savedUser;
     }
@@ -150,13 +147,16 @@ public class UserService {
 
     // ---------------- Update User ----------------
     @Transactional
-    public User updateUser(Long id, User updatedUser) {
+    public User updateUser(Long id, UserRequestUpdateDto updatedUser) {
         User existingUser = getUserById(id);
 
         existingUser.setFirstName(updatedUser.getFirstName());
         existingUser.setLastName(updatedUser.getLastName());
+        existingUser.setEmail(updatedUser.getEmail());
         existingUser.setPhoneNumber(updatedUser.getPhoneNumber());
-        existingUser.setRole(updatedUser.getRole());
+        if (updatedUser.getRole() != null) {
+            existingUser.setRole(updatedUser.getRole());
+        }
         if (updatedUser.getPassword() != null && !updatedUser.getPassword().isBlank()) {
             existingUser.setPassword(updatedUser.getPassword());
         }
@@ -203,27 +203,21 @@ public class UserService {
     }
 
     // ---------------- Login ----------------
-    public String loginUser(String email, String password, String role) {
+    public String loginUser(String email, String password) {
         User user = getUserByEmail(email);
         if (!user.checkPassword(password))
             throw new InvalidUserException("Invalid email or password.");
         if (!user.isVerified())
             throw new InvalidUserException("Email not verified.");
 
-        return user.getVerificationToken();
+        return ensureLoginToken(user);
     }
 
     public void sendPasswordReset(String email) {
         User user = getUserByEmail(email);
 
         String resetToken = generateVerificationToken(user);
-        String verificationLink = baseUrl + "/reset?token=" + resetToken;
-
-        user.setVerificationToken(resetToken);
-        userRepository.save(user);
-
-        EmailRequestDTO emailRequest = new EmailRequestDTO(user.getEmail(), resetToken, "reset", verificationLink);
-        emailClient.sendEmail(emailRequest);
+        sendEmail(user.getEmail(), resetToken, "reset", "/reset?token=");
     }
 
     public void resetPassword(String token, String newPassword) {
@@ -234,6 +228,35 @@ public class UserService {
 
         user.setPassword(newPassword);
         userRepository.save(user);
+    }
+
+    private UserRole parseRoleOrDefault(String roleValue, UserRole defaultRole) {
+        if (roleValue == null || roleValue.isBlank()) {
+            return defaultRole;
+        }
+        try {
+            return UserRole.valueOf(roleValue.trim().toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            return defaultRole;
+        }
+    }
+
+    private void sendEmail(String email, String token, String type, String pathPrefix) {
+        String verificationLink = baseUrl + pathPrefix + token;
+        EmailRequestDTO emailRequest = new EmailRequestDTO(email, token, type, verificationLink);
+        emailClient.sendEmail(emailRequest);
+    }
+
+    private String ensureLoginToken(User user) {
+        String existingToken = user.getVerificationToken();
+        if (existingToken != null && !existingToken.isBlank()) {
+            return existingToken;
+        }
+
+        String token = UUID.randomUUID().toString();
+        user.setVerificationToken(token);
+        userRepository.save(user);
+        return token;
     }
 
 }

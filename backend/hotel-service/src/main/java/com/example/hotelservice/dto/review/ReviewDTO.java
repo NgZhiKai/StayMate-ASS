@@ -3,12 +3,20 @@ package com.example.hotelservice.dto.review;
 import java.time.LocalDateTime;
 import com.example.hotelservice.entity.review.Review;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
+
 public class ReviewDTO {
 
+    @NotNull(message = "Hotel ID must be provided.")
     private Long hotelId;
+    @NotNull(message = "User ID must be provided.")
     private Long userId;
     private String comment;
     private LocalDateTime created;
+    @Min(value = 1, message = "Rating must be between 1 and 5.")
+    @Max(value = 5, message = "Rating must be between 1 and 5.")
     private int rating;
 
     public ReviewDTO() {

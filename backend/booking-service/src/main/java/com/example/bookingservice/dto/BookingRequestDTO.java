@@ -4,19 +4,22 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
 public class BookingRequestDTO {
 
     @NotNull(message = "User ID is required")
+    @Positive(message = "User ID must be a positive number")
     private Long userId;
 
     @NotNull(message = "Hotel ID is required")
+    @Positive(message = "Hotel ID must be a positive number")
     private Long hotelId;
 
-    @NotNull(message = "Room ID is required")
-    private List<Long> roomIds;
+    @NotEmpty(message = "At least one room must be selected")
+    private List<@NotNull(message = "Room ID is required") @Positive(message = "Room ID must be a positive number") Long> roomIds;
 
     @NotNull(message = "Check-in date is required")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")

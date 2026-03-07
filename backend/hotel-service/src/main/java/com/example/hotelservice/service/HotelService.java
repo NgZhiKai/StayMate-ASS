@@ -7,9 +7,11 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.springframework.lang.NonNull;
+import org.springframework.util.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.hotelservice.dto.hotel.HotelRequestDTO;
 import com.example.hotelservice.dto.hotel.HotelSearchDTO;
 import com.example.hotelservice.entity.hotel.Hotel;
 import com.example.hotelservice.entity.review.Review;
@@ -26,6 +28,7 @@ public class HotelService {
     private static final String NAME_NULL_MESSAGE = "Name must not be null";
     private static final String LATITUDE_NULL_MESSAGE = "Latitude must not be null";
     private static final String LONGITUDE_NULL_MESSAGE = "Longitude must not be null";
+    private static final String HOTEL_NAME_REQUIRED = "Hotel name is required";
 
     private final HotelRepository hotelRepository;
     private final ImageService imageService;
@@ -72,6 +75,36 @@ public class HotelService {
     }
 
     @Transactional
+    public Hotel createHotel(HotelRequestDTO request, byte[] imageBytes) {
+        validateHotelRequest(request);
+
+        Hotel hotel = new Hotel();
+        applyHotelDetails(hotel, request);
+        if (imageBytes != null) {
+            hotel.setImage(imageBytes);
+        }
+
+        Hotel savedHotel = saveHotel(hotel);
+        List<Room> rooms = roomService.createRoomsForHotel(savedHotel, request.getRooms());
+        savedHotel.setRooms(rooms);
+        return savedHotel;
+    }
+
+    @Transactional
+    public Hotel updateHotel(Long id, HotelRequestDTO request, byte[] imageBytes) {
+        Objects.requireNonNull(id, HOTEL_ID_NULL_MESSAGE);
+        validateHotelRequest(request);
+
+        Hotel existingHotel = getHotelEntityById(id);
+        applyHotelDetails(existingHotel, request);
+        if (imageBytes != null) {
+            existingHotel.setImage(imageBytes);
+        }
+
+        return saveHotel(existingHotel);
+    }
+
+    @Transactional
     public void deleteHotel(@NonNull Long id) {
         Objects.requireNonNull(id, HOTEL_ID_NULL_MESSAGE);
 
@@ -84,7 +117,10 @@ public class HotelService {
 
     public List<HotelSearchDTO> findHotelsByName(@NonNull String name) {
         Objects.requireNonNull(name, NAME_NULL_MESSAGE);
-        List<Hotel> hotels = hotelRepository.findByNameContaining(name);
+        if (!StringUtils.hasText(name)) {
+            throw new IllegalArgumentException("Search query cannot be empty");
+        }
+        List<Hotel> hotels = hotelRepository.findByNameContaining(name.trim());
         return hotels.stream().map(this::toHotelSearchDTO).toList();
     }
 
@@ -173,5 +209,27 @@ public class HotelService {
         double avgRating = reviews.stream().mapToInt(Review::getRating).average().orElse(0);
 
         return new HotelSearchDTO(hotel, avgRating, minPrice, maxPrice);
+    }
+
+    private void validateHotelRequest(HotelRequestDTO request) {
+        if (request == null) {
+            throw new IllegalArgumentException("Hotel payload must not be null");
+        }
+        if (!StringUtils.hasText(request.getName())) {
+            throw new IllegalArgumentException(HOTEL_NAME_REQUIRED);
+        }
+    }
+
+    private void applyHotelDetails(Hotel hotel, HotelRequestDTO dto) {
+        hotel.setName(dto.getName());
+        hotel.setAddress(dto.getAddress());
+        hotel.setDescription(dto.getDescription());
+        hotel.setLatitude(dto.getLatitude());
+        hotel.setLongitude(dto.getLongitude());
+        hotel.setContact(dto.getContact());
+        hotel.setCheckIn(dto.getCheckIn());
+        hotel.setCheckOut(dto.getCheckOut());
+        hotel.setCity(dto.getCity());
+        hotel.setCountry(dto.getCountry());
     }
 }

@@ -7,7 +7,6 @@ const LoginPage: React.FC = () => {
   const handlers = useLoginHandlers({
     email: "",
     password: "",
-    role: "customer",
   } as LoginData);
 
   return <LoginPageLayout {...handlers} />;

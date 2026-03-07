@@ -1,12 +1,13 @@
 package com.example.paymentservice.service;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.paymentservice.client.BookingClient;
 import com.example.paymentservice.client.NotificationClient;
@@ -15,6 +16,7 @@ import com.example.paymentservice.dto.booking.UserBookingDTO;
 import com.example.paymentservice.entity.Payment;
 import com.example.paymentservice.entity.PaymentMethod;
 import com.example.paymentservice.entity.PaymentStatus;
+import com.example.paymentservice.exception.PaymentNotFoundException;
 import com.example.paymentservice.repository.PaymentRepository;
 import com.example.paymentservice.strategy.CreditCardPaymentStrategy;
 import com.example.paymentservice.strategy.PaymentContext;
@@ -42,20 +44,24 @@ public class PaymentService {
     /**
      * Creates and processes a payment.
      */
+    @Transactional
     public Payment createAndProcessPayment(Long bookingId, PaymentMethod paymentMethod, double amount) {
+        validateBookingId(bookingId);
+        validatePaymentMethod(paymentMethod);
         validateAmount(amount);
 
         BookingDTO booking = fetchBooking(bookingId);
-
-        validatePaymentAmount(booking, amount);
+        Double totalAmount = requireTotalAmount(booking);
+        validatePaymentAmount(booking.getId(), totalAmount, amount);
 
         Payment payment = createPayment(booking, paymentMethod, amount);
+        Payment processedPayment = processPaymentInternal(payment, paymentMethod);
 
-        processPayment(payment.getId(), paymentMethod);
+        if (processedPayment.getStatus() == PaymentStatus.SUCCESS) {
+            updateBookingIfFullyPaid(booking.getId(), totalAmount);
+        }
 
-        updateBookingIfFullyPaid(booking, amount);
-
-        return getPaymentById(payment.getId());
+        return processedPayment;
     }
 
     /**
@@ -63,7 +69,11 @@ public class PaymentService {
      */
     public void processPayment(Long paymentId, PaymentMethod paymentMethod) {
         Payment payment = getPaymentById(paymentId);
+        validatePaymentMethod(paymentMethod);
+        processPaymentInternal(payment, paymentMethod);
+    }
 
+    private Payment processPaymentInternal(Payment payment, PaymentMethod paymentMethod) {
         if (payment.getStatus() == PaymentStatus.SUCCESS) {
             throw new IllegalStateException("Payment has already been successfully processed.");
         }
@@ -73,11 +83,12 @@ public class PaymentService {
 
         boolean success = context.executePayment(payment.getAmount());
         payment.setStatus(success ? PaymentStatus.SUCCESS : PaymentStatus.FAILED);
-        paymentRepository.save(payment);
+        Payment savedPayment = paymentRepository.save(payment);
 
-        logger.info("Payment {} processed with status: {}", paymentId, payment.getStatus());
+        logger.info("Payment {} processed with status: {}", payment.getId(), payment.getStatus());
 
-        sendNotification(payment);
+        sendNotification(savedPayment);
+        return savedPayment;
     }
 
     // -------------------- Read Methods --------------------
@@ -86,7 +97,7 @@ public class PaymentService {
         if (id == null)
             throw new IllegalArgumentException("Payment ID must not be null.");
         return paymentRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Payment not found with ID: " + id));
+                .orElseThrow(() -> new PaymentNotFoundException("Payment not found with ID: " + id));
     }
 
     public List<Payment> getPaymentsByBookingId(Long bookingId) {
@@ -99,11 +110,11 @@ public class PaymentService {
         if (userId == null)
             throw new IllegalArgumentException("User ID must not be null.");
         List<UserBookingDTO> bookings = bookingClient.getBookingsByUserId(userId);
-        List<Payment> payments = new ArrayList<>();
-        for (UserBookingDTO booking : bookings) {
-            payments.addAll(paymentRepository.findByBookingId(booking.getBookingId()));
-        }
-        return payments;
+        return bookings.stream()
+                .map(UserBookingDTO::getBookingId)
+                .filter(Objects::nonNull)
+                .flatMap(bookingId -> paymentRepository.findByBookingId(bookingId).stream())
+                .toList();
     }
 
     public double getTotalPaidAmount(Long bookingId) {
@@ -123,16 +134,11 @@ public class PaymentService {
 
     private BookingDTO fetchBooking(Long bookingId) {
         return bookingClient.getBookingById(bookingId)
-                .orElseThrow(() -> new RuntimeException("Booking not found with ID: " + bookingId));
+                .orElseThrow(() -> new PaymentNotFoundException("Booking not found with ID: " + bookingId));
     }
 
-    private void validatePaymentAmount(BookingDTO booking, double amount) {
-        Double totalAmount = booking.getTotalAmount();
-        if (totalAmount == null) {
-            throw new IllegalStateException("Booking total amount is missing for booking ID: " + booking.getId());
-        }
-
-        double remaining = totalAmount - getTotalPaidAmount(booking.getId());
+    private void validatePaymentAmount(Long bookingId, double totalAmount, double amount) {
+        double remaining = totalAmount - getTotalPaidAmount(bookingId);
         if (amount > remaining) {
             throw new IllegalArgumentException("Payment exceeds remaining balance. Remaining amount: " + remaining);
         }
@@ -152,14 +158,11 @@ public class PaymentService {
         return payment;
     }
 
-    private void updateBookingIfFullyPaid(BookingDTO booking, double amount) {
-        Double totalAmount = booking.getTotalAmount();
-        if (totalAmount == null) return;
-
-        double updatedTotalPaid = getTotalPaidAmount(booking.getId()) + amount;
+    private void updateBookingIfFullyPaid(Long bookingId, double totalAmount) {
+        double updatedTotalPaid = getTotalPaidAmount(bookingId);
         if (updatedTotalPaid >= totalAmount) {
-            bookingClient.updateBookingStatus(booking.getId(), "CONFIRMED");
-            logger.info("Booking {} fully paid. Status update requested via BookingClient.", booking.getId());
+            bookingClient.updateBookingStatus(bookingId, "CONFIRMED");
+            logger.info("Booking {} fully paid. Status update requested via BookingClient.", bookingId);
         }
     }
 
@@ -178,5 +181,25 @@ public class PaymentService {
             case STRIPE -> new StripePaymentStrategy();
             default -> throw new IllegalArgumentException("Unsupported payment method: " + method);
         };
+    }
+
+    private void validateBookingId(Long bookingId) {
+        if (bookingId == null || bookingId <= 0) {
+            throw new IllegalArgumentException("Booking ID must be a positive number.");
+        }
+    }
+
+    private void validatePaymentMethod(PaymentMethod paymentMethod) {
+        if (paymentMethod == null) {
+            throw new IllegalArgumentException("Payment method must not be null.");
+        }
+    }
+
+    private Double requireTotalAmount(BookingDTO booking) {
+        Double totalAmount = booking.getTotalAmount();
+        if (totalAmount == null) {
+            throw new IllegalStateException("Booking total amount is missing for booking ID: " + booking.getId());
+        }
+        return totalAmount;
     }
 }
