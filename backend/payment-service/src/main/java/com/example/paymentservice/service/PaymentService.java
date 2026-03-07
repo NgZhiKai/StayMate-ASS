@@ -175,12 +175,16 @@ public class PaymentService {
     }
 
     private PaymentStrategy getStrategy(PaymentMethod method) {
-        return switch (method) {
-            case CREDIT_CARD -> new CreditCardPaymentStrategy();
-            case PAYPAL -> new PaypalPaymentStrategy();
-            case STRIPE -> new StripePaymentStrategy();
-            default -> throw new IllegalArgumentException("Unsupported payment method: " + method);
-        };
+        if (method == PaymentMethod.CREDIT_CARD) {
+            return new CreditCardPaymentStrategy();
+        }
+        if (method == PaymentMethod.PAYPAL) {
+            return new PaypalPaymentStrategy();
+        }
+        if (method == PaymentMethod.STRIPE) {
+            return new StripePaymentStrategy();
+        }
+        throw new IllegalArgumentException("Unsupported payment method: " + method);
     }
 
     private void validateBookingId(Long bookingId) {

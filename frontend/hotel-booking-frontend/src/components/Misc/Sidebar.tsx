@@ -47,10 +47,10 @@ const Sidebar: React.FC<{ isOpen: boolean }> = ({ isOpen }) => {
 
   return (
     <aside
-      className={`fixed top-16 left-0 h-[calc(100vh-4rem)] w-64 select-none
-        text-white p-6 shadow-2xl rounded-tr-3xl rounded-br-3xl
+      className={`fixed top-16 left-0 h-[calc(100vh-4rem)] w-72 select-none scrollbar-none
+        text-white p-6 shadow-2xl rounded-tr-3xl rounded-br-3xl overflow-y-auto
         z-40
-        ${isOpen ? "translate-x-0" : "-translate-x-64"}`}
+        ${isOpen ? "translate-x-0" : "-translate-x-72"}`}
       style={{
         background: "linear-gradient(to bottom, #770265, #9b30ff, #ff5ec4)",
         backgroundSize: "200% 200%",
@@ -59,7 +59,7 @@ const Sidebar: React.FC<{ isOpen: boolean }> = ({ isOpen }) => {
       }}
     >
       <nav
-        className="flex flex-col space-y-6"
+        className="flex flex-col space-y-6 pb-4"
         onMouseEnter={() => setIsHoveringNav(true)}
         onMouseLeave={() => setIsHoveringNav(false)}
       >
@@ -75,14 +75,14 @@ const Sidebar: React.FC<{ isOpen: boolean }> = ({ isOpen }) => {
                   <Link
                     key={item.path}
                     to={item.path}
-                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 min-h-12
                       ${isActive
                         ? "bg-white/20 backdrop-blur shadow-lg"
-                        : "hover:bg-white/10 hover:shadow-md hover:scale-[1.02]"}`
+                        : "hover:bg-white/10 hover:shadow-md hover:scale-[1.02]"}` 
                     }
                   >
-                    {item.icon}
-                    {item.label}
+                    <span className="shrink-0">{item.icon}</span>
+                    <span className="truncate" title={item.label}>{item.label}</span>
                   </Link>
                 );
               })}

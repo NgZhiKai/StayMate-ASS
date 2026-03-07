@@ -14,7 +14,7 @@ const MainLayout: React.FC = () => {
       <Sidebar isOpen={isOpen} />
 
       {/* Main content */}
-      <div className={`flex-1 transition-[margin] duration-300 ease-out ${isOpen ? "md:ml-64" : "md:ml-0"}`}>
+      <div className={`flex-1 transition-[margin] duration-300 ease-out ${isOpen ? "md:ml-72" : "md:ml-0"}`}>
         {/* Header */}
         <Header toggleSidebar={toggleSidebar} isSidebarOpen={isOpen} />
 
