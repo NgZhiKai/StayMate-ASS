@@ -1,19 +1,85 @@
-name: Deploy ECS Services (Force New Deployment)
+name: Build, Push, and Deploy ECS Services
 
 on:
-  workflow_run:
-    workflows: ["Build and Push Microservices to ECR"]
-    types:
-      - completed
+  push:
+    branches:
+      - main
+      - dev
+      - "feature/**"
+    paths:
+      - "backend/**"
+      - ".github/workflows/deploy-ecs.yml"
   workflow_dispatch:
 
 env:
   AWS_REGION: ap-southeast-1
   ECS_CLUSTER: staymate-cluster
+  ECR_REPO_PREFIX: staymate
 
 jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          - api-gateway
+          - booking-service
+          - discovery-service
+          - email-service
+          - hotel-service
+          - notification-service
+          - payment-service
+          - user-service
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::241533158848:role/GitHubActionsECRPushRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build and push image
+        env:
+          SERVICE: ${{ matrix.service }}
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        working-directory: backend
+        shell: bash
+        run: |
+          IMAGE_TAG=${GITHUB_SHA}
+          IMAGE_NAME=${ECR_REPO_PREFIX}-${SERVICE}
+          docker build \
+            -f Dockerfile.microservice \
+            --build-arg SERVICE=${SERVICE} \
+            -t ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} \
+            -t ${REGISTRY}/${IMAGE_NAME}:latest \
+            .
+          docker push ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+          docker push ${REGISTRY}/${IMAGE_NAME}:latest
+
+      - name: Verify image exists in ECR
+        env:
+          SERVICE: ${{ matrix.service }}
+        run: |
+          IMAGE_NAME=${ECR_REPO_PREFIX}-${SERVICE}
+          aws ecr describe-images \
+            --repository-name ${IMAGE_NAME} \
+            --image-ids imageTag=${GITHUB_SHA} \
+            --region ${AWS_REGION}
+
   deploy:
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    needs: build-and-push
     runs-on: ubuntu-latest
     permissions:
       id-token: write
