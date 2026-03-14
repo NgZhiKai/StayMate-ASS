@@ -13,7 +13,7 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: ${EUREKA_SERVER_URL}
+      defaultZone: ${EUREKA_SERVER_URL:http://discovery-service.staymate.local:8761/eureka/}
   instance:
     prefer-ip-address: true
 
