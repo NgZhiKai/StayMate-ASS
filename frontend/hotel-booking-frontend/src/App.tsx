@@ -35,7 +35,7 @@ import ManageUsersPage from "./Pages/User/ManageUsersPage";
 import UserAccountSettings from "./Pages/User/UserAccountSettings";
 
 const App: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(() => {
+  const [isOpen] = useState(() => {
     const saved = localStorage.getItem("sidebarOpen");
     return saved !== null ? JSON.parse(saved) : true;
   });
