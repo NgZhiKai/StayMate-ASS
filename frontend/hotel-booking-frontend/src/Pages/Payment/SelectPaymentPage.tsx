@@ -1,8 +1,8 @@
 import React from "react";
-import mastercard from "../../assets/logos/mastercard.png";
-import paypal from "../../assets/logos/paypal.png";
-import stripe from "../../assets/logos/stripe.png";
-import visa from "../../assets/logos/visa.png";
+import mastercard from "../../assets/logos/Mastercard.png";
+import paypal from "../../assets/logos/PayPal.png";
+import stripe from "../../assets/logos/Stripe.png";
+import visa from "../../assets/logos/Visa.png";
 import { PageAction, PageHeader } from "../../components/Layout";
 import { PaymentSelection } from "../../components/Payment";
 import { useSelectPayment } from "../../hooks";
