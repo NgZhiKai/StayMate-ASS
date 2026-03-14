@@ -1,0 +1,47 @@
+name: Deploy ECS Services (Force New Deployment)
+
+on:
+  workflow_run:
+    workflows: ["Build and Push Microservices to ECR"]
+    types:
+      - completed
+
+env:
+  AWS_REGION: ap-southeast-1
+  ECS_CLUSTER: staymate-cluster
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        service:
+          - api-gateway-service-k55j0c3f
+          - booking-service-service-pvvl6zq0
+          - discovery-service-service-psyueg59
+          - email-service-service-as4sc4sw
+          - hotel-service-service-n0bnid8x
+          - notification-service-service-8eiw62wr
+          - payment-service-service-r47pdyzu
+          - user-service-service-cyseqmk6
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::241533158848:role/GitHubActionsECRPushRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Force new deployment
+        run: |
+          aws ecs update-service \
+            --cluster ${ECS_CLUSTER} \
+            --service ${{ matrix.service }} \
+            --force-new-deployment \
+            --region ${AWS_REGION}

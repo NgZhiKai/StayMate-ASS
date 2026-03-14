@@ -62,8 +62,10 @@ jobs:
             -f Dockerfile.microservice \
             --build-arg SERVICE=${SERVICE} \
             -t ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} \
+            -t ${REGISTRY}/${IMAGE_NAME}:latest \
             .
           docker push ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
+          docker push ${REGISTRY}/${IMAGE_NAME}:latest
 
       - name: Verify image exists in ECR
         env:
