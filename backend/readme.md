@@ -22,6 +22,11 @@ Services:
 - `email-service`: `8085`
 - `payment-service`: `8086`
 
+## Legacy Monolith Code
+
+- The legacy monolith folder `backend/src` has been removed.
+- This backend now runs only as a Maven multi-module microservices project.
+
 ## Prerequisites
 
 - Java 17+
@@ -130,6 +135,18 @@ Run tests:
 ```bat
 mvn test
 ```
+
+## Docker Build (Per Service)
+
+From `backend/`, build a specific service image with:
+
+```bat
+docker build -t staymate/<service-name>:local --build-arg SERVICE=<service-folder> -f Dockerfile.microservice .
+```
+
+Examples:
+- `SERVICE=user-service`
+- `SERVICE=api-gateway`
 
 ## Troubleshooting
 

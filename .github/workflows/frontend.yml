@@ -1,8 +1,0 @@
-name: Frontend Build with React
-
-on:
-  workflow_call:
-    
-jobs:
-  frontend-build:
-    uses: ./.github/workflows/frontend-template.yml

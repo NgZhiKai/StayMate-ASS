@@ -5,6 +5,7 @@
 -- Optional: create shared DB user used by dev profile
 -- Requires admin privileges
 CREATE USER IF NOT EXISTS 'staymate_user'@'localhost' IDENTIFIED BY 'password';
+CREATE USER IF NOT EXISTS 'staymate_user'@'%' IDENTIFIED BY 'password';
 
 CREATE DATABASE IF NOT EXISTS StayMate_User CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE DATABASE IF NOT EXISTS StayMate_Hotel CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -17,6 +18,11 @@ GRANT ALL PRIVILEGES ON StayMate_Hotel.* TO 'staymate_user'@'localhost';
 GRANT ALL PRIVILEGES ON StayMate_Booking.* TO 'staymate_user'@'localhost';
 GRANT ALL PRIVILEGES ON StayMate_Notification.* TO 'staymate_user'@'localhost';
 GRANT ALL PRIVILEGES ON StayMate_Payment.* TO 'staymate_user'@'localhost';
+GRANT ALL PRIVILEGES ON StayMate_User.* TO 'staymate_user'@'%';
+GRANT ALL PRIVILEGES ON StayMate_Hotel.* TO 'staymate_user'@'%';
+GRANT ALL PRIVILEGES ON StayMate_Booking.* TO 'staymate_user'@'%';
+GRANT ALL PRIVILEGES ON StayMate_Notification.* TO 'staymate_user'@'%';
+GRANT ALL PRIVILEGES ON StayMate_Payment.* TO 'staymate_user'@'%';
 FLUSH PRIVILEGES;
 
 -- ============================================================
@@ -44,7 +50,7 @@ CREATE TABLE IF NOT EXISTS users (
 INSERT IGNORE INTO users
     (id, first_name, last_name, email, password, phone_number, role, verification_token, verified, is_deleted)
 VALUES
-    (1, 'Alice', 'Tan', 'admin1@staymate.com', '$2a$10$Zpvlj7GeTWW75HqOv5tHyuCWOgP97Mms3bjMNouOmRbqv6y.e30Ne', '+65-9000-0001', 'ADMIN', NULL, b'1', b'0'),
+    (1, 'ZK', 'Ng', 'ngzk123@gmail.com', '$2a$10$Zpvlj7GeTWW75HqOv5tHyuCWOgP97Mms3bjMNouOmRbqv6y.e30Ne', '+65-9000-0001', 'ADMIN', NULL, b'1', b'0'),
     (2, 'Benjamin', 'Lim', 'admin2@staymate.com', '$2a$10$Zpvlj7GeTWW75HqOv5tHyuCWOgP97Mms3bjMNouOmRbqv6y.e30Ne', '+65-9000-0002', 'ADMIN', NULL, b'1', b'0'),
     (3, 'Chloe', 'Ng', 'admin3@staymate.com', '$2a$10$Zpvlj7GeTWW75HqOv5tHyuCWOgP97Mms3bjMNouOmRbqv6y.e30Ne', '+65-9000-0003', 'ADMIN', NULL, b'1', b'0'),
     (4, 'Daniel', 'Ong', 'admin4@staymate.com', '$2a$10$Zpvlj7GeTWW75HqOv5tHyuCWOgP97Mms3bjMNouOmRbqv6y.e30Ne', '+65-9000-0004', 'ADMIN', NULL, b'1', b'0'),
