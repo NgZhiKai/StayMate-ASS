@@ -53,14 +53,16 @@ jobs:
         env:
           SERVICE: ${{ matrix.service }}
           REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        working-directory: backend
+        shell: bash
         run: |
           IMAGE_TAG=${GITHUB_SHA}
           IMAGE_NAME=${ECR_REPO_PREFIX}-${SERVICE}
           docker build \
-            -f backend/Dockerfile.microservice \
+            -f Dockerfile.microservice \
             --build-arg SERVICE=${SERVICE} \
             -t ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG} \
-            backend
+            .
           docker push ${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}
 
       - name: Verify image exists in ECR
