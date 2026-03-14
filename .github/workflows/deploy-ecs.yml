@@ -87,14 +87,21 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        service:
-          - api-gateway-service-k55j0c3f
-          - booking-service-service-pvvl6zq0
-          - email-service-service-as4sc4sw
-          - hotel-service-service-n0bnid8x
-          - notification-service-service-8eiw62wr
-          - payment-service-service-r47pdyzu
-          - user-service-service-cyseqmk6
+        include:
+          - service: api-gateway-service-k55j0c3f
+            image: api-gateway
+          - service: booking-service-service-pvvl6zq0
+            image: booking-service
+          - service: email-service-service-as4sc4sw
+            image: email-service
+          - service: hotel-service-service-n0bnid8x
+            image: hotel-service
+          - service: notification-service-service-8eiw62wr
+            image: notification-service
+          - service: payment-service-service-r47pdyzu
+            image: payment-service
+          - service: user-service-service-cyseqmk6
+            image: user-service
 
     steps:
       - name: Configure AWS credentials
@@ -103,10 +110,49 @@ jobs:
           role-to-assume: arn:aws:iam::241533158848:role/GitHubActionsECRPushRole
           aws-region: ${{ env.AWS_REGION }}
 
-      - name: Force new deployment
+      - name: Register new task definition with immutable image tag
+        env:
+          SERVICE: ${{ matrix.service }}
+          IMAGE: ${{ matrix.image }}
         run: |
+          ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+          REGISTRY="${ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com"
+          IMAGE_NAME="${ECR_REPO_PREFIX}-${IMAGE}"
+          IMAGE_URI="${REGISTRY}/${IMAGE_NAME}:${GITHUB_SHA}"
+
+          TASK_DEF_ARN=$(aws ecs describe-services \
+            --cluster ${ECS_CLUSTER} \
+            --services ${SERVICE} \
+            --query "services[0].taskDefinition" \
+            --output text)
+
+          aws ecs describe-task-definition \
+            --task-definition ${TASK_DEF_ARN} \
+            --query taskDefinition > taskdef.json
+
+          jq --arg IMAGE_NAME "${IMAGE_NAME}" --arg IMAGE_URI "${IMAGE_URI}" '
+            .containerDefinitions |= map(
+              if (.image | contains("/" + $IMAGE_NAME)) then .image = $IMAGE_URI else . end
+            )
+            | del(
+              .taskDefinitionArn,
+              .revision,
+              .status,
+              .requiresAttributes,
+              .compatibilities,
+              .registeredAt,
+              .registeredBy
+            )
+          ' taskdef.json > taskdef-registered.json
+
+          NEW_TASK_DEF_ARN=$(aws ecs register-task-definition \
+            --cli-input-json file://taskdef-registered.json \
+            --query "taskDefinition.taskDefinitionArn" \
+            --output text)
+
           aws ecs update-service \
             --cluster ${ECS_CLUSTER} \
-            --service ${{ matrix.service }} \
+            --service ${SERVICE} \
+            --task-definition ${NEW_TASK_DEF_ARN} \
             --force-new-deployment \
             --region ${AWS_REGION}
