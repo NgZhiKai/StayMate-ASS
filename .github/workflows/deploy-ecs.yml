@@ -29,7 +29,6 @@ jobs:
         service:
           - api-gateway
           - booking-service
-          - discovery-service
           - email-service
           - hotel-service
           - notification-service
@@ -91,7 +90,6 @@ jobs:
         service:
           - api-gateway-service-k55j0c3f
           - booking-service-service-pvvl6zq0
-          - discovery-service-service-psyueg59
           - email-service-service-as4sc4sw
           - hotel-service-service-n0bnid8x
           - notification-service-service-8eiw62wr

@@ -5,7 +5,7 @@ StayMate is a microservices-based hotel booking platform with a React frontend a
 ## Repository Structure
 
 - `frontend/hotel-booking-frontend`: React + TypeScript + Vite client app
-- `backend`: Spring Boot microservices (gateway, discovery, user, hotel, booking, payment, notification, email)
+- `backend`: Spring Boot microservices (gateway, user, hotel, booking, payment, notification, email)
 - `docs`: supporting docs/assets
 
 ## Quick Start
@@ -20,7 +20,6 @@ From `backend/`:
    - `run-all.bat`
 
 Main endpoints:
-- Eureka: `http://localhost:8761`
 - API Gateway: `http://localhost:8080/api`
 
 Detailed backend setup:
@@ -45,7 +44,7 @@ Detailed frontend setup:
 
 Backend:
 - Build all: `mvn clean install`
-- Compile selected services: `mvn -pl user-service,hotel-service,booking-service,payment-service,notification-service,email-service,api-gateway,discovery-service -DskipTests compile`
+- Compile selected services: `mvn -pl user-service,hotel-service,booking-service,payment-service,notification-service,email-service,api-gateway -DskipTests compile`
 
 Frontend:
 - Lint: `npm run lint`

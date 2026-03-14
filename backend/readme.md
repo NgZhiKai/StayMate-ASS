@@ -2,18 +2,16 @@
 
 Spring Boot microservices backend for StayMate with:
 - API Gateway (`api-gateway`)
-- Service Discovery (Eureka) (`discovery-service`)
 - Domain services (`user`, `hotel`, `booking`, `payment`, `notification`, `email`)
 
 ## Architecture
 
 Request flow:
 - Frontend -> API Gateway (`http://localhost:8080/api/...`)
-- API Gateway -> Services via Eureka (`lb://service-name`)
-- Service-to-service calls -> Eureka service names
+- API Gateway -> Services via direct URLs in dev, or Service Connect DNS in prod
+- Service-to-service calls -> Service Connect DNS in prod
 
 Services:
-- `discovery-service` (Eureka server): `8761`
 - `api-gateway`: `8080`
 - `user-service`: `8081`
 - `hotel-service`: `8082`
@@ -57,10 +55,7 @@ mysql -u root -p < mysql-ddl-microservices.sql
 run-all.bat
 ```
 
-6. Eureka dashboard:
-- `http://localhost:8761`
-
-7. Gateway base URL:
+6. Gateway base URL:
 - `http://localhost:8080/api`
 
 Stop all services:
@@ -71,8 +66,8 @@ stop-all.bat
 ### Startup Scripts
 
 The backend includes helper scripts in `backend/`:
-- `run-all.bat`: starts `discovery-service`, `api-gateway`, and all domain services with `dev` profile.
-- `stop-all.bat`: kills processes bound to backend service ports (`8080-8086`, `8761`).
+- `run-all.bat`: starts `api-gateway` and all domain services with `dev` profile.
+- `stop-all.bat`: kills processes bound to backend service ports (`8080-8086`).
 
 ## API Gateway Routes
 
@@ -104,8 +99,8 @@ Examples:
 Active profile:
 - `SPRING_PROFILES_ACTIVE=dev|prod`
 
-Common discovery setting:
-- `EUREKA_SERVER_URL` (example: `http://localhost:8761/eureka/`)
+Service Connect setting (prod):
+- `SERVICE_CONNECT_NAMESPACE` (default `staymate`)
 
 Prod essentials:
 - `SERVER_PORT`
@@ -128,7 +123,7 @@ mvn clean install "-Dspring.profiles.active=dev"
 
 Compile specific modules:
 ```bat
-mvn -pl api-gateway,user-service,hotel-service,booking-service,notification-service,payment-service,email-service,discovery-service -DskipTests compile
+mvn -pl api-gateway,user-service,hotel-service,booking-service,notification-service,payment-service,email-service -DskipTests compile
 ```
 
 Run tests:
@@ -165,5 +160,4 @@ mvn -pl <service-name> spring-boot:run -Dspring-boot.run.profiles=dev
 ```
 
 Slow responses:
-- Wait until all services are registered in Eureka.
 - Check downstream service health and DB latency.

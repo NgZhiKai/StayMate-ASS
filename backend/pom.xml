@@ -19,7 +19,6 @@
     <description>StayMate microservices parent aggregator</description>
 
     <modules>
-        <module>discovery-service</module>
         <module>api-gateway</module>
         <module>user-service</module>
         <module>hotel-service</module>
