@@ -156,3 +156,43 @@ jobs:
             --task-definition ${NEW_TASK_DEF_ARN} \
             --force-new-deployment \
             --region ${AWS_REGION}
+
+  cleanup-task-definitions:
+    needs: deploy
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        family:
+          - api-gateway
+          - booking-service
+          - email-service
+          - hotel-service
+          - notification-service
+          - payment-service
+          - user-service
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::241533158848:role/GitHubActionsECRPushRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Deregister old task definitions (keep last 2)
+        run: |
+          KEEP=2
+          ARNS=$(aws ecs list-task-definitions \
+            --family-prefix "${{ matrix.family }}" \
+            --sort DESC \
+            --query "taskDefinitionArns[${KEEP}:]" \
+            --output text)
+
+          for ARN in $ARNS; do
+            echo "Deregistering $ARN"
+            aws ecs deregister-task-definition --task-definition "$ARN"
+          done
