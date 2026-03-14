@@ -88,19 +88,19 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - service: api-gateway-service-k55j0c3f
+          - service: api-gateway-service
             image: api-gateway
-          - service: booking-service-service-pvvl6zq0
+          - service: booking-service-service
             image: booking-service
-          - service: email-service-service-as4sc4sw
+          - service: email-service-service
             image: email-service
-          - service: hotel-service-service-n0bnid8x
+          - service: hotel-service-service
             image: hotel-service
-          - service: notification-service-service-8eiw62wr
+          - service: notification-service-service
             image: notification-service
-          - service: payment-service-service-r47pdyzu
+          - service: payment-service-service
             image: payment-service
-          - service: user-service-service-cyseqmk6
+          - service: user-service-service
             image: user-service
 
     steps:
