@@ -16,12 +16,29 @@ env:
   ECR_REPO_PREFIX: staymate
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Detect changes
+        id: filter
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+            frontend:
+              - 'frontend/**'
+
   deploy-frontend:
     runs-on: ubuntu-latest
-    if: |
-      contains(join(github.event.head_commit.added, ','), 'frontend/hotel-booking-frontend/') ||
-      contains(join(github.event.head_commit.modified, ','), 'frontend/hotel-booking-frontend/') ||
-      contains(join(github.event.head_commit.removed, ','), 'frontend/hotel-booking-frontend/')
+    needs: changes
+    if: needs.changes.outputs.frontend == 'true'
     permissions:
       id-token: write
       contents: read
@@ -62,10 +79,8 @@ jobs:
 
   build-and-push:
     runs-on: ubuntu-latest
-    if: |
-      contains(join(github.event.head_commit.added, ','), 'backend/') ||
-      contains(join(github.event.head_commit.modified, ','), 'backend/') ||
-      contains(join(github.event.head_commit.removed, ','), 'backend/')
+    needs: changes
+    if: needs.changes.outputs.backend == 'true'
     permissions:
       id-token: write
       contents: read
@@ -127,10 +142,6 @@ jobs:
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
-    if: |
-      contains(join(github.event.head_commit.added, ','), 'backend/') ||
-      contains(join(github.event.head_commit.modified, ','), 'backend/') ||
-      contains(join(github.event.head_commit.removed, ','), 'backend/')
     permissions:
       id-token: write
       contents: read
@@ -211,10 +222,6 @@ jobs:
   cleanup-task-definitions:
     needs: deploy
     runs-on: ubuntu-latest
-    if: |
-      contains(join(github.event.head_commit.added, ','), 'backend/') ||
-      contains(join(github.event.head_commit.modified, ','), 'backend/') ||
-      contains(join(github.event.head_commit.removed, ','), 'backend/')
     permissions:
       id-token: write
       contents: read
