@@ -11,6 +11,10 @@ interface MapSectionProps {
 }
 
 const MapSection: React.FC<MapSectionProps> = ({ hotels, hoveredHotelId }) => {
+  const tileUrl = "https://tile.openstreetmap.org/{z}/{x}/{y}.png";
+  const tileAttribution =
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>';
+
   // Fallback to Singapore center if no hotels
   const defaultPosition: [number, number] = hotels.length
     ? [hotels[0].latitude, hotels[0].longitude]
@@ -39,8 +43,8 @@ const MapSection: React.FC<MapSectionProps> = ({ hotels, hoveredHotelId }) => {
         className="w-full h-full rounded-2xl shadow-inner"
       >
         <TileLayer
-          url="https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png"
-          attribution='&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>'
+          url={tileUrl}
+          attribution={tileAttribution}
         />
 
         {hotels.length > 0 ? (
