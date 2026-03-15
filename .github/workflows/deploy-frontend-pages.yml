@@ -33,9 +33,6 @@ jobs:
 
       - name: Build
         working-directory: frontend/hotel-booking-frontend
-        env:
-          VITE_APP_API_GATEWAY_BASE_URL: ${{ vars.VITE_APP_API_GATEWAY_BASE_URL }}
-          VITE_APP_OPEN_CAGE_API_KEY: ${{ vars.VITE_APP_OPEN_CAGE_API_KEY }}
         run: npm run build
 
       - name: Configure AWS credentials
