@@ -25,9 +25,9 @@ const HomePage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-gray-50 to-gray-100 select-none">
       <HeroSection
-        title="Find your next stay"
+        title="Stay smarter with StayMate"
         highlight="stay"
-        description="Discover unique hotels, cozy escapes and luxury stays worldwide."
+        description="Compare top hotels, find deals, and book in minutes."
         padding="lg"
         align="left"
       />

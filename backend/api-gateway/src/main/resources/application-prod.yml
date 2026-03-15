@@ -5,7 +5,7 @@ spring:
         cors-configurations:
           "[/**]":
             allowedOrigins:
-              - ${FRONTEND_HOST_URL:https://ngzhikai.github.io/StayMate-ASS/}
+              - ${FRONTEND_HOST_URL:https://www.staymate.org}
       routes:
         - id: user-service
           uri: http://user-service.${SERVICE_CONNECT_NAMESPACE:staymate}:8081
