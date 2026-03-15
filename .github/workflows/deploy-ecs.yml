@@ -1,13 +1,12 @@
-name: Build, Push, and Deploy ECS Services
+name: Deploy Backend and Frontend
 
 on:
   push:
     branches:
-      - main
-      - dev
-      - "feature/**"
+      - master
     paths:
       - "backend/**"
+      - "frontend/**"
       - ".github/workflows/deploy-ecs.yml"
   workflow_dispatch:
 
@@ -17,8 +16,56 @@ env:
   ECR_REPO_PREFIX: staymate
 
 jobs:
+  deploy-frontend:
+    runs-on: ubuntu-latest
+    if: |
+      contains(join(github.event.head_commit.added, ','), 'frontend/hotel-booking-frontend/') ||
+      contains(join(github.event.head_commit.modified, ','), 'frontend/hotel-booking-frontend/') ||
+      contains(join(github.event.head_commit.removed, ','), 'frontend/hotel-booking-frontend/')
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+          cache: "npm"
+          cache-dependency-path: "frontend/hotel-booking-frontend/package-lock.json"
+
+      - name: Install dependencies
+        working-directory: frontend/hotel-booking-frontend
+        run: npm ci
+
+      - name: Build
+        working-directory: frontend/hotel-booking-frontend
+        run: npm run build
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::241533158848:role/GitHubActionsECRPushRole
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Sync to S3
+        run: |
+          aws s3 sync frontend/hotel-booking-frontend/dist s3://www.staymate.org --delete
+
+      - name: Invalidate CloudFront
+        run: |
+          aws cloudfront create-invalidation \
+            --distribution-id E1ANYJ00XJRQL6 \
+            --paths "/*"
+
   build-and-push:
     runs-on: ubuntu-latest
+    if: |
+      contains(join(github.event.head_commit.added, ','), 'backend/') ||
+      contains(join(github.event.head_commit.modified, ','), 'backend/') ||
+      contains(join(github.event.head_commit.removed, ','), 'backend/')
     permissions:
       id-token: write
       contents: read
@@ -80,6 +127,10 @@ jobs:
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
+    if: |
+      contains(join(github.event.head_commit.added, ','), 'backend/') ||
+      contains(join(github.event.head_commit.modified, ','), 'backend/') ||
+      contains(join(github.event.head_commit.removed, ','), 'backend/')
     permissions:
       id-token: write
       contents: read
@@ -160,6 +211,10 @@ jobs:
   cleanup-task-definitions:
     needs: deploy
     runs-on: ubuntu-latest
+    if: |
+      contains(join(github.event.head_commit.added, ','), 'backend/') ||
+      contains(join(github.event.head_commit.modified, ','), 'backend/') ||
+      contains(join(github.event.head_commit.removed, ','), 'backend/')
     permissions:
       id-token: write
       contents: read
