@@ -7,6 +7,7 @@ spring:
             allowedOriginPatterns:
               - http://localhost:*
               - http://127.0.0.1:*
+              - https://datv0gr5pi6zx.cloudfront.net
       routes:
         - id: user-service
           uri: http://localhost:8081
