@@ -10,7 +10,8 @@ export default function HeaderOnlyLayout({ children }: Readonly<HeaderOnlyLayout
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header without sidebar toggle */}
-      <Header hideToggle />
+      {/* <Header hideToggle /> */}
+      <Header />
       
       {/* Main content fills the rest */}
       <div className="flex-1 pt-16 flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
