@@ -1,0 +1,636 @@
+timeStamp,elapsed,label,responseCode,responseMessage,threadName,dataType,success,failureMessage,bytes,sentBytes,grpThreads,allThreads,URL,Latency,IdleTime,Connect
+1774686515240,293,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,291,0,280
+1774686515535,3374,Get Hotels,200,OK,Thread Group 1-1,text,true,,12099858,203,1,1,https://api.staymate.org/api/hotels,2268,0,278
+1774686518910,16,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,299,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,16,0,0
+1774686518926,118,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,118,0,0
+1774686519044,16,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,16,0,0
+1774686519060,84,Book Hotel,201,Created,Thread Group 1-1,text,true,,518,338,1,1,https://api.staymate.org/api/bookings,84,0,0
+1774686515223,3901,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12103201,1499,1,1,null,2793,20,558
+1774686519145,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686519153,3242,Get Hotels,200,OK,Thread Group 1-1,text,true,,12099930,203,1,1,https://api.staymate.org/api/hotels,2024,0,0
+1774686522395,21,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,466,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,21,0,0
+1774686522416,98,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,98,0,0
+1774686522514,17,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,17,0,0
+1774686522532,44,Book Hotel,201,Created,Thread Group 1-1,text,true,,518,338,1,1,https://api.staymate.org/api/bookings,44,0,0
+1774686519145,3429,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12103440,1499,1,1,null,2211,2,0
+1774686522576,9,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,9,0,0
+1774686522585,3609,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102266,203,1,1,https://api.staymate.org/api/hotels,1894,0,0
+1774686526194,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,632,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686526208,110,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,109,0,0
+1774686526318,65,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,65,0,0
+1774686526383,43,Book Hotel,201,Created,Thread Group 1-1,text,true,,518,338,1,1,https://api.staymate.org/api/bookings,43,0,0
+1774686522576,3849,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12105944,1499,1,1,null,2133,1,0
+1774686526427,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686526435,2764,Get Hotels,200,OK,Thread Group 1-1,text,true,,12100653,203,1,1,https://api.staymate.org/api/hotels,1844,0,0
+1774686529200,12,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,804,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686529213,102,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,102,0,0
+1774686529315,16,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,16,0,0
+1774686529331,58,Book Hotel,201,Created,Thread Group 1-1,text,true,,518,338,1,1,https://api.staymate.org/api/bookings,58,0,0
+1774686526427,2959,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12104501,1499,1,1,null,2039,3,0
+1774686529390,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686529397,6495,Get Hotels,200,OK,Thread Group 1-1,text,true,,12105306,203,1,1,https://api.staymate.org/api/hotels,3395,0,0
+1774686535892,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,964,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686535906,115,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,115,0,0
+1774686536022,61,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,61,0,0
+1774686536084,333,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,333,0,0
+1774686529390,7025,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12109317,1499,1,1,null,3925,2,0
+1774686536418,9,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,9,0,0
+1774686536427,4073,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103425,203,1,1,https://api.staymate.org/api/hotels,2089,0,0
+1774686540500,15,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,1130,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,15,0,0
+1774686540516,105,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,105,0,0
+1774686540621,52,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,52,0,0
+1774686540674,71,Book Hotel,201,Created,Thread Group 1-1,text,true,,518,338,1,1,https://api.staymate.org/api/bookings,71,0,0
+1774686536417,4325,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12107600,1499,1,1,null,2341,4,0
+1774686540746,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686540754,3823,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102790,203,1,1,https://api.staymate.org/api/hotels,1955,0,0
+1774686544578,12,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,1296,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686544591,131,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,131,0,0
+1774686544722,17,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,17,0,0
+1774686544739,43,Book Hotel,201,Created,Thread Group 1-1,text,true,,518,338,1,1,https://api.staymate.org/api/bookings,43,0,0
+1774686540746,4033,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12107131,1499,1,1,null,2165,3,0
+1774686544783,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686544790,3896,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102512,203,1,1,https://api.staymate.org/api/hotels,1904,0,0
+1774686548687,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,1462,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686548701,115,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,115,0,0
+1774686548816,18,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,18,0,0
+1774686548834,43,Book Hotel,201,Created,Thread Group 1-1,text,true,,518,338,1,1,https://api.staymate.org/api/bookings,43,0,0
+1774686544783,4093,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12107019,1499,1,1,null,2101,0,0
+1774686548878,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686548886,3792,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102242,203,1,1,https://api.staymate.org/api/hotels,1823,0,0
+1774686552678,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,1628,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686552692,126,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,125,0,0
+1774686552818,16,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,16,0,0
+1774686552835,40,Book Hotel,201,Created,Thread Group 1-1,text,true,,518,338,1,1,https://api.staymate.org/api/bookings,40,0,0
+1774686548877,3994,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12106915,1499,1,1,null,2024,4,0
+1774686552876,12,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,12,0,0
+1774686552888,3691,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102889,203,1,1,https://api.staymate.org/api/hotels,1710,0,0
+1774686556580,12,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,1794,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686556593,151,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,151,0,0
+1774686556744,18,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,18,0,0
+1774686556762,82,Book Hotel,201,Created,Thread Group 1-1,text,true,,518,338,1,1,https://api.staymate.org/api/bookings,82,0,0
+1774686552875,3966,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12107729,1499,1,1,null,1985,3,0
+1774686556845,6,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,6,0,0
+1774686556852,3937,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102348,203,1,1,https://api.staymate.org/api/hotels,2032,0,0
+1774686560789,12,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,1960,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686560801,115,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,115,0,0
+1774686560916,17,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,17,0,0
+1774686560934,38,Book Hotel,201,Created,Thread Group 1-1,text,true,,518,338,1,1,https://api.staymate.org/api/bookings,38,0,0
+1774686556845,4125,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12107353,1499,1,1,null,2220,3,0
+1774686560973,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686560981,3219,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103103,203,1,1,https://api.staymate.org/api/hotels,1902,0,0
+1774686564200,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,2126,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686564214,97,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,97,0,0
+1774686564311,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686564326,49,Book Hotel,201,Created,Thread Group 1-1,text,true,,518,338,1,1,https://api.staymate.org/api/bookings,49,0,0
+1774686560972,3401,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12108273,1499,1,1,null,2084,2,0
+1774686564375,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686564383,3518,Get Hotels,200,OK,Thread Group 1-1,text,true,,12104607,203,1,1,https://api.staymate.org/api/hotels,2013,0,0
+1774686567901,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,2292,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686567914,98,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,98,0,0
+1774686568012,82,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,82,0,0
+1774686568095,108,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,108,0,0
+1774686564375,3827,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12109945,1499,1,1,null,2322,1,0
+1774686568203,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686568211,7466,Get Hotels,200,OK,Thread Group 1-1,text,true,,12104799,203,1,1,https://api.staymate.org/api/hotels,2775,0,0
+1774686575678,62,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,2458,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,62,0,49
+1774686575741,147,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,147,0,0
+1774686575888,97,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,97,0,0
+1774686575985,118,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,118,0,0
+1774686568203,7898,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12110304,1499,1,1,null,3207,2,49
+1774686576103,55,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,55,0,48
+1774686576158,6828,Get Hotels,200,OK,Thread Group 1-1,text,true,,12100242,203,1,1,https://api.staymate.org/api/hotels,4628,0,0
+1774686582986,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,2624,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686583001,114,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,114,0,0
+1774686583115,67,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,67,0,0
+1774686583182,40,Book Hotel,201,Created,Thread Group 1-1,text,true,,518,338,1,1,https://api.staymate.org/api/bookings,40,0,0
+1774686576103,7118,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12105912,1499,1,1,null,4918,2,48
+1774686583223,11,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,11,0,0
+1774686583234,2866,Get Hotels,200,OK,Thread Group 1-1,text,true,,12100058,203,1,1,https://api.staymate.org/api/hotels,1846,0,0
+1774686586101,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,2790,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686586114,98,Login,200,OK,Thread Group 1-1,text,true,,532,303,1,1,https://api.staymate.org/api/users/login,98,0,0
+1774686586213,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686586229,41,Book Hotel,201,Created,Thread Group 1-1,text,true,,518,338,1,1,https://api.staymate.org/api/bookings,41,0,0
+1774686583223,3044,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12105897,1499,1,1,null,2024,4,0
+1774686586271,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686586278,3107,Get Hotels,200,OK,Thread Group 1-1,text,true,,12101294,203,1,1,https://api.staymate.org/api/hotels,1706,0,0
+1774686589386,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,2956,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686589400,115,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,115,0,0
+1774686589516,66,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,66,0,0
+1774686589582,44,Book Hotel,201,Created,Thread Group 1-1,text,true,,518,338,1,1,https://api.staymate.org/api/bookings,44,0,0
+1774686586271,3352,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12107296,1499,1,1,null,1951,3,0
+1774686589626,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686589634,3253,Get Hotels,200,OK,Thread Group 1-1,text,true,,12100573,203,1,1,https://api.staymate.org/api/hotels,1947,0,0
+1774686592888,12,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,3122,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686592900,115,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,115,0,0
+1774686593015,16,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,16,0,0
+1774686593032,42,Book Hotel,201,Created,Thread Group 1-1,text,true,,518,338,1,1,https://api.staymate.org/api/bookings,42,0,0
+1774686589626,3446,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12106740,1499,1,1,null,2140,2,0
+1774686593074,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686593082,3813,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103268,203,1,1,https://api.staymate.org/api/hotels,2044,0,0
+1774686596895,12,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,3295,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686596907,196,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,196,0,0
+1774686597103,18,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,18,0,0
+1774686597121,46,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,46,0,0
+1774686593074,4092,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12109610,1499,1,1,null,2323,1,0
+1774686597167,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686597175,3541,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102434,203,1,1,https://api.staymate.org/api/hotels,1803,0,0
+1774686600716,56,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,3456,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,53,0,0
+1774686600772,275,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,275,0,0
+1774686601048,235,View Hotel,200,OK,Thread Group 1-1,text,true,,1057,205,1,1,https://api.staymate.org/api/hotels/2,235,0,0
+1774686601283,252,Book Hotel,201,Created,Thread Group 1-1,text,true,,520,338,1,1,https://api.staymate.org/api/bookings,251,0,0
+1774686597167,4366,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12108939,1499,1,1,null,2624,2,0
+1774686601535,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686601542,4034,Get Hotels,200,OK,Thread Group 1-1,text,true,,12100922,203,1,1,https://api.staymate.org/api/hotels,2353,0,0
+1774686605576,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,3622,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686605590,125,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,125,0,0
+1774686605716,67,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,67,0,0
+1774686605783,46,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,46,0,0
+1774686601535,4293,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12107591,1499,1,1,null,2612,1,0
+1774686605829,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686605837,3547,Get Hotels,200,OK,Thread Group 1-1,text,true,,12101970,203,1,1,https://api.staymate.org/api/hotels,1868,0,0
+1774686609384,15,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,3789,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686609399,120,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,119,0,0
+1774686609519,21,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,21,0,0
+1774686609540,43,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,43,0,0
+1774686605829,3754,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12108806,1499,1,1,null,2073,1,0
+1774686609584,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686609591,2799,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102761,203,1,1,https://api.staymate.org/api/hotels,1807,0,0
+1774686612390,15,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,3956,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,15,0,0
+1774686612405,111,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,111,0,0
+1774686612516,16,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,16,0,0
+1774686612532,49,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,49,0,0
+1774686609584,2997,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12109763,1499,1,1,null,2005,0,0
+1774686612582,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686612589,2989,Get Hotels,200,OK,Thread Group 1-1,text,true,,12100535,203,1,1,https://api.staymate.org/api/hotels,1926,0,0
+1774686615578,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,4123,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686615591,123,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,123,0,0
+1774686615714,16,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,16,0,0
+1774686615730,44,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,44,0,0
+1774686612581,3192,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12107704,1499,1,1,null,2129,1,0
+1774686615774,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686615781,3406,Get Hotels,200,OK,Thread Group 1-1,text,true,,12104266,203,1,1,https://api.staymate.org/api/hotels,2240,0,0
+1774686619188,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,4290,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686619202,119,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,119,0,0
+1774686619322,30,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,30,0,0
+1774686619352,50,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,50,0,0
+1774686615774,3626,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12111603,1499,1,1,null,2460,2,0
+1774686619402,11,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,11,0,0
+1774686619413,2891,Get Hotels,200,OK,Thread Group 1-1,text,true,,12101143,203,1,1,https://api.staymate.org/api/hotels,1978,0,0
+1774686622304,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,4458,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686622318,101,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,101,0,0
+1774686622419,54,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,36,0,0
+1774686622474,56,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,54,0,0
+1774686619402,3127,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12108647,1499,1,1,null,2194,1,0
+1774686622531,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686622539,3843,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103868,203,1,1,https://api.staymate.org/api/hotels,1771,0,0
+1774686626383,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,4625,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686626398,293,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,293,0,0
+1774686626692,16,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,16,0,0
+1774686626708,41,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,41,0,0
+1774686622530,4215,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12111539,1499,1,1,null,2143,4,0
+1774686626749,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686626757,3231,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103158,203,1,1,https://api.staymate.org/api/hotels,1854,0,0
+1774686629988,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,4792,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686630002,115,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,115,0,0
+1774686630117,68,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,68,0,0
+1774686630186,40,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,40,0,0
+1774686626749,3476,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12110997,1499,1,1,null,2099,1,0
+1774686630227,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686630235,3154,Get Hotels,200,OK,Thread Group 1-1,text,true,,12101953,203,1,1,https://api.staymate.org/api/hotels,1964,0,0
+1774686633390,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,4959,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686633403,198,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,198,0,0
+1774686633601,19,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,19,0,0
+1774686633620,63,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,63,0,0
+1774686630226,3454,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12109959,1499,1,1,null,2264,3,0
+1774686633683,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686633691,3700,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103610,203,1,1,https://api.staymate.org/api/hotels,2013,0,0
+1774686637391,260,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,5126,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,260,0,246
+1774686637651,143,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,143,0,0
+1774686637794,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686637810,38,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,38,0,0
+1774686633683,4164,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12111782,1499,1,1,null,2477,1,246
+1774686637848,232,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,232,0,225
+1774686638081,3301,Get Hotels,200,OK,Thread Group 1-1,text,true,,12101466,203,1,1,https://api.staymate.org/api/hotels,2113,0,0
+1774686641383,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,5293,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686641396,127,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,127,0,0
+1774686641523,19,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,19,0,0
+1774686641542,46,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,46,0,0
+1774686637848,3738,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12109806,1499,1,1,null,2550,2,225
+1774686641589,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686641597,3203,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103980,203,1,1,https://api.staymate.org/api/hotels,1885,0,0
+1774686644799,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,5460,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686644812,115,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,115,0,0
+1774686644927,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686644942,44,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,44,0,0
+1774686641589,3398,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12112486,1499,1,1,null,2079,0,0
+1774686644986,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686644994,3391,Get Hotels,200,OK,Thread Group 1-1,text,true,,12104815,203,1,1,https://api.staymate.org/api/hotels,1903,0,0
+1774686648385,12,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,5633,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686648398,112,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,112,0,0
+1774686648511,16,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,16,0,0
+1774686648527,41,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,41,0,0
+1774686644986,3580,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12113494,1499,1,1,null,2092,2,0
+1774686648568,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686648576,2825,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102474,203,1,1,https://api.staymate.org/api/hotels,1825,0,0
+1774686651401,12,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,5794,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686651414,112,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,112,0,0
+1774686651526,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686651541,43,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,43,0,0
+1774686648568,3015,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12111314,1499,1,1,null,2015,1,0
+1774686651584,9,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686651593,3105,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102223,203,1,1,https://api.staymate.org/api/hotels,2084,0,0
+1774686654698,12,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,5961,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686654710,102,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,102,0,0
+1774686654812,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686654828,39,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,39,0,0
+1774686651584,3282,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12111229,1499,1,1,null,2260,1,0
+1774686654867,9,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,9,0,0
+1774686654876,3116,Get Hotels,200,OK,Thread Group 1-1,text,true,,12104096,203,1,1,https://api.staymate.org/api/hotels,1923,0,0
+1774686657992,12,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,6128,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686658004,109,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,109,0,0
+1774686658113,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686658128,42,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,42,0,0
+1774686654867,3303,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12113270,1499,1,1,null,2110,0,0
+1774686658170,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686658177,3431,Get Hotels,200,OK,Thread Group 1-1,text,true,,12100462,203,1,1,https://api.staymate.org/api/hotels,2034,0,0
+1774686661608,30,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,6296,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,29,0,0
+1774686661638,163,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,163,0,0
+1774686661801,24,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,24,0,0
+1774686661825,108,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,108,0,0
+1774686658170,3763,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12109805,1499,1,1,null,2365,0,0
+1774686661934,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686661941,3133,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102924,203,1,1,https://api.staymate.org/api/hotels,1442,0,0
+1774686665074,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,6462,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686665089,121,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,121,0,0
+1774686665210,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686665226,43,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,43,0,0
+1774686661933,3333,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12112432,1499,1,1,null,1642,4,0
+1774686665270,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686665278,3597,Get Hotels,200,OK,Thread Group 1-1,text,true,,12104854,203,1,1,https://api.staymate.org/api/hotels,1803,0,0
+1774686668875,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,6629,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686668888,125,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,125,0,0
+1774686669013,17,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,17,0,0
+1774686669031,44,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,44,0,0
+1774686665270,3804,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12114530,1499,1,1,null,2009,1,0
+1774686669076,6,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,6,0,0
+1774686669083,3104,Get Hotels,200,OK,Thread Group 1-1,text,true,,12101293,203,1,1,https://api.staymate.org/api/hotels,1494,0,0
+1774686672187,15,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,6796,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,15,0,0
+1774686672202,110,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,110,0,0
+1774686672312,17,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,17,0,0
+1774686672329,42,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,42,0,0
+1774686669076,3294,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12111135,1499,1,1,null,1684,2,0
+1774686672372,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686672379,2804,Get Hotels,200,OK,Thread Group 1-1,text,true,,12101801,203,1,1,https://api.staymate.org/api/hotels,1816,0,0
+1774686675183,12,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,6963,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686675195,116,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,116,0,0
+1774686675312,14,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,14,0,0
+1774686675326,41,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,41,0,0
+1774686672372,2994,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12111810,1499,1,1,null,2006,2,0
+1774686675368,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686675375,5323,Get Hotels,200,OK,Thread Group 1-1,text,true,,12104111,203,1,1,https://api.staymate.org/api/hotels,2997,0,0
+1774686680698,12,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,7130,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686680711,100,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,100,0,0
+1774686680812,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686680828,42,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,42,0,0
+1774686675368,5499,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12114286,1499,1,1,null,3173,4,0
+1774686680871,9,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,9,0,0
+1774686680881,3796,Get Hotels,200,OK,Thread Group 1-1,text,true,,12104172,203,1,1,https://api.staymate.org/api/hotels,2701,0,0
+1774686684677,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,7297,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686684692,121,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,120,0,0
+1774686684813,14,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,14,0,0
+1774686684827,40,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,40,0,0
+1774686680871,3994,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12114515,1499,1,1,null,2898,2,0
+1774686684868,9,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,9,0,0
+1774686684877,3307,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102746,203,1,1,https://api.staymate.org/api/hotels,1910,0,0
+1774686688185,12,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,7464,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686688197,116,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,116,0,0
+1774686688313,16,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,16,0,0
+1774686688330,41,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,41,0,0
+1774686684867,3501,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12113256,1499,1,1,null,2104,3,0
+1774686688371,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686688379,2814,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102473,203,1,1,https://api.staymate.org/api/hotels,1804,0,0
+1774686691194,12,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,7631,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686691206,280,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,280,0,0
+1774686691486,16,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,16,0,0
+1774686691502,39,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,39,0,0
+1774686688371,3169,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12113150,1499,1,1,null,2159,1,0
+1774686691541,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686691548,2925,Get Hotels,200,OK,Thread Group 1-1,text,true,,12100689,203,1,1,https://api.staymate.org/api/hotels,1727,0,0
+1774686694474,12,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,7798,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686694486,308,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,308,0,0
+1774686694794,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686694809,39,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,39,0,0
+1774686691541,3306,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12111533,1499,1,1,null,2108,0,0
+1774686694848,9,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,9,0,0
+1774686694857,3729,Get Hotels,200,OK,Thread Group 1-1,text,true,,12104714,203,1,1,https://api.staymate.org/api/hotels,2041,0,0
+1774686698585,306,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,7965,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,306,0,293
+1774686698892,117,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,117,0,0
+1774686699009,16,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,16,0,0
+1774686699025,42,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,42,0,0
+1774686694848,4219,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12115725,1499,1,1,null,2531,1,293
+1774686699067,94,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,94,0,85
+1774686699161,3136,Get Hotels,200,OK,Thread Group 1-1,text,true,,12101954,203,1,1,https://api.staymate.org/api/hotels,1937,0,0
+1774686702297,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,8132,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686702310,102,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,101,0,0
+1774686702412,17,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,17,0,0
+1774686702429,41,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,41,0,0
+1774686699067,3403,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12113132,1499,1,1,null,2203,0,85
+1774686702470,10,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,10,0,0
+1774686702480,3296,Get Hotels,200,OK,Thread Group 1-1,text,true,,12105287,203,1,1,https://api.staymate.org/api/hotels,2039,0,0
+1774686705776,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,8299,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686705789,121,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,121,0,0
+1774686705911,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686705926,40,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,40,0,0
+1774686702470,3495,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12116632,1499,1,1,null,2238,1,0
+1774686705966,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686705973,3019,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103226,203,1,1,https://api.staymate.org/api/hotels,1804,0,0
+1774686708992,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,8466,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686709005,105,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,105,0,0
+1774686709110,16,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,16,0,0
+1774686709126,41,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,41,0,0
+1774686705966,3201,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12114737,1499,1,1,null,1986,1,0
+1774686709168,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686709175,3110,Get Hotels,200,OK,Thread Group 1-1,text,true,,12101112,203,1,1,https://api.staymate.org/api/hotels,2006,0,0
+1774686712285,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,8640,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686712298,114,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,114,0,0
+1774686712412,17,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,17,0,0
+1774686712429,40,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,40,0,0
+1774686709168,3301,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12112799,1499,1,1,null,2197,0,0
+1774686712469,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686712476,3220,Get Hotels,200,OK,Thread Group 1-1,text,true,,12104426,203,1,1,https://api.staymate.org/api/hotels,2229,0,0
+1774686715697,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,8800,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686715711,182,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,182,0,0
+1774686715893,16,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,16,0,0
+1774686715909,43,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,43,0,0
+1774686712469,3482,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12116272,1499,1,1,null,2491,1,0
+1774686715953,9,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,9,0,0
+1774686715962,5196,Get Hotels,200,OK,Thread Group 1-1,text,true,,12100355,203,1,1,https://api.staymate.org/api/hotels,4139,0,0
+1774686721158,21,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,8974,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,20,0,0
+1774686721179,178,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,178,0,0
+1774686721358,27,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,27,0,0
+1774686721385,48,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,48,0,0
+1774686715953,5479,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12112376,1499,1,1,null,4421,3,0
+1774686721434,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686721442,3439,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102194,203,1,1,https://api.staymate.org/api/hotels,2352,0,0
+1774686724882,12,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,9134,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686724895,116,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,116,0,0
+1774686725012,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686725027,42,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,42,0,0
+1774686721434,3632,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12114374,1499,1,1,null,2545,3,0
+1774686725069,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686725076,3298,Get Hotels,200,OK,Thread Group 1-1,text,true,,12101518,203,1,1,https://api.staymate.org/api/hotels,2110,0,0
+1774686728374,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,9301,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686728387,126,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,126,0,0
+1774686728514,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686728529,44,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,44,0,0
+1774686725069,3503,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12113865,1499,1,1,null,2315,1,0
+1774686728573,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686728581,2822,Get Hotels,200,OK,Thread Group 1-1,text,true,,12101944,203,1,1,https://api.staymate.org/api/hotels,1819,0,0
+1774686731403,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,9468,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686731416,93,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,93,0,0
+1774686731509,16,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,16,0,0
+1774686731525,39,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,39,0,0
+1774686728573,2991,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12114457,1499,1,1,null,1988,0,0
+1774686731564,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686731572,3210,Get Hotels,200,OK,Thread Group 1-1,text,true,,12100930,203,1,1,https://api.staymate.org/api/hotels,2119,0,0
+1774686734782,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,9642,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686734796,113,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,113,0,0
+1774686734910,17,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,17,0,0
+1774686734928,43,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,43,0,0
+1774686731564,3405,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12113619,1499,1,1,null,2313,3,0
+1774686734972,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686734979,3499,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103015,203,1,1,https://api.staymate.org/api/hotels,2014,0,0
+1774686738478,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,9802,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686738491,119,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,119,0,0
+1774686738610,17,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,17,0,0
+1774686738627,44,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,44,0,0
+1774686734972,3699,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12115864,1499,1,1,null,2214,0,0
+1774686738671,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686738678,2722,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102634,203,1,1,https://api.staymate.org/api/hotels,1635,0,0
+1774686741401,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,9969,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686741414,97,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,97,0,0
+1774686741511,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686741526,41,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,41,0,0
+1774686738671,2895,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12115648,1499,1,1,null,1808,1,0
+1774686741567,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686741575,3302,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102140,203,1,1,https://api.staymate.org/api/hotels,2000,0,0
+1774686744877,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,10136,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686744891,117,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,117,0,0
+1774686745009,67,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,67,0,0
+1774686745076,41,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,41,0,0
+1774686741567,3549,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12115323,1499,1,1,null,2247,1,0
+1774686745118,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686745125,3752,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102746,203,1,1,https://api.staymate.org/api/hotels,1967,0,0
+1774686748877,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,10310,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686748891,118,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,118,0,0
+1774686749009,71,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,71,0,0
+1774686749080,42,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,42,0,0
+1774686745117,4003,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12116103,1499,1,1,null,2218,2,0
+1774686749122,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686749130,3253,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103872,203,1,1,https://api.staymate.org/api/hotels,1945,0,0
+1774686752383,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,10470,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686752397,113,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,113,0,0
+1774686752510,17,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,17,0,0
+1774686752527,40,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,40,0,0
+1774686749122,3444,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12117388,1499,1,1,null,2136,1,0
+1774686752567,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686752574,3914,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103098,203,1,1,https://api.staymate.org/api/hotels,2001,0,0
+1774686756488,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,10637,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686756502,110,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,110,0,0
+1774686756612,68,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,68,0,0
+1774686756680,41,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,41,0,0
+1774686752567,4154,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12116782,1499,1,1,null,2241,1,0
+1774686756722,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686756729,2750,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103139,203,1,1,https://api.staymate.org/api/hotels,1672,0,0
+1774686759479,290,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,10804,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,290,0,273
+1774686759769,143,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,143,0,0
+1774686759912,17,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,17,0,0
+1774686759929,43,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,43,0,0
+1774686756722,3250,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12116989,1499,1,1,null,2172,0,273
+1774686759972,267,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,267,0,259
+1774686760240,3061,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102754,203,1,1,https://api.staymate.org/api/hotels,2061,0,0
+1774686763301,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,10971,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686763316,96,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,96,0,0
+1774686763413,16,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,16,0,0
+1774686763429,40,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,40,0,0
+1774686759972,3494,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12116770,1499,1,1,null,2494,3,259
+1774686763469,9,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,9,0,0
+1774686763478,3616,Get Hotels,200,OK,Thread Group 1-1,text,true,,12104290,203,1,1,https://api.staymate.org/api/hotels,2122,0,0
+1774686767094,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,11138,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686767107,101,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,101,0,0
+1774686767208,69,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,69,0,0
+1774686767277,121,Book Hotel,201,Created,Thread Group 1-1,text,true,,520,338,1,1,https://api.staymate.org/api/bookings,121,0,0
+1774686763469,3929,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12118475,1499,1,1,null,2435,0,0
+1774686767398,10,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,10,0,0
+1774686767408,3869,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103222,203,1,1,https://api.staymate.org/api/hotels,1898,0,0
+1774686771277,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,11305,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686771290,117,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,117,0,0
+1774686771408,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686771423,40,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,40,0,0
+1774686767398,4064,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12117573,1499,1,1,null,2093,1,0
+1774686771464,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686771471,3501,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103562,203,1,1,https://api.staymate.org/api/hotels,1638,0,0
+1774686774973,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,11479,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686774986,124,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,124,0,0
+1774686775111,22,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,22,0,0
+1774686775134,47,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,47,0,0
+1774686771464,3714,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12118088,1499,1,1,null,1851,3,0
+1774686775181,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686775189,3403,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102417,203,1,1,https://api.staymate.org/api/hotels,1991,0,0
+1774686778592,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,11646,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686778606,104,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,104,0,0
+1774686778711,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686778726,46,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,46,0,0
+1774686775181,3590,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12117108,1499,1,1,null,2178,1,0
+1774686778772,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686778779,3213,Get Hotels,200,OK,Thread Group 1-1,text,true,,12101660,203,1,1,https://api.staymate.org/api/hotels,2019,0,0
+1774686781992,22,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,11814,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,22,0,0
+1774686782014,93,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,93,0,0
+1774686782108,23,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,23,0,0
+1774686782131,50,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,50,0,0
+1774686778772,3408,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12116520,1499,1,1,null,2214,1,0
+1774686782181,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686782189,3603,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103534,203,1,1,https://api.staymate.org/api/hotels,2212,0,0
+1774686785792,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,11973,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686785805,104,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,104,0,0
+1774686785909,70,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,70,0,0
+1774686785980,40,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,40,0,0
+1774686782181,3838,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12118553,1499,1,1,null,2447,1,0
+1774686786020,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686786028,3755,Get Hotels,200,OK,Thread Group 1-1,text,true,,12101250,203,1,1,https://api.staymate.org/api/hotels,2050,0,0
+1774686789783,19,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,12141,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,19,0,0
+1774686789802,106,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,106,0,0
+1774686789908,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686789923,41,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,41,0,0
+1774686786020,3944,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12116436,1499,1,1,null,2239,0,0
+1774686789964,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686789971,3324,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103278,203,1,1,https://api.staymate.org/api/hotels,2234,0,0
+1774686793296,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,12307,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686793310,98,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,98,0,0
+1774686793408,63,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,63,0,0
+1774686793471,40,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,40,0,0
+1774686789964,3546,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12118631,1499,1,1,null,2456,1,0
+1774686793512,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686793520,3152,Get Hotels,200,OK,Thread Group 1-1,text,true,,12105570,203,1,1,https://api.staymate.org/api/hotels,1479,0,0
+1774686796673,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,12474,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686796687,189,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,137,0,0
+1774686796876,22,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,17,0,0
+1774686796898,103,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,103,0,0
+1774686793512,3487,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12121090,1499,1,1,null,1757,3,0
+1774686797002,6,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,6,0,0
+1774686797009,2183,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103933,203,1,1,https://api.staymate.org/api/hotels,1103,0,0
+1774686799192,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,12649,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686799206,105,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,105,0,0
+1774686799312,17,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,17,0,0
+1774686799330,49,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,49,0,0
+1774686797002,2374,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12119628,1499,1,1,null,1294,3,0
+1774686799379,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686799386,2100,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103822,203,1,1,https://api.staymate.org/api/hotels,994,0,0
+1774686801486,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,12816,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686801499,206,Login,200,OK,Thread Group 1-1,text,true,,533,303,1,1,https://api.staymate.org/api/users/login,206,0,0
+1774686801705,16,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,16,0,0
+1774686801721,42,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,42,0,0
+1774686799379,2384,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12119689,1499,1,1,null,1278,0,0
+1774686801763,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686801771,2313,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103337,203,1,1,https://api.staymate.org/api/hotels,1215,0,0
+1774686804085,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,12975,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686804098,113,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,113,0,0
+1774686804211,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686804227,43,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,39,0,0
+1774686801763,2505,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12119358,1499,1,1,null,1403,2,0
+1774686804270,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686804277,3911,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103489,203,1,1,https://api.staymate.org/api/hotels,1910,0,0
+1774686808188,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,13150,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686808201,109,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,109,0,0
+1774686808310,16,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,16,0,0
+1774686808326,39,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,39,0,0
+1774686804270,4095,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12119685,1499,1,1,null,2094,0,0
+1774686808365,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686808373,2812,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102906,203,1,1,https://api.staymate.org/api/hotels,1810,0,0
+1774686811186,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,13317,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686811199,112,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,112,0,0
+1774686811312,21,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,21,0,0
+1774686811333,40,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,40,0,0
+1774686808365,3006,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12119270,1499,1,1,null,2004,2,0
+1774686811373,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686811380,3292,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103026,203,1,1,https://api.staymate.org/api/hotels,2315,0,0
+1774686814673,12,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,13476,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,12,0,0
+1774686814685,122,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,122,0,0
+1774686814807,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686814822,42,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,42,0,0
+1774686811373,3490,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12119548,1499,1,1,null,2513,2,0
+1774686814865,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686814872,3327,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102618,203,1,1,https://api.staymate.org/api/hotels,2321,0,0
+1774686818199,15,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,13651,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,15,0,0
+1774686818214,92,Login,200,OK,Thread Group 1-1,text,true,,527,303,1,1,https://api.staymate.org/api/users/login,92,0,0
+1774686818307,15,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,15,0,0
+1774686818322,47,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,47,0,0
+1774686814865,3503,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12119314,1499,1,1,null,2497,1,0
+1774686818369,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686818376,3409,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102373,203,1,1,https://api.staymate.org/api/hotels,2014,0,0
+1774686821786,299,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,13810,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,299,0,279
+1774686822085,127,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,127,0,0
+1774686822212,25,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,25,0,0
+1774686822237,47,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,47,0,0
+1774686818369,3914,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12119230,1499,1,1,null,2519,1,279
+1774686822284,249,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,249,0,241
+1774686822534,3142,Get Hotels,200,OK,Thread Group 1-1,text,true,,12105488,203,1,1,https://api.staymate.org/api/hotels,977,0,0
+1774686825677,15,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,13977,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686825692,118,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,118,0,0
+1774686825810,19,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,19,0,0
+1774686825829,41,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,41,0,0
+1774686822284,3584,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12122512,1499,1,1,null,1418,2,241
+1774686825870,9,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,9,0,0
+1774686825879,3702,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102327,203,1,1,https://api.staymate.org/api/hotels,1803,0,0
+1774686829582,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,14144,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686829595,121,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,121,0,0
+1774686829716,17,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,17,0,0
+1774686829733,42,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,42,0,0
+1774686825870,3904,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12119517,1499,1,1,null,2005,2,0
+1774686829776,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686829784,3597,Get Hotels,200,OK,Thread Group 1-1,text,true,,12105113,203,1,1,https://api.staymate.org/api/hotels,1893,0,0
+1774686833382,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,14319,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686833396,114,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,114,0,0
+1774686833510,17,View Hotel,200,OK,Thread Group 1-1,text,true,,1055,205,1,1,https://api.staymate.org/api/hotels/2,17,0,0
+1774686833527,41,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,41,0,0
+1774686829776,3791,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12122478,1499,1,1,null,2087,0,0
+1774686833568,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686833576,2801,Get Hotels,200,OK,Thread Group 1-1,text,true,,12104488,203,1,1,https://api.staymate.org/api/hotels,1017,0,0
+1774686836378,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,14478,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686836392,118,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,118,0,0
+1774686836510,69,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,68,0,0
+1774686836579,40,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,40,0,0
+1774686833568,3049,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12122013,1499,1,1,null,1264,2,0
+1774686836619,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686836627,2049,Get Hotels,200,OK,Thread Group 1-1,text,true,,12101755,203,1,1,https://api.staymate.org/api/hotels,1068,0,0
+1774686838675,23,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,14653,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,18,0,0
+1774686838698,115,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,115,0,0
+1774686838813,17,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,17,0,0
+1774686838831,40,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,40,0,0
+1774686836619,2251,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12119455,1499,1,1,null,1265,2,0
+1774686838871,7,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,7,0,0
+1774686838878,3395,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102430,203,1,1,https://api.staymate.org/api/hotels,2213,0,0
+1774686842273,25,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,14821,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,25,0,0
+1774686842298,111,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,111,0,0
+1774686842410,18,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,18,0,0
+1774686842428,46,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,46,0,0
+1774686838871,3602,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12120298,1499,1,1,null,2420,1,0
+1774686842474,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686842482,3207,Get Hotels,200,OK,Thread Group 1-1,text,true,,12102823,203,1,1,https://api.staymate.org/api/hotels,2003,0,0
+1774686845689,13,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,14987,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,13,0,0
+1774686845702,113,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,113,0,0
+1774686845815,18,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,18,0,0
+1774686845833,41,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,41,0,0
+1774686842474,3400,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12120857,1499,1,1,null,2196,0,0
+1774686845875,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686845883,3288,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103255,203,1,1,https://api.staymate.org/api/hotels,1587,0,0
+1774686849172,15,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,15154,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,15,0,0
+1774686849187,130,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,130,0,0
+1774686849318,32,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,32,0,0
+1774686849350,44,Book Hotel,201,Created,Thread Group 1-1,text,true,,519,338,1,1,https://api.staymate.org/api/bookings,44,0,0
+1774686845874,3517,Transaction Controller,200,"Number of samples in transaction : 6, number of failing samples : 0",Thread Group 1-1,,true,,12121456,1499,1,1,null,1816,2,0
+1774686849395,8,Landing Page Test,200,OK,Thread Group 1-1,text,true,,944,193,1,1,https://www.staymate.org/,8,0,0
+1774686849403,2992,Get Hotels,200,OK,Thread Group 1-1,text,true,,12103658,203,1,1,https://api.staymate.org/api/hotels,1377,0,0
+1774686852395,14,Check Available Rooms,200,OK,Thread Group 1-1,text,true,,15313,257,1,1,https://api.staymate.org/api/bookings/search/date?startDate=2026-04-01&endDate=2026-04-04,14,0,0
+1774686852409,112,Login,200,OK,Thread Group 1-1,text,true,,528,303,1,1,https://api.staymate.org/api/users/login,112,0,0
+1774686852521,19,View Hotel,200,OK,Thread Group 1-1,text,true,,1056,205,1,1,https://api.staymate.org/api/hotels/2,19,0,0

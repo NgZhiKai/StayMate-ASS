@@ -22,14 +22,33 @@ export const UserActions = () => {
   const userId = sessionStorage.getItem("userId");
   const userInitials = `${userFirstName.charAt(0).toUpperCase()}${userLastName.charAt(0).toUpperCase()}` || "U";
 
+  // if (!userId) {
+  //   return (
+  //     <button
+  //       onClick={() => navigate("/signin")}
+  //       className="px-4 py-2 rounded bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold shadow-lg hover:opacity-90 transition focus:outline-none focus:ring-2 focus:ring-indigo-500"
+  //     >
+  //       Login / Sign Up
+  //     </button>
+  //   );
+  // }
+
   if (!userId) {
     return (
-      <button
-        onClick={() => navigate("/signin")}
-        className="px-4 py-2 rounded bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold shadow-lg hover:opacity-90 transition focus:outline-none focus:ring-2 focus:ring-indigo-500"
-      >
-        Login / Sign Up
-      </button>
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => navigate("/login")}
+          className="px-4 py-2 rounded bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold shadow-lg hover:opacity-90 transition focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        >
+          Login
+        </button>
+        <button
+          onClick={() => navigate("/signin")}
+          className="px-4 py-2 rounded bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 text-white font-semibold shadow-lg hover:opacity-90 transition focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        >
+          Sign Up
+        </button>
+      </div>
     );
   }
 
