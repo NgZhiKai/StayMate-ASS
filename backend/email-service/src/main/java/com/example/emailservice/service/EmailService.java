@@ -21,6 +21,10 @@ import jakarta.mail.internet.MimeMessage;
 @Service
 public class EmailService {
 
+    private static final String TEMPLATE_DEFAULT = "/templates/email-template.html";
+    private static final String TEMPLATE_NEW_USER = "/templates/email-template-new-user.html";
+    private static final String TEMPLATE_EXISTING_USER = "/templates/email-template-existing-user.html";
+
     private final JavaMailSender mailSender;
     private final String fromEmail;
 
@@ -36,23 +40,29 @@ public class EmailService {
         String link = requireNonBlank(request.getLink(), "Email link is required");
 
         return switch (normalizedType) {
-            case "verification" -> {
-                sendVerificationEmail(to, link, token);
+            case "verification", "verification_new" -> {
+                sendVerificationEmailNewUser(to, link, token);
+                yield "Verification email sent successfully.";
+            }
+            case "verification_existing" -> {
+                sendVerificationEmailExistingUser(to, link, token);
                 yield "Verification email sent successfully.";
             }
             case "reset" -> {
                 sendPasswordResetEmail(to, link, token);
                 yield "Password reset email sent successfully.";
             }
-            default -> throw new IllegalArgumentException("Invalid email type. Must be 'verification' or 'reset'.");
+            default -> throw new IllegalArgumentException(
+                    "Invalid email type. Must be 'verification', 'verification_new', 'verification_existing', or 'reset'.");
         };
     }
 
     // Generic method to send any type of email
-    public void sendEmail(String to, String subject, String messageText, String token, String link, String buttonText)
+    public void sendEmail(String to, String subject, String messageText, String token, String link, String buttonText,
+            String templatePath)
             throws EmailServiceException {
         try {
-            String body = renderTemplate(subject, messageText, token, link, buttonText);
+            String body = renderTemplate(templatePath, subject, messageText, token, link, buttonText);
 
             sendSimpleEmail(to, subject, body);
 
@@ -84,14 +94,28 @@ public class EmailService {
     }
 
     // Convenience methods
-    public void sendVerificationEmail(String to, String verificationLink, String token) throws EmailServiceException {
+    public void sendVerificationEmailNewUser(String to, String verificationLink, String token)
+            throws EmailServiceException {
         sendEmail(
                 to,
                 "Email Verification",
                 "Thank you for registering with Staymate! To complete your registration, verify your email using the token below:",
                 token,
                 verificationLink,
-                "Verify Email");
+                "Verify Email",
+                TEMPLATE_NEW_USER);
+    }
+
+    public void sendVerificationEmailExistingUser(String to, String verificationLink, String token)
+            throws EmailServiceException {
+        sendEmail(
+                to,
+                "Verify Your Email",
+                "You already have a Staymate account. Please verify your email again using the token below:",
+                token,
+                verificationLink,
+                "Verify Email",
+                TEMPLATE_EXISTING_USER);
     }
 
     public void sendPasswordResetEmail(String to, String resetLink, String token) throws EmailServiceException {
@@ -101,16 +125,18 @@ public class EmailService {
                 "We received a request to reset your password. Use the token below to continue:",
                 token,
                 resetLink,
-                "Reset Password");
+                "Reset Password",
+                TEMPLATE_DEFAULT);
     }
 
     private @NonNull String requireText(@Nullable String value, String message) {
         return Objects.requireNonNull(value, message);
     }
 
-    private String renderTemplate(String subject, String messageText, String token, String link, String buttonText)
+    private String renderTemplate(String templatePath, String subject, String messageText, String token, String link,
+            String buttonText)
             throws IOException {
-        String body = loadTemplate();
+        String body = loadTemplate(templatePath);
         return body.replace("{{title}}", subject)
                 .replace("{{message}}", messageText)
                 .replace("{{token}}", token)
@@ -118,9 +144,9 @@ public class EmailService {
                 .replace("{{buttonText}}", buttonText);
     }
 
-    private String loadTemplate() throws IOException {
+    private String loadTemplate(String templatePath) throws IOException {
         var inputStream = Objects.requireNonNull(
-                EmailService.class.getResourceAsStream("/templates/email-template.html"));
+                EmailService.class.getResourceAsStream(templatePath));
         return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
     }
 

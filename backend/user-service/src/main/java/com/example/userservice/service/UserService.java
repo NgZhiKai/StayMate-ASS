@@ -52,7 +52,8 @@ public class UserService {
         }
 
         String token = generateVerificationToken(user);
-        sendEmail(email, token, "verification", "/verify?token=");
+        String emailType = existingUserOpt.isPresent() ? "verification_existing" : "verification_new";
+        sendEmail(email, token, emailType, "/verify?token=");
 
         return token;
     }
