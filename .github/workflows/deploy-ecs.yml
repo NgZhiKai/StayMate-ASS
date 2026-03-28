@@ -3,11 +3,7 @@ name: Deploy Backend and Frontend
 on:
   push:
     branches:
-      - master
-    paths:
-      - "backend/**"
-      - "frontend/**"
-      - ".github/workflows/deploy-ecs.yml"
+      - "master"
   workflow_dispatch:
 
 env:
@@ -19,26 +15,114 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      backend: ${{ steps.filter.outputs.backend }}
       frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
+      backend_matrix: ${{ steps.matrix.outputs.backend_matrix }}
+      deploy_matrix: ${{ steps.matrix.outputs.deploy_matrix }}
+      cleanup_matrix: ${{ steps.matrix.outputs.cleanup_matrix }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Detect changes
         id: filter
         uses: dorny/paths-filter@v3
         with:
           filters: |
-            backend:
-              - 'backend/**'
             frontend:
               - 'frontend/**'
+            backend:
+              - 'backend/**'
+            api-gateway:
+              - 'backend/api-gateway/**'
+            booking-service:
+              - 'backend/booking-service/**'
+            email-service:
+              - 'backend/email-service/**'
+            hotel-service:
+              - 'backend/hotel-service/**'
+            notification-service:
+              - 'backend/notification-service/**'
+            payment-service:
+              - 'backend/payment-service/**'
+            user-service:
+              - 'backend/user-service/**'
+
+      - name: Build backend matrix
+        id: matrix
+        run: |
+          set -e
+          ALL_SERVICES=("api-gateway" "booking-service" "email-service" "hotel-service" "notification-service" "payment-service" "user-service")
+          ALL_DEPLOY_ITEMS=(
+            "{\"service\":\"api-gateway-service\",\"image\":\"api-gateway\"}"
+            "{\"service\":\"booking-service-service\",\"image\":\"booking-service\"}"
+            "{\"service\":\"email-service-service\",\"image\":\"email-service\"}"
+            "{\"service\":\"hotel-service-service\",\"image\":\"hotel-service\"}"
+            "{\"service\":\"notification-service-service\",\"image\":\"notification-service\"}"
+            "{\"service\":\"payment-service-service\",\"image\":\"payment-service\"}"
+            "{\"service\":\"user-service-service\",\"image\":\"user-service\"}"
+          )
+
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo 'backend_matrix={"service":["api-gateway","booking-service","email-service","hotel-service","notification-service","payment-service","user-service"]}' >> "$GITHUB_OUTPUT"
+            echo 'deploy_matrix={"include":[{"service":"api-gateway-service","image":"api-gateway"},{"service":"booking-service-service","image":"booking-service"},{"service":"email-service-service","image":"email-service"},{"service":"hotel-service-service","image":"hotel-service"},{"service":"notification-service-service","image":"notification-service"},{"service":"payment-service-service","image":"payment-service"},{"service":"user-service-service","image":"user-service"}]}' >> "$GITHUB_OUTPUT"
+            echo 'cleanup_matrix={"family":["api-gateway","booking-service","email-service","hotel-service","notification-service","payment-service","user-service"]}' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          SERVICES=()
+          DEPLOY_ITEMS=()
+          FAMILIES=()
+          [[ "${{ steps.filter.outputs.api-gateway }}" == "true" ]] && SERVICES+=("\"api-gateway\"")
+          [[ "${{ steps.filter.outputs.api-gateway }}" == "true" ]] && DEPLOY_ITEMS+=("{\"service\":\"api-gateway-service\",\"image\":\"api-gateway\"}")
+          [[ "${{ steps.filter.outputs.api-gateway }}" == "true" ]] && FAMILIES+=("\"api-gateway\"")
+          [[ "${{ steps.filter.outputs.booking-service }}" == "true" ]] && SERVICES+=("\"booking-service\"")
+          [[ "${{ steps.filter.outputs.booking-service }}" == "true" ]] && DEPLOY_ITEMS+=("{\"service\":\"booking-service-service\",\"image\":\"booking-service\"}")
+          [[ "${{ steps.filter.outputs.booking-service }}" == "true" ]] && FAMILIES+=("\"booking-service\"")
+          [[ "${{ steps.filter.outputs.email-service }}" == "true" ]] && SERVICES+=("\"email-service\"")
+          [[ "${{ steps.filter.outputs.email-service }}" == "true" ]] && DEPLOY_ITEMS+=("{\"service\":\"email-service-service\",\"image\":\"email-service\"}")
+          [[ "${{ steps.filter.outputs.email-service }}" == "true" ]] && FAMILIES+=("\"email-service\"")
+          [[ "${{ steps.filter.outputs.hotel-service }}" == "true" ]] && SERVICES+=("\"hotel-service\"")
+          [[ "${{ steps.filter.outputs.hotel-service }}" == "true" ]] && DEPLOY_ITEMS+=("{\"service\":\"hotel-service-service\",\"image\":\"hotel-service\"}")
+          [[ "${{ steps.filter.outputs.hotel-service }}" == "true" ]] && FAMILIES+=("\"hotel-service\"")
+          [[ "${{ steps.filter.outputs.notification-service }}" == "true" ]] && SERVICES+=("\"notification-service\"")
+          [[ "${{ steps.filter.outputs.notification-service }}" == "true" ]] && DEPLOY_ITEMS+=("{\"service\":\"notification-service-service\",\"image\":\"notification-service\"}")
+          [[ "${{ steps.filter.outputs.notification-service }}" == "true" ]] && FAMILIES+=("\"notification-service\"")
+          [[ "${{ steps.filter.outputs.payment-service }}" == "true" ]] && SERVICES+=("\"payment-service\"")
+          [[ "${{ steps.filter.outputs.payment-service }}" == "true" ]] && DEPLOY_ITEMS+=("{\"service\":\"payment-service-service\",\"image\":\"payment-service\"}")
+          [[ "${{ steps.filter.outputs.payment-service }}" == "true" ]] && FAMILIES+=("\"payment-service\"")
+          [[ "${{ steps.filter.outputs.user-service }}" == "true" ]] && SERVICES+=("\"user-service\"")
+          [[ "${{ steps.filter.outputs.user-service }}" == "true" ]] && DEPLOY_ITEMS+=("{\"service\":\"user-service-service\",\"image\":\"user-service\"}")
+          [[ "${{ steps.filter.outputs.user-service }}" == "true" ]] && FAMILIES+=("\"user-service\"")
+
+          if [[ "${{ steps.filter.outputs.backend }}" == "true" ]] && [[ ${#SERVICES[@]} -eq 0 ]]; then
+            # Backend changed, but not in a specific service folder (shared files). Deploy all services.
+            SERVICES=()
+            DEPLOY_ITEMS=()
+            FAMILIES=()
+            for SVC in "${ALL_SERVICES[@]}"; do
+              SERVICES+=("\"$SVC\"")
+              FAMILIES+=("\"$SVC\"")
+            done
+            DEPLOY_ITEMS=("${ALL_DEPLOY_ITEMS[@]}")
+          fi
+
+          if [[ ${#SERVICES[@]} -eq 0 ]]; then
+            echo 'backend_matrix={"service":[]}' >> "$GITHUB_OUTPUT"
+            echo 'deploy_matrix={"include":[]}' >> "$GITHUB_OUTPUT"
+            echo 'cleanup_matrix={"family":[]}' >> "$GITHUB_OUTPUT"
+          else
+            echo "backend_matrix={\"service\":[${SERVICES[*]}]}" >> "$GITHUB_OUTPUT"
+            echo "deploy_matrix={\"include\":[${DEPLOY_ITEMS[*]}]}" >> "$GITHUB_OUTPUT"
+            echo "cleanup_matrix={\"family\":[${FAMILIES[*]}]}" >> "$GITHUB_OUTPUT"
+          fi
 
   deploy-frontend:
-    runs-on: ubuntu-latest
     needs: changes
-    if: needs.changes.outputs.frontend == 'true'
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.frontend == 'true' }}
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
@@ -78,24 +162,16 @@ jobs:
             --paths "/*"
 
   build-and-push:
-    runs-on: ubuntu-latest
     needs: changes
-    if: needs.changes.outputs.backend == 'true'
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.backend == 'true' }}
+    runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
 
     strategy:
       fail-fast: false
-      matrix:
-        service:
-          - api-gateway
-          - booking-service
-          - email-service
-          - hotel-service
-          - notification-service
-          - payment-service
-          - user-service
+      matrix: ${{ fromJson(needs.changes.outputs.backend_matrix) }}
 
     steps:
       - name: Checkout
@@ -140,7 +216,8 @@ jobs:
             --region ${AWS_REGION}
 
   deploy:
-    needs: build-and-push
+    needs: [build-and-push, changes]
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.backend == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -148,22 +225,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix:
-        include:
-          - service: api-gateway-service
-            image: api-gateway
-          - service: booking-service-service
-            image: booking-service
-          - service: email-service-service
-            image: email-service
-          - service: hotel-service-service
-            image: hotel-service
-          - service: notification-service-service
-            image: notification-service
-          - service: payment-service-service
-            image: payment-service
-          - service: user-service-service
-            image: user-service
+      matrix: ${{ fromJson(needs.changes.outputs.deploy_matrix) }}
 
     steps:
       - name: Configure AWS credentials
@@ -220,7 +282,8 @@ jobs:
             --region ${AWS_REGION}
 
   cleanup-task-definitions:
-    needs: deploy
+    needs: [deploy, changes]
+    if: ${{ github.event_name == 'workflow_dispatch' || needs.changes.outputs.backend == 'true' }}
     runs-on: ubuntu-latest
     permissions:
       id-token: write
@@ -228,15 +291,7 @@ jobs:
 
     strategy:
       fail-fast: false
-      matrix:
-        family:
-          - api-gateway
-          - booking-service
-          - email-service
-          - hotel-service
-          - notification-service
-          - payment-service
-          - user-service
+      matrix: ${{ fromJson(needs.changes.outputs.cleanup_matrix) }}
 
     steps:
       - name: Configure AWS credentials
