@@ -54,6 +54,17 @@ jobs:
         id: matrix
         run: |
           set -e
+          ALL_SERVICES=("api-gateway" "booking-service" "email-service" "hotel-service" "notification-service" "payment-service" "user-service")
+          ALL_DEPLOY_ITEMS=(
+            "{\"service\":\"api-gateway-service\",\"image\":\"api-gateway\"}"
+            "{\"service\":\"booking-service-service\",\"image\":\"booking-service\"}"
+            "{\"service\":\"email-service-service\",\"image\":\"email-service\"}"
+            "{\"service\":\"hotel-service-service\",\"image\":\"hotel-service\"}"
+            "{\"service\":\"notification-service-service\",\"image\":\"notification-service\"}"
+            "{\"service\":\"payment-service-service\",\"image\":\"payment-service\"}"
+            "{\"service\":\"user-service-service\",\"image\":\"user-service\"}"
+          )
+
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo 'backend_matrix={"service":["api-gateway","booking-service","email-service","hotel-service","notification-service","payment-service","user-service"]}' >> "$GITHUB_OUTPUT"
             echo 'deploy_matrix={"include":[{"service":"api-gateway-service","image":"api-gateway"},{"service":"booking-service-service","image":"booking-service"},{"service":"email-service-service","image":"email-service"},{"service":"hotel-service-service","image":"hotel-service"},{"service":"notification-service-service","image":"notification-service"},{"service":"payment-service-service","image":"payment-service"},{"service":"user-service-service","image":"user-service"}]}' >> "$GITHUB_OUTPUT"
@@ -85,6 +96,18 @@ jobs:
           [[ "${{ steps.filter.outputs.user-service }}" == "true" ]] && SERVICES+=("\"user-service\"")
           [[ "${{ steps.filter.outputs.user-service }}" == "true" ]] && DEPLOY_ITEMS+=("{\"service\":\"user-service-service\",\"image\":\"user-service\"}")
           [[ "${{ steps.filter.outputs.user-service }}" == "true" ]] && FAMILIES+=("\"user-service\"")
+
+          if [[ "${{ steps.filter.outputs.backend }}" == "true" ]] && [[ ${#SERVICES[@]} -eq 0 ]]; then
+            # Backend changed, but not in a specific service folder (shared files). Deploy all services.
+            SERVICES=()
+            DEPLOY_ITEMS=()
+            FAMILIES=()
+            for SVC in "${ALL_SERVICES[@]}"; do
+              SERVICES+=("\"$SVC\"")
+              FAMILIES+=("\"$SVC\"")
+            done
+            DEPLOY_ITEMS=("${ALL_DEPLOY_ITEMS[@]}")
+          fi
 
           if [[ ${#SERVICES[@]} -eq 0 ]]; then
             echo 'backend_matrix={"service":[]}' >> "$GITHUB_OUTPUT"
