@@ -114,9 +114,13 @@ jobs:
             echo 'deploy_matrix={"include":[]}' >> "$GITHUB_OUTPUT"
             echo 'cleanup_matrix={"family":[]}' >> "$GITHUB_OUTPUT"
           else
-            echo "backend_matrix={\"service\":[${SERVICES[*]}]}" >> "$GITHUB_OUTPUT"
-            echo "deploy_matrix={\"include\":[${DEPLOY_ITEMS[*]}]}" >> "$GITHUB_OUTPUT"
-            echo "cleanup_matrix={\"family\":[${FAMILIES[*]}]}" >> "$GITHUB_OUTPUT"
+            SERVICES_JSON=$(IFS=,; echo "${SERVICES[*]}")
+            DEPLOY_JSON=$(IFS=,; echo "${DEPLOY_ITEMS[*]}")
+            FAMILIES_JSON=$(IFS=,; echo "${FAMILIES[*]}")
+
+            echo "backend_matrix={\"service\":[${SERVICES_JSON}]}" >> "$GITHUB_OUTPUT"
+            echo "deploy_matrix={\"include\":[${DEPLOY_JSON}]}" >> "$GITHUB_OUTPUT"
+            echo "cleanup_matrix={\"family\":[${FAMILIES_JSON}]}" >> "$GITHUB_OUTPUT"
           fi
 
   deploy-frontend:
