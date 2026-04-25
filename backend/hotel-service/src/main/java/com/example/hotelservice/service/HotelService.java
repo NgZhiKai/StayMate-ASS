@@ -163,7 +163,7 @@ public class HotelService {
                     Double hotelLat = hotel.getLatitude();
                     Double hotelLon = hotel.getLongitude();
                     return hotelLat != null && hotelLon != null
-                            && calculateDistance(latitude, longitude, hotelLat, hotelLon) <= 10;
+                            && calculateDistance(latitude, longitude, hotelLat, hotelLon) <= 30;
                 })
                 .toList();
     }
