@@ -146,6 +146,7 @@ public class UserService {
         return userRepository.findByRole(role);
     }
 
+    
     // ---------------- Update User ----------------
     @Transactional
     public User updateUser(Long id, UserRequestUpdateDto updatedUser) {
