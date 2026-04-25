@@ -13,8 +13,8 @@ public class EmailRequestDTO {
     @NotBlank(message = "Token is required")
     private String token;
 
-    @NotBlank(message = "Type is required: 'verification' or 'reset'")
-    private String type; // either "verification" or "reset"
+    @NotBlank(message = "Type is required: 'verification_new', 'verification_existing', or 'reset'")
+    private String type; // either "verification_new", "verification_existing", or "reset"
 
     private String link; // optional link for verification/reset
 
