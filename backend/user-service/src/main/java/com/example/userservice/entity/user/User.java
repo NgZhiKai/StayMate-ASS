@@ -26,16 +26,17 @@ public class User {
     @Column(nullable = true)
     private String lastName;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = true)
     private String email;
 
     @Column(nullable = true)
     private String password;
 
+    @Column(nullable = true)
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = true)
     private UserRole role;
 
     @Column(name = "verification_token")
