@@ -146,7 +146,6 @@ public class UserService {
         return userRepository.findByRole(role);
     }
 
-
     // ---------------- Update User ----------------
     @Transactional
     public User updateUser(Long id, UserRequestUpdateDto updatedUser) {
@@ -250,18 +249,6 @@ public class UserService {
     }
 
     private String ensureLoginToken(User user) {
-        String existingToken = user.getVerificationToken();
-        if (existingToken != null && !existingToken.isBlank()) {
-            return existingToken;
-        }
-
-        String token = UUID.randomUUID().toString();
-        user.setVerificationToken(token);
-        userRepository.save(user);
-        return token;
-    }
-
-    private String ensureLoginToken1(User user) {
         String existingToken = user.getVerificationToken();
         if (existingToken != null && !existingToken.isBlank()) {
             return existingToken;
