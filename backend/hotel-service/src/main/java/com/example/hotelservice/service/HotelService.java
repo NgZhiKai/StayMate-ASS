@@ -169,7 +169,6 @@ public class HotelService {
                 .toList();
     }
 
-
     public List<HotelSearchDTO> findHotelsByCityAndCountry(String city, String country) {
         String normalizedCity = city == null ? "" : city;
         String normalizedCountry = country == null ? "" : country;
