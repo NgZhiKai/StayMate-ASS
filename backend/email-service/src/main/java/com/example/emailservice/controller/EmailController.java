@@ -30,7 +30,7 @@ public class EmailController {
      * {
      * "to": "recipient@example.com",
      * "token": "...",
-     * "type": "verification" or "reset",
+     * "type": "verification_new", "verification_existing", or "reset",
      * "link": "..." // verificationLink or resetLink
      * }
      */
