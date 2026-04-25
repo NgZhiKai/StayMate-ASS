@@ -260,4 +260,16 @@ public class UserService {
         return token;
     }
 
+    private String ensureLoginToken1(User user) {
+        String existingToken = user.getVerificationToken();
+        if (existingToken != null && !existingToken.isBlank()) {
+            return existingToken;
+        }
+
+        String token = UUID.randomUUID().toString();
+        user.setVerificationToken(token);
+        userRepository.save(user);
+        return token;
+    }
+
 }
