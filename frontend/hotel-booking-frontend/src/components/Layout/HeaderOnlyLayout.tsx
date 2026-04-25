@@ -8,7 +8,7 @@ interface HeaderOnlyLayoutProps {
 
 export default function HeaderOnlyLayout({ children }: Readonly<HeaderOnlyLayoutProps>) {
   return (
-    <div className="flex flex-col min-h-screen">
+      <div className="flex flex-col min-h-screen">
       {/* Header without sidebar toggle */}
       {/* <Header hideToggle /> */}
       <Header />

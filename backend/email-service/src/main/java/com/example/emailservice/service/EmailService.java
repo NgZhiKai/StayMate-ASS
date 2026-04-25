@@ -40,7 +40,7 @@ public class EmailService {
         String link = requireNonBlank(request.getLink(), "Email link is required");
 
         return switch (normalizedType) {
-            case "verification", "verification_new" -> {
+            case "verification_new" -> {
                 sendVerificationEmailNewUser(to, link, token);
                 yield "Verification email sent successfully.";
             }
@@ -53,7 +53,7 @@ public class EmailService {
                 yield "Password reset email sent successfully.";
             }
             default -> throw new IllegalArgumentException(
-                    "Invalid email type. Must be 'verification', 'verification_new', 'verification_existing', or 'reset'.");
+                    "Invalid email type. Must be 'verification_new', 'verification_existing', or 'reset'.");
         };
     }
 

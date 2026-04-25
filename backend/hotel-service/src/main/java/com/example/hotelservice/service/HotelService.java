@@ -29,6 +29,7 @@ public class HotelService {
     private static final String LATITUDE_NULL_MESSAGE = "Latitude must not be null";
     private static final String LONGITUDE_NULL_MESSAGE = "Longitude must not be null";
     private static final String HOTEL_NAME_REQUIRED = "Hotel name is required";
+    private static final double SEARCH_RADIUS_KM = 15;
 
     private final HotelRepository hotelRepository;
     private final ImageService imageService;
@@ -163,7 +164,7 @@ public class HotelService {
                     Double hotelLat = hotel.getLatitude();
                     Double hotelLon = hotel.getLongitude();
                     return hotelLat != null && hotelLon != null
-                            && calculateDistance(latitude, longitude, hotelLat, hotelLon) <= 10;
+                            && calculateDistance(latitude, longitude, hotelLat, hotelLon) <= SEARCH_RADIUS_KM;
                 })
                 .toList();
     }

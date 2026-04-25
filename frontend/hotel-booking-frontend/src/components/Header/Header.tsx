@@ -14,14 +14,11 @@ export default function Header({
 }: Readonly<HeaderProps>) {
   return (
     <header className="fixed top-0 left-0 w-full h-16 bg-white/80 backdrop-blur-md shadow-sm flex items-center justify-between px-6 z-[9999] select-none">
-      {hideToggle ? (
-        <div />
-      ) : (
-        <HeaderLeft
-          toggleSidebar={toggleSidebar ?? (() => {})}
-          isSidebarOpen={isSidebarOpen}
-        />
-      )}
+      <HeaderLeft
+        toggleSidebar={toggleSidebar ?? (() => {})}
+        isSidebarOpen={isSidebarOpen}
+        hideToggle={hideToggle}
+      />
       <UserActions />
     </header>
   );
